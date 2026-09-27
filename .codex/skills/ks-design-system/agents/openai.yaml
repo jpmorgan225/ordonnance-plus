@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-design-system"
+  short_description: "Capture and structure the global design system into docs/design-system.md. Doesn't generate visuals — it records them."
+  default_prompt: "Run ks-design-system (optional) source of the visual direction"

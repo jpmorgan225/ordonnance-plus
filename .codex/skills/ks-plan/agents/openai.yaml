@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-plan"
+  short_description: "Break a story into sequenced tasks, ready to execute"
+  default_prompt: "Run ks-plan <story id or name>"

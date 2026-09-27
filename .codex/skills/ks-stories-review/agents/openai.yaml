@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-stories-review"
+  short_description: "Review the story breakdown against the PRD perimeter, in a fresh-context subagent. Cheapest place to catch a bad split."
+  default_prompt: "Run the ks-stories-review step of the killer-saas pipeline."

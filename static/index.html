@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordonnance+ — L'assistant de lecture sécurisé pour pharmaciens</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-fiche, #printable-fiche * { visibility: visible; }
+      #printable-fiche { position: absolute; left: 0; top: 0; width: 100%; color: black !important; }
+      .no-print { display: none !important; }
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30 px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
+        <i data-lucide="cross" class="w-6 h-6 text-white stroke-[2.5]"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl font-bold tracking-tight text-white">Ordonnance<span class="text-brand-400">+</span></span>
+          <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">Officine CI</span>
+        </div>
+        <p class="text-xs text-slate-400">Assistant de lecture & transcription sous contrôle pharmaceutique</p>
+      </div>
+    </div>
+
+    <!-- LIVE CI DATABASE BADGE -->
+    <div class="flex items-center gap-4 text-xs">
+      <div class="hidden md:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-1.5 text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Catalogue CI : <strong class="text-white" id="badge-total-meds">3 852</strong> méd.</span>
+        <span class="text-slate-500">•</span>
+        <span class="text-slate-400" title="Synchronisé depuis pharmacies-de-garde.ci">MAJ Samedi 06:00 GMT</span>
+      </div>
+
+      <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
+        <span class="text-slate-300">Conforme <strong class="text-white">Loi ARTCI 2013-450</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- DEMO PRESETS / QUICK LAUNCHER BAR -->
+  <section class="bg-slate-900 border-b border-slate-800/80 px-4 lg:px-8 py-2.5">
+    <div class="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-brand-400"></i> Scénarios Hackathon :
+        </span>
+        <div class="flex flex-wrap items-center gap-2" id="preset-buttons">
+          <button onclick="chargerSample('sample_1')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" data-id="sample_1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 1. Cas Nominal (Lisible)
+          </button>
+          <button onclick="chargerSample('sample_2')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 transition flex items-center gap-1.5" data-id="sample_2">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> 2. Dosage Ambigu (Bloquant) ⭐
+          </button>
+          <button onclick="chargerSample('sample_3')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" data-id="sample_3">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span> 3. Posologie Incomplète
+          </button>
+        </div>
+      </div>
+
+      <!-- Upload custom photo -->
+      <label class="cursor-pointer inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition">
+        <i data-lucide="upload" class="w-3.5 h-3.5 text-brand-400"></i>
+        <span>Importer une ordonnance...</span>
+        <input type="file" id="file-input" accept="image/*" class="hidden" onchange="uploadPhoto(event)">
+      </label>
+    </div>
+  </section>
+
+  <!-- MAIN SPLIT WORKSPACE -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
+    
+    <!-- LEFT PANE: PRESCRIPTION VIEWER (5 cols) -->
+    <div class="lg:col-span-5 border-r border-slate-800 bg-slate-950 flex flex-col h-full overflow-hidden">
+      <!-- Viewer Controls -->
+      <div class="p-3 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs text-slate-300">
+        <span class="font-medium flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i> Document Source Original
+        </span>
+        <div class="flex items-center gap-1">
+          <button onclick="zoomImage(1.15)" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Zoom avant">
+            <i data-lucide="zoom-in" class="w-4 h-4"></i>
+          </button>
+          <button onclick="zoomImage(0.85)" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Zoom arrière">
+            <i data-lucide="zoom-out" class="w-4 h-4"></i>
+          </button>
+          <button onclick="resetZoom()" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Réinitialiser">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Image Canvas Container -->
+      <div class="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-950/80 relative custom-scrollbar" id="image-scroll-box">
+        <div id="image-wrapper" class="transition-transform duration-150 origin-center max-w-full">
+          <img id="prescription-img" src="/static/samples/ordonnance_1_standard.png" alt="Ordonnance originale" class="rounded-lg shadow-2xl border border-slate-800 max-h-[75vh] object-contain">
+        </div>
+        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-20">
+          <div class="w-10 h-10 border-3 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-medium text-slate-300">Analyse Gemini Multimodal en cours...</p>
+          <span class="text-xs text-slate-500">Extraction fidèle sans déduction</span>
+        </div>
+      </div>
+
+      <!-- Legal footer -->
+      <div class="p-2.5 border-t border-slate-800 bg-slate-900/40 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>Document fictif anonymisé (Hackathon Abidjan)</span>
+        <span class="text-emerald-400 flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Données chiffrées</span>
+      </div>
+    </div>
+
+    <!-- RIGHT PANE: PHARMACIST ASSISTANT & VALIDATION (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col h-full bg-slate-900/50 overflow-y-auto custom-scrollbar">
+      
+      <!-- PRESCRIPTION HEADER METADATA -->
+      <div class="p-5 border-b border-slate-800 bg-slate-900/90">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span id="patient-name">KONE Ibrahim (Fictif)</span>
+              </h2>
+              <span id="patient-age-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">34 ans</span>
+            </div>
+            <p class="text-xs text-slate-400 flex items-center gap-2">
+              <span class="flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i> Prescripteur : <strong class="text-slate-200" id="doctor-name">Dr. KOUASSI Jean</strong></span>
+              <span class="text-slate-600">•</span>
+              <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> <span id="prescription-date">26/09/2026</span></span>
+            </p>
+            <p class="text-xs text-slate-500 mt-0.5" id="facility-name">Polyclinique des Deux-Plateaux, Cocody</p>
+          </div>
+
+          <!-- Total live estimate -->
+          <div class="text-right bg-slate-800/80 border border-slate-700/80 rounded-xl px-4 py-2.5">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Estimation Référence</span>
+            <span class="text-xl font-extrabold text-brand-400 font-mono" id="total-price-fcfa">4 559 FCFA</span>
+            <span class="text-[10px] text-slate-500 block">Catalogue officiel CI (TTC)</span>
+          </div>
+        </div>
+
+        <!-- DYNAMIC SAFETY BANNER -->
+        <div id="safety-banner" class="mt-4 p-3.5 rounded-xl border flex items-start gap-3 transition-all duration-200">
+          <!-- Populated by JS: Green or Amber/Red alert -->
+        </div>
+      </div>
+
+      <!-- PRESCRIPTION ITEMS LIST -->
+      <div class="p-5 flex-1 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="pill" class="w-4 h-4 text-brand-400"></i> Lignes de Prescription Transcrites (<span id="items-count">0</span>)
+          </h3>
+          <span class="text-xs text-slate-500">Règle de sécurité : recopie brute fidèle</span>
+        </div>
+
+        <!-- Dynamic Lines Container -->
+        <div id="lines-container" class="space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- PHARMACIST DELIVERY NOTES & VOICE DICTATION -->
+        <div class="mt-2 p-4 rounded-xl border border-slate-800 bg-slate-900/60">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="message-square" class="w-3.5 h-3.5 text-teal-400"></i> Conseils de délivrance du Pharmacien (pour la fiche patient)
+            </label>
+            <!-- Voice Dictation button -->
+            <button id="mic-btn" onclick="toggleVoiceDictation()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition">
+              <i data-lucide="mic" class="w-3.5 h-3.5 text-brand-400" id="mic-icon"></i>
+              <span id="mic-label">Dicter à la voix</span>
+            </button>
+          </div>
+          <textarea id="delivery-advice" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-brand-500" placeholder="Ex: Bien respecter les 7 jours complets. Boire abondamment pendant le traitement..."></textarea>
+        </div>
+      </div>
+
+      <!-- BOTTOM ACTION BAR -->
+      <div class="p-5 border-t border-slate-800 bg-slate-900/90 sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs text-slate-400 block" id="validation-status-text">Toutes les lignes doivent être confirmées</span>
+          <span class="text-[11px] text-slate-500">Engage la responsabilité du pharmacien titulaire</span>
+        </div>
+
+        <button id="btn-validate-all" onclick="validerOrdonnanceFinale()" class="px-6 py-3 rounded-xl font-bold text-sm bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-lg shadow-brand-500/25 transition flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-500">
+          <i data-lucide="check-check" class="w-4 h-4"></i>
+          <span>Valider & Générer la Fiche Patient</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODAL FICHE PATIENT (READY TO PRINT) -->
+  <div id="modal-fiche" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-8 shadow-2xl border border-slate-200 relative my-8" id="printable-fiche">
+      
+      <!-- Modal Close button (no-print) -->
+      <button onclick="fermerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 no-print">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Fiche Header -->
+      <div class="border-b-2 border-emerald-600 pb-4 mb-6 flex justify-between items-start">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl font-black text-emerald-700 tracking-tight">ORDONNANCE<span class="text-slate-900">+</span></span>
+            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">FICHE DE DISPENSATION SÉCURISÉE</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Délivrée par la <strong>Grande Pharmacie de la Riviera</strong> • Cocody, Abidjan</p>
+          <p class="text-[11px] text-slate-400">Dr. KONAN (Pharmacien Responsable) • Tél: +225 27 22 41 20 20</p>
+        </div>
+        <div class="text-right">
+          <span class="inline-block text-[11px] font-mono font-bold bg-slate-100 border border-slate-300 rounded px-2 py-1 text-slate-700" id="fiche-visa">VISA-CI-2026</span>
+          <p class="text-[11px] text-slate-500 mt-1" id="fiche-date">27/09/2026</p>
+        </div>
+      </div>
+
+      <!-- Patient & Doctor block -->
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs mb-6">
+        <div>
+          <span class="text-slate-400 font-semibold block uppercase">Patient</span>
+          <p class="font-bold text-slate-800 text-sm" id="fiche-patient-nom">KONE Ibrahim</p>
+          <p class="text-slate-600" id="fiche-patient-age">34 ans</p>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold block uppercase">Prescripteur</span>
+          <p class="font-bold text-slate-800 text-sm" id="fiche-medecin-nom">Dr. KOUASSI Jean</p>
+          <p class="text-slate-600" id="fiche-etablissement">Polyclinique des Deux-Plateaux</p>
+        </div>
+      </div>
+
+      <!-- Prescribed medications table -->
+      <div class="mb-6">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Traitement Prescrit & Posologie Validée</h4>
+        <div class="border border-slate-200 rounded-lg overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+              <tr>
+                <th class="p-2.5 font-semibold">Médicament & Dosage</th>
+                <th class="p-2.5 font-semibold">Posologie Officielle</th>
+                <th class="p-2.5 font-semibold text-right">Réf. Prix (CI)</th>
+              </tr>
+            </thead>
+            <tbody id="fiche-table-body" class="divide-y divide-slate-200">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Total & Source -->
+      <div class="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-3 rounded-xl mb-6">
+        <div>
+          <span class="text-xs font-bold text-emerald-900 block">Total Indicatif de Référence (Officine CI)</span>
+          <span class="text-[11px] text-emerald-700">Source officielle : pharmacies-de-garde.ci (MAJ hebdomadaire)</span>
+        </div>
+        <div class="text-right">
+          <span class="text-xl font-black text-emerald-800 font-mono" id="fiche-total-prix">4 559 FCFA</span>
+        </div>
+      </div>
+
+      <!-- Pharmacist delivery advice -->
+      <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl mb-6 text-xs">
+        <span class="font-bold text-slate-800 flex items-center gap-1.5 mb-1">
+          <i data-lucide="info" class="w-4 h-4 text-emerald-600"></i> Conseils et Recommandations du Pharmacien
+        </span>
+        <p class="text-slate-600" id="fiche-conseils"></p>
+      </div>
+
+      <!-- Duty Pharmacies info -->
+      <div class="p-3 bg-slate-100 rounded-xl text-[11px] text-slate-600 mb-6">
+        <span class="font-bold text-slate-700 block mb-1">Pharmacies de garde à proximité (Abidjan) :</span>
+        <div class="grid grid-cols-2 gap-2" id="fiche-pharmacies-garde">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Footer Stamp -->
+      <div class="border-t border-slate-200 pt-4 flex justify-between items-end text-[11px] text-slate-500">
+        <div>
+          <p>Document remis au patient pour faciliter la bonne observance.</p>
+          <p class="text-[10px] text-slate-400">Conformité ARTCI / Loi ivoirienne n° 2013-450 sur les données de santé.</p>
+        </div>
+        <div class="border-2 border-emerald-600 rounded-lg p-2 text-center text-emerald-800 font-bold text-[10px] w-40">
+          VISA DU PHARMACIEN
+          <span class="block text-[8px] font-normal text-emerald-700">DÉLIVRANCE CONFORME</span>
+        </div>
+      </div>
+
+      <!-- Action buttons (no-print) -->
+      <div class="mt-6 flex justify-end gap-3 no-print">
+        <button onclick="fermerModal()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          Fermer
+        </button>
+        <button onclick="window.print()" class="px-5 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimer la Fiche
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC SCRIPT -->
+  <script>
+    // State
+    let currentPrescription = null;
+    let currentZoom = 1.0;
+    let isDictating = false;
+    let recognition = null;
+
+    // Initialize Lucide icons
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      chargerSample('sample_1');
+      initVoiceRecognition();
+      chargerStatsCatalogue();
+    });
+
+    async function chargerStatsCatalogue() {
+      try {
+        const res = await fetch('/api/sync/status');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('badge-total-meds').textContent = data.total_references || '3 852';
+        }
+      } catch (e) {
+        console.warn('Stats catalogue:', e);
+      }
+    }
+
+    // Zoom controls
+    function zoomImage(factor) {
+      currentZoom = Math.min(Math.max(currentZoom * factor, 0.5), 3.0);
+      document.getElementById('image-wrapper').style.transform = `scale(${currentZoom})`;
+    }
+    function resetZoom() {
+      currentZoom = 1.0;
+      document.getElementById('image-wrapper').style.transform = `scale(1.0)`;
+    }
+
+    // Load sample
+    async function chargerSample(sampleId) {
+      // Highlight active button
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        if (b.dataset.id === sampleId) {
+          b.classList.add('ring-2', 'ring-brand-400');
+        } else {
+          b.classList.remove('ring-2', 'ring-brand-400');
+        }
+      });
+
+      const imgMap = {
+        'sample_1': '/static/samples/ordonnance_1_standard.png',
+        'sample_2': '/static/samples/ordonnance_2_ambigue.png',
+        'sample_3': '/static/samples/ordonnance_3_incomplete.png'
+      };
+
+      document.getElementById('prescription-img').src = imgMap[sampleId] || imgMap['sample_1'];
+      resetZoom();
+      showLoading(true);
+
+      try {
+        const formData = new FormData();
+        formData.append('preset_key', sampleId);
+        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+        if (res.ok) {
+          currentPrescription = await res.json();
+          renderPrescription();
+        }
+      } catch (err) {
+        console.error('Erreur analyse:', err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function uploadPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('prescription-img').src = e.target.result;
+        resetZoom();
+      };
+      reader.readAsDataURL(file);
+
+      showLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+        if (res.ok) {
+          currentPrescription = await res.json();
+          renderPrescription();
+        }
+      } catch (err) {
+        console.error('Erreur upload:', err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function showLoading(show) {
+      document.getElementById('loading-overlay').classList.toggle('hidden', !show);
+    }
+
+    // Render prescription data into UI
+    function renderPrescription() {
+      if (!currentPrescription) return;
+
+      document.getElementById('patient-name').textContent = currentPrescription.patient_nom;
+      document.getElementById('patient-age-badge').textContent = currentPrescription.patient_age || 'Âge non précisé';
+      document.getElementById('doctor-name').textContent = currentPrescription.medecin_nom;
+      document.getElementById('prescription-date').textContent = currentPrescription.date_prescription;
+      document.getElementById('facility-name').textContent = currentPrescription.etablissement || 'Établissement de Santé';
+
+      renderSafetyBanner();
+      renderLines();
+      updateTotalPrice();
+      checkGlobalValidationState();
+      lucide.createIcons();
+    }
+
+    function renderSafetyBanner() {
+      const banner = document.getElementById('safety-banner');
+      const hasDoutes = currentPrescription.lignes.some(l => l.confiance === 'douteux' && !l.valide_par_pharmacien);
+
+      if (hasDoutes) {
+        banner.className = "mt-4 p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-200 flex items-start gap-3";
+        banner.innerHTML = `
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5 animate-bounce"></i>
+          <div class="text-xs">
+            <strong class="font-bold text-amber-300 block text-sm">Contrôle de Sécurité : Incertitude Détectée</strong>
+            <span>L'IA a repéré un doute sur l'ordonnance (dosage ambigu ou posologie absente). 
+            La validation finale est <strong>bloquée</strong> tant que vous n'avez pas confirmé ou rectifié chaque ligne concernée.</span>
+          </div>
+        `;
+      } else {
+        banner.className = "mt-4 p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 flex items-start gap-3";
+        banner.innerHTML = `
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+          <div class="text-xs">
+            <strong class="font-bold text-emerald-300 block text-sm">Contrôle de Sécurité : Lignes Prêtes</strong>
+            <span>Toutes les posologies sont fidèlement recopiées. Aucune ambiguïté résiduelle. Prêt pour la validation officielle.</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderLines() {
+      const container = document.getElementById('lines-container');
+      container.innerHTML = '';
+      document.getElementById('items-count').textContent = currentPrescription.lignes.length;
+
+      currentPrescription.lignes.forEach((ligne, idx) => {
+        const isDouteux = (ligne.confiance === 'douteux');
+        const isValide = ligne.valide_par_pharmacien;
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border transition-all ${
+          isDouteux && !isValide 
+            ? 'bg-amber-950/20 border-amber-500/50 shadow-lg shadow-amber-500/5' 
+            : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono font-bold text-slate-500">#${idx + 1}</span>
+                <input type="text" value="${escapeHtml(ligne.nom_medicament)}" 
+                  onchange="modifierLigne('${ligne.id}', 'nom_medicament', this.value)"
+                  class="font-bold text-slate-100 bg-transparent border-b border-dashed border-slate-700 hover:border-brand-500 focus:border-brand-500 focus:outline-none text-sm px-1">
+                
+                <input type="text" value="${escapeHtml(ligne.dosage)}" 
+                  onchange="modifierLigne('${ligne.id}', 'dosage', this.value)"
+                  class="text-xs font-semibold text-brand-300 bg-slate-800/80 rounded px-2 py-0.5 border border-slate-700 focus:border-brand-500 focus:outline-none w-32">
+                
+                <!-- Status Badge -->
+                ${isDouteux && !isValide 
+                  ? `<span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+                       <i data-lucide="alert-circle" class="w-3 h-3"></i> À Vérifier
+                     </span>`
+                  : `<span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                       <i data-lucide="check" class="w-3 h-3"></i> Conforme
+                     </span>`
+                }
+              </div>
+
+              <!-- Posologie recopiée -->
+              <div class="mt-2 pl-3 border-l-2 ${isDouteux && !isValide ? 'border-amber-500' : 'border-slate-700'}">
+                <label class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">Posologie Recopiée Brut (Non Interprétée)</label>
+                <input type="text" value="${escapeHtml(ligne.posologie_recopiee)}" 
+                  onchange="modifierLigne('${ligne.id}', 'posologie_recopiee', this.value)"
+                  class="w-full bg-slate-950/70 border border-slate-800 focus:border-brand-500 rounded p-1.5 text-xs text-slate-200 focus:outline-none">
+              </div>
+
+              <!-- Safety Note if doubt -->
+              ${ligne.note_securite ? `
+                <div class="mt-2 text-xs flex items-center gap-1.5 ${isDouteux ? 'text-amber-300/90' : 'text-slate-400'}">
+                  <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span>${escapeHtml(ligne.note_securite)}</span>
+                </div>
+              ` : ''}
+
+              <!-- Price & CI Catalog matching -->
+              <div class="mt-3 flex items-center gap-3 text-xs">
+                <span class="text-slate-400 font-mono text-[11px] flex items-center gap-1">
+                  <i data-lucide="tag" class="w-3 h-3 text-teal-400"></i> Réf. CI : 
+                  <strong class="text-brand-300 font-semibold">${ligne.prix_reference_fcfa ? ligne.prix_reference_fcfa.toLocaleString() + ' FCFA' : 'Prix non répertorié'}</strong>
+                </span>
+                ${ligne.nom_catalogue ? `<span class="text-[10px] text-slate-500 truncate max-w-xs" title="${escapeHtml(ligne.nom_catalogue)}">(${escapeHtml(ligne.nom_catalogue)})</span>` : ''}
+              </div>
+            </div>
+
+            <!-- Pharmacist validation button for this line -->
+            <div class="flex flex-col items-end justify-center shrink-0">
+              <button onclick="toggleValiderLigne('${ligne.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+                isValide 
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30' 
+                  : 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-md shadow-amber-500/20 animate-pulse'
+              }">
+                <i data-lucide="${isValide ? 'check-circle-2' : 'shield-alert'}" class="w-4 h-4"></i>
+                <span>${isValide ? 'Vérifié' : 'Confirmer la ligne'}</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function modifierLigne(id, field, value) {
+      const ligne = currentPrescription.lignes.find(l => l.id === id);
+      if (ligne) {
+        ligne[field] = value;
+        // Si l'utilisateur modifie manuellement, on marque comme validé
+        if (field === 'dosage' || field === 'posologie_recopiee') {
+          ligne.valide_par_pharmacien = true;
+          ligne.confiance = 'haute';
+        }
+        renderPrescription();
+      }
+    }
+
+    function toggleValiderLigne(id) {
+      const ligne = currentPrescription.lignes.find(l => l.id === id);
+      if (ligne) {
+        ligne.valide_par_pharmacien = !ligne.valide_par_pharmacien;
+        renderPrescription();
+      }
+    }
+
+    function updateTotalPrice() {
+      const total = currentPrescription.lignes.reduce((sum, l) => sum + (l.prix_reference_fcfa || 0), 0);
+      currentPrescription.total_estime_fcfa = total;
+      document.getElementById('total-price-fcfa').textContent = total.toLocaleString() + ' FCFA';
+    }
+
+    function checkGlobalValidationState() {
+      const hasPendingDoutes = currentPrescription.lignes.some(l => l.confiance === 'douteux' && !l.valide_par_pharmacien);
+      const btn = document.getElementById('btn-validate-all');
+      const statusText = document.getElementById('validation-status-text');
+
+      if (hasPendingDoutes) {
+        btn.disabled = true;
+        statusText.innerHTML = `<span class="text-amber-400 font-semibold flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5 inline"></i> Validation bloquée : confirmez la ligne douteuse</span>`;
+      } else {
+        btn.disabled = false;
+        statusText.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 inline"></i> Toutes les lignes sont prêtes à être certifiées</span>`;
+      }
+    }
+
+    // Final Validation
+    async function validerOrdonnanceFinale() {
+      try {
+        const payload = {
+          patient_nom: currentPrescription.patient_nom,
+          patient_age: currentPrescription.patient_age,
+          medecin_nom: currentPrescription.medecin_nom,
+          date_prescription: currentPrescription.date_prescription,
+          lignes: currentPrescription.lignes,
+          conseils_delivrance: document.getElementById('delivery-advice').value.trim()
+        };
+
+        const res = await fetch('/api/validate-prescription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const fiche = await res.json();
+          afficherFichePatient(fiche);
+        } else {
+          const err = await res.json();
+          alert("Erreur de validation : " + (err.detail || "Sécurité non satisfaite"));
+        }
+      } catch (e) {
+        console.error("Erreur validation:", e);
+      }
+    }
+
+    function afficherFichePatient(fiche) {
+      document.getElementById('fiche-visa').textContent = fiche.numero_visa;
+      document.getElementById('fiche-date').textContent = fiche.date_validation;
+      document.getElementById('fiche-patient-nom').textContent = fiche.patient.nom;
+      document.getElementById('fiche-patient-age').textContent = fiche.patient.age || 'Non spécifié';
+      document.getElementById('fiche-medecin-nom').textContent = fiche.prescripteur;
+      document.getElementById('fiche-etablissement').textContent = currentPrescription.etablissement || 'Cabinet Médical';
+      document.getElementById('fiche-conseils').textContent = fiche.conseils_delivrance;
+      document.getElementById('fiche-total-prix').textContent = fiche.total_estime_fcfa.toLocaleString() + ' FCFA';
+
+      const tbody = document.getElementById('fiche-table-body');
+      tbody.innerHTML = '';
+      fiche.medicaments.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-2.5 font-bold text-slate-800">${escapeHtml(m.nom)} <span class="text-emerald-700 font-semibold">${escapeHtml(m.dosage)}</span></td>
+          <td class="p-2.5 text-slate-700 font-medium">${escapeHtml(m.posologie_officielle)}</td>
+          <td class="p-2.5 text-right font-mono font-semibold text-slate-900">${m.prix_reference_fcfa ? m.prix_reference_fcfa.toLocaleString() + ' FCFA' : '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const pharmaciesDiv = document.getElementById('fiche-pharmacies-garde');
+      pharmaciesDiv.innerHTML = '';
+      (fiche.pharmacies_garde_recommandees || []).forEach(p => {
+        const item = document.createElement('div');
+        item.className = "p-2 bg-white rounded border border-slate-200";
+        item.innerHTML = `
+          <strong class="text-slate-800 block">${escapeHtml(p.nom)} (${escapeHtml(p.commune)})</strong>
+          <span class="text-slate-500">${escapeHtml(p.adresse)}</span><br>
+          <span class="text-emerald-700 font-mono font-bold">${escapeHtml(p.tel)}</span>
+        `;
+        pharmaciesDiv.appendChild(item);
+      });
+
+      document.getElementById('modal-fiche').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fermerModal() {
+      document.getElementById('modal-fiche').classList.add('hidden');
+    }
+
+    // Voice Dictation (Web Speech API)
+    function initVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        document.getElementById('mic-btn').title = "Dictée vocale non supportée sur ce navigateur";
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = 'fr-FR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        isDictating = true;
+        document.getElementById('mic-btn').classList.add('bg-red-500/20', 'text-red-300', 'border-red-500/50');
+        document.getElementById('mic-label').textContent = "Écoute en cours...";
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const textarea = document.getElementById('delivery-advice');
+        textarea.value = (textarea.value ? textarea.value + " " : "") + transcript;
+      };
+
+      recognition.onend = () => {
+        isDictating = false;
+        document.getElementById('mic-btn').classList.remove('bg-red-500/20', 'text-red-300', 'border-red-500/50');
+        document.getElementById('mic-label').textContent = "Dicter à la voix";
+      };
+    }
+
+    function toggleVoiceDictation() {
+      if (!recognition) {
+        alert("La reconnaissance vocale nécessite Chrome, Safari ou Edge.");
+        return;
+      }
+      if (isDictating) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

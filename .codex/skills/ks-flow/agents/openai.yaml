@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-flow"
+  short_description: "One small story, end to end, in three contexts instead of six — research and plan fused, same implementer, same fresh-context review, same gates"
+  default_prompt: "Run ks-flow <story id or name>"

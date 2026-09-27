@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-execute"
+  short_description: "Get a story implemented in an isolated subagent. Never codes in the main context."
+  default_prompt: "Run ks-execute <story id or name>"

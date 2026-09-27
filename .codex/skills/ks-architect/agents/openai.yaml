@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-architect"
+  short_description: "Set the technical HOW — stack, patterns, conventions, design"
+  default_prompt: "Run the ks-architect step of the killer-saas pipeline."

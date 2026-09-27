@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-stories"
+  short_description: "Break the PRD down into shippable, agentic-ready user stories"
+  default_prompt: "Run the ks-stories step of the killer-saas pipeline."

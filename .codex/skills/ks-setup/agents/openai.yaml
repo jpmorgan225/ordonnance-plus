@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-setup"
+  short_description: "Create the project's AGENTS.local.md — the settings and commands the pipeline reads. Runs once, before /ks-prd."
+  default_prompt: "Run the ks-setup step of the killer-saas pipeline."

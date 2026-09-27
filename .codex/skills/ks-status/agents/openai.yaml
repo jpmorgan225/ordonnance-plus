@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-status"
+  short_description: "Show the project's pipeline state — framing docs, per-story progress, next command"
+  default_prompt: "Run the ks-status step of the killer-saas pipeline."

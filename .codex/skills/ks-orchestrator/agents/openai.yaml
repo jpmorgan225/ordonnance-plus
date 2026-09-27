@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-orchestrator"
+  short_description: "Chain a story's full cycle — Research → Design → Plan → Execute → Review → Ship — with two blocking human checkpoints (plan validation, ship confirmation)"
+  default_prompt: "Run ks-orchestrator <story id or name>"

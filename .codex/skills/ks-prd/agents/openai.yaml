@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-prd"
+  short_description: "Frame the kill — target SaaS, kill mode, perimeter, the WHAT and the WHY"
+  default_prompt: "Run ks-prd <target SaaS or product idea>"

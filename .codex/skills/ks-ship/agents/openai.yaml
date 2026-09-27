@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-ship"
+  short_description: "Ship the story per the project's Merge mode and Ship confirmation (AGENTS.local.md)"
+  default_prompt: "Run ks-ship <story id or name>"

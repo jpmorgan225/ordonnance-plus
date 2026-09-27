@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-design"
+  short_description: "Derive a story's screen from the design system. Autonomous path (the agent produces it) or brief path (an external tool produces it and the result comes back). Never freestyles outside the system."
+  default_prompt: "Run ks-design <story id or name> [--agent | --brief [tool name]]"

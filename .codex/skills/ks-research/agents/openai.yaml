@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-research"
+  short_description: "Explore a story's real context before planning — current code, APIs, traps"
+  default_prompt: "Run ks-research <story id or name>"

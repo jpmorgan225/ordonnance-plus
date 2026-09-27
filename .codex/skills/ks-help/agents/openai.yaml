@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-help"
+  short_description: "Affiche le pipeline killer-saas — l'ordre des phases et la règle unique"
+  default_prompt: "Run the ks-help step of the killer-saas pipeline."

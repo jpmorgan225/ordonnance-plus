@@ -1,0 +1,4 @@
+interface:
+  display_name: "/ks-review"
+  short_description: "Get a story reviewed by a fresh-context subagent. Gate before Ship. Never reviews in the context that wrote the code."
+  default_prompt: "Run ks-review <story id or name>"
