@@ -84,7 +84,7 @@
           </div>
           <div class="flex items-center gap-1.5 text-[11px] text-on-surface-variant">
             <span class="w-1.5 h-1.5 rounded-full bg-pharmacy-green animate-pulse"></span>
-            <span>Référentiel médicaments & officines CI</span>
+            <span>Référentiel médicaments & pharmacies CI</span>
           </div>
         </div>
       </div>
@@ -246,7 +246,7 @@
           <span class="text-[10px] px-2 py-0.2 rounded-full bg-white text-slate-700 font-semibold border border-slate-200">Aide à la vérification</span>
         </div>
         <p class="text-on-surface-variant font-body leading-relaxed">
-          Extraction fidèle et stricte : l'IA n'extrapole aucun dosage ni consigne absente du document. Les écritures hésitantes ou ambiguës sont isolées et signalées comme incertaines. Présentez toujours votre ordonnance originale papier à votre pharmacien d'officine.
+          Extraction fidèle et stricte : l'IA n'extrapole aucun dosage ni consigne absente du document. Les écritures hésitantes ou ambiguës sont isolées et signalées comme incertaines. Présentez toujours votre ordonnance originale papier à votre pharmacien.
         </p>
       </div>
     </section>
@@ -303,7 +303,7 @@
       <!-- Print / Export Bar (Affiché après analyse) -->
       <div id="fiche-export-bar" class="mt-2 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4 hidden">
         <div>
-          <span class="text-xs font-bold text-slate-900 block">Prêt à vous rendre en officine ?</span>
+          <span class="text-xs font-bold text-slate-900 block">Prêt à vous rendre en pharmacie ?</span>
           <span class="text-[11px] text-slate-500">Présentez toujours votre ordonnance médicale papier originale au pharmacien.</span>
         </div>
         <button onclick="genererFichePatient()" class="px-6 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2">
@@ -325,7 +325,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-slate-900">Pharmacies de proximité par commune</h3>
-            <p class="text-xs text-on-surface-variant font-body">Officines répertoriées par commune • Triées par ordre de proximité directe</p>
+            <p class="text-xs text-on-surface-variant font-body">Pharmacies répertoriées par commune • Triées par ordre de proximité directe</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -345,7 +345,7 @@
           <div class="text-xs">
             <h4 class="font-bold text-slate-900 text-sm">Sélection de votre commune</h4>
             <p class="text-slate-600 font-body mt-0.5" id="geo-status-text">
-              Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les officines de la plus proche à la plus éloignée.
+              Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les pharmacies de la plus proche à la plus éloignée.
             </p>
           </div>
         </div>
@@ -378,7 +378,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div class="flex flex-wrap items-center gap-2 text-xs" id="service-tabs">
           <button id="tab-service-tous" onclick="changerFiltreService('tous')" class="px-3.5 py-1.5 rounded-full font-bold text-white bg-slate-900 shadow-sm transition flex items-center gap-1.5">
-            <span>Toutes les officines de la commune</span>
+            <span>Toutes les pharmacies de la commune</span>
             <span class="bg-white/20 px-1.5 py-0.2 rounded-full text-[10px]" id="count-tab-tous">—</span>
           </button>
           <button id="tab-service-garde" onclick="changerFiltreService('garde')" class="px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
@@ -400,7 +400,7 @@
       <div id="geo-info-badge" class="hidden px-4 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex flex-wrap items-center justify-between gap-2">
         <span class="flex items-center gap-2 font-medium">
           <span class="material-symbols-outlined text-base text-emerald-700">check_circle</span>
-          <span id="geo-coords-text">Position prise en compte. Officines classées de la plus proche à la plus éloignée.</span>
+          <span id="geo-coords-text">Position prise en compte. Pharmacies classées de la plus proche à la plus éloignée.</span>
         </span>
         <button onclick="reinitialiserGeoloc()" class="text-xs text-emerald-800 hover:text-emerald-950 underline font-bold">
           Désactiver le GPS
@@ -526,7 +526,7 @@
       container.innerHTML = `
         <div class="col-span-full py-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
           <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <span>Recherche des officines dans la commune de ${escapeHtml(selectedCommune)}...</span>
+          <span>Recherche des pharmacies dans la commune de ${escapeHtml(selectedCommune)}...</span>
         </div>
       `;
 
@@ -549,7 +549,7 @@
           // Mettre à jour l'en-tête de commune
           const badgeText = document.getElementById('badge-commune-text');
           if (badgeText) {
-            badgeText.textContent = `Commune : ${selectedCommune} (${data.count} officines)`;
+            badgeText.textContent = `Commune : ${selectedCommune} (${data.count} pharmacies)`;
           }
 
           // Compteur total de l'onglet tous
@@ -607,7 +607,7 @@
               ${isClosest ? `
                 <span class="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-700 text-white flex items-center gap-1 shadow-sm">
                   <span class="material-symbols-outlined text-xs">star</span>
-                  Officine la plus proche
+                  Pharmacie la plus proche
                 </span>
               ` : `
                 <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
@@ -736,7 +736,7 @@
           if (geoText) {
             geoText.textContent = `Position GPS détectée (${userLocation.lat.toFixed(4)}°N, ${userLocation.lon.toFixed(4)}°W). Recherche de votre commune en cours...`;
           }
-          statusText.textContent = "Géolocalisation active : votre commune a été automatiquement sélectionnée et les officines sont classées par proximité.";
+          statusText.textContent = "Géolocalisation active : votre commune a été automatiquement sélectionnée et les pharmacies sont classées par proximité.";
 
           chargerPharmacies();
         },
@@ -762,7 +762,7 @@
       if (geoBadge) geoBadge.classList.add('hidden');
       document.getElementById('btn-geoloc-label').textContent = "Me localiser automatiquement";
       document.getElementById('btn-geoloc').className = "px-4 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2 active:scale-95";
-      document.getElementById('geo-status-text').textContent = "Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les officines de la plus proche à la plus éloignée.";
+      document.getElementById('geo-status-text').textContent = "Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les pharmacies de la plus proche à la plus éloignée.";
       chargerPharmacies();
     }
 
@@ -1041,7 +1041,7 @@
                     </span>
                   ` : `
                     <span class="text-[11px] font-semibold text-amber-900 bg-amber-50 border border-amber-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                      <span class="material-symbols-outlined text-xs text-amber-700">pending</span> À chiffrer en officine
+                      <span class="material-symbols-outlined text-xs text-amber-700">pending</span> À chiffrer en pharmacie
                     </span>
                   `}
                 </div>
