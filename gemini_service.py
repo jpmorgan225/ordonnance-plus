@@ -21,17 +21,26 @@ DB_PATH = os.path.join(DATA_DIR, "medicaments.db")
 
 class LignePrescription(BaseModel):
     id: str
+    raw_text: str = Field(default="", description="Ligne textuelle brute visible sur l'ordonnance")
     nom_medicament: str
     dosage: str
     forme: str
     posologie_recopiee: str
-    confiance: str = Field(description="'haute' si lecture limpide, 'douteux' si écriture ambiguë, raturée ou incomplète")
+    score_confiance: int = Field(default=95, description="Score de certitude visuelle de 0 à 100")
+    statut_confiance: str = Field(default="CONFIRME", description="'CONFIRME' (>=80%), 'INCERTAIN' (50-79%), ou 'NON_IDENTIFIE' (<50%)")
+    motif_incertitude: Optional[str] = None
+    needs_confirmation: bool = False
+    
+    # Compatibilité antérieure
+    confiance: str = "haute"
     note_securite: Optional[str] = None
     valide_par_pharmacien: bool = False
-    # Données issues du catalogue officiel CI
+    
+    # Données issues du référentiel officiel CI
     code_catalogue: Optional[str] = None
     nom_catalogue: Optional[str] = None
     prix_reference_fcfa: Optional[int] = None
+    motif_prix: Optional[str] = None
     groupe_therapeutique: Optional[str] = None
 
 class AnalyseOrdonnance(BaseModel):
@@ -41,11 +50,14 @@ class AnalyseOrdonnance(BaseModel):
     date_prescription: str
     etablissement: Optional[str] = None
     lignes: List[LignePrescription]
+    total_lignes: int = 0
+    lignes_confirmees: int = 0
+    lignes_incertaines: int = 0
     statut_global: str = Field(description="'pret_pour_validation' ou 'contient_doutes'")
     total_estime_fcfa: int = 0
     modele_utilise: str = "Google Gemini Multimodal"
-    source_donnees: str = "Analyse en direct Google AI Studio"
-    mentions_legales: str = "Données traitées sous contrôle strict du pharmacien diplômé. Conforme Loi n° 2013-450 (Protection des données sensibles de santé)."
+    source_donnees: str = "Extraction structurée Google AI Studio + Référentiel CI"
+    mentions_legales: str = "Traitement éphémère en mémoire vive. Conçu selon les principes de minimisation et de confidentialité des données."
 
 def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") -> Optional[Dict[str, Any]]:
     """Recherche floue rapide dans le catalogue officiel des médicaments de Côte d'Ivoire."""
@@ -91,44 +103,44 @@ def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") ->
 
     return meilleur_match
 
-SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", l'assistant clinique officiel de lecture et transcription d'ordonnances médicales pour les pharmaciens d'officine.
-Ton rôle est de lire l'image de l'ordonnance médicale manuscrite fournie et d'en extraire les informations avec une rigueur chirurgicale.
+SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", un moteur de vision clinique expert chargé d'extraire fidèlement des ordonnances médicales manuscrites réelles.
+Tu produis STRICTEMENT un objet JSON valide, sans texte additionnel ni markdown en dehors du JSON.
 
-PROTOCOLE DE SÉCURITÉ PATIENT (OBLIGATOIRE) :
-1. "NE RIEN INTERPRÉTER NI INVENTER" :
-   - Recopie fidèlement la posologie telle qu'elle est écrite par le praticien.
-   - Ne déduis JAMAIS une répartition inexistante (n'invente pas "matin, midi et soir" si ce n'est pas expressément écrit).
-   - N'invente pas de consignes de repas ("avant/après manger").
+PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
+1. "NE RIEN INVENTER NI DÉDUIRE" :
+   - Recopie fidèlement le texte manuscrit tel quel.
+   - Si un dosage est ambigu ou raturé, signale-le immédiatement comme incertain : n'extrapole JAMAIS.
+   - Si la posologie est illisible ou absente, écris exactement "À confirmer auprès du pharmacien".
 
-2. "DÉTECTION SYSTÉMATIQUE DU DOUTE" :
-   - Si une écriture manuscrite est cursive, difficile à lire, hésitante ou raturée : marque confiance = "douteux" et explique précisément le doute dans "note_securite".
-   - Si un dosage est ambigu (ex: chiffre ambigu entre 250mg et 500mg, virgule mal placée) : marque confiance = "douteux".
-   - Si la posologie est absente ou illisible sur le document : écris strictement "À confirmer auprès du pharmacien" et marque confiance = "douteux".
-   - Si la lecture est limpide et sans équivoque : marque confiance = "haute".
+2. "ÉVALUATION RIGOUREUSE DE LA CONFIANCE" :
+   Pour chaque ligne de prescription identifiée, évalue la lisibilité :
+   - score_confiance (0 à 100) :
+     * 80 à 100 : lecture nette, sans ambiguïté -> statut_confiance = "CONFIRME", needs_confirmation = false
+     * 50 à 79 : écriture cursive difficile, dosage ambigu, chiffre peu lisible -> statut_confiance = "INCERTAIN", needs_confirmation = true, avec motif_incertitude détaillé.
+     * 0 à 49 : mot raturé ou illisible -> statut_confiance = "NON_IDENTIFIE", needs_confirmation = true.
 
-3. ANONYMISATION DES DONNÉES SENSIBLES :
-   - Si l'ordonnance comporte un nom réel, préserve le prénom ou anonymise sous forme "Patient Anonymisé" ou le nom tel quel s'il s'agit d'un spécimen.
-
-FORMAT DE SORTIE JSON STRICT :
+3. STRUCTURE DU JSON ATTENDU :
 {
-  "patient_nom": "Nom ou Anonymisé",
-  "patient_age": "Âge si mentionné",
-  "medecin_nom": "Nom du médecin prescripteur",
-  "date_prescription": "Date jj/mm/aaaa",
-  "etablissement": "Nom de la clinique ou cabinet médical",
+  "patient_nom": "Nom du patient ou 'Patient Anonymisé'",
+  "patient_age": "Âge si mentionné sur le document, sinon null",
+  "medecin_nom": "Nom du médecin praticien",
+  "date_prescription": "Date au format JJ/MM/AAAA si lisible",
+  "etablissement": "Clinique, hôpital ou cabinet",
   "lignes": [
     {
       "id": "l-1",
-      "nom_medicament": "Nom du médicament",
-      "dosage": "Dosage exact relevé",
-      "forme": "Comprimé, gélule, sirop, etc.",
-      "posologie_recopiee": "Texte exact tel quel ou 'À confirmer auprès du pharmacien'",
-      "confiance": "haute" ou "douteux",
-      "note_securite": "Explication du doute clinique ou 'Lecture claire'",
-      "valide_par_pharmacien": false
+      "raw_text": "Texte brut complet lu sur la ligne (ex: Doliprane 1000 1 cp x 3/j)",
+      "nom_medicament": "Nom usuel du médicament",
+      "dosage": "Dosage explicite ou 'Non précisé / Illisible'",
+      "forme": "Comprimé, gélule, sirop, pommade, etc.",
+      "posologie_recopiee": "Posologie exacte recopiée",
+      "score_confiance": 95,
+      "statut_confiance": "CONFIRME",
+      "motif_incertitude": null,
+      "needs_confirmation": false
     }
   ],
-  "statut_global": "pret_pour_validation" ou "contient_doutes"
+  "statut_global": "pret_pour_validation"
 }
 """
 
@@ -202,46 +214,92 @@ async def analyser_ordonnance_reelle(
     if not raw_data:
         raise RuntimeError(f"Échec de l'appel Google Gemini : {dernier_erreur}")
 
-    # Rapprochement avec le catalogue de prix officiel de Côte d'Ivoire
+    # Rapprochement avec le référentiel de prix de Côte d'Ivoire
     lignes_enrichies: List[LignePrescription] = []
     total_fcfa = 0
 
     for idx, l in enumerate(raw_data.get("lignes", [])):
         lid = l.get("id") or f"l-{idx+1}"
+        raw_text = l.get("raw_text") or f"{l.get('nom_medicament', '')} {l.get('dosage', '')}".strip()
         nom_med = l.get("nom_medicament", "").strip()
         dosage = l.get("dosage", "").strip()
+        forme = l.get("forme", "Comprimé / Gélule").strip()
+        posologie = l.get("posologie_recopiee", "").strip()
 
-        med_ref = chercher_medicament_catalogue(nom_med, dosage)
-        prix = med_ref["prix_fcfa"] if med_ref else None
+        # Score numérique de confiance (0 - 100)
+        raw_score = l.get("score_confiance")
+        if raw_score is not None:
+            try:
+                score = int(raw_score)
+                # Si fourni entre 0.0 et 1.0
+                if score <= 1 and float(raw_score) <= 1.0:
+                    score = int(float(raw_score) * 100)
+            except Exception:
+                score = 85
+        else:
+            score = 92 if l.get("confiance") == "haute" else 62
+
+        # Détection d'ambiguïté sur le dosage ou la posologie
+        if "?" in dosage or "illisible" in dosage.lower() or "non précisé" in dosage.lower() or "confirmer" in posologie.lower():
+            score = min(score, 68)
+
+        # Statut à 3 niveaux
+        if score >= 80:
+            statut_confiance = "CONFIRME"
+            needs_conf = False
+            motif = None
+        elif score >= 50:
+            statut_confiance = "INCERTAIN"
+            needs_conf = True
+            motif = l.get("motif_incertitude") or l.get("note_securite") or "Dosage ou écriture manuscrite difficilement lisible"
+        else:
+            statut_confiance = "NON_IDENTIFIE"
+            needs_conf = True
+            motif = l.get("motif_incertitude") or "Mention raturée ou méconnaissable : vérification directe requise"
+
+        # Rapprochement catalogue métier
+        med_ref = chercher_medicament_catalogue(nom_med, dosage if statut_confiance == "CONFIRME" else "")
         code = med_ref["code"] if med_ref else None
         nom_cat = med_ref["nom"] if med_ref else None
         grp = med_ref["groupe"] if med_ref else None
 
-        if prix:
+        # RÈGLE MÉTIER DE CALCUL DU PRIX :
+        # Si la ligne est incertaine ou non identifiée, nous n'inventons pas de prix (exclu du total estimé)
+        if statut_confiance == "CONFIRME" and med_ref:
+            prix = med_ref["prix_fcfa"]
+            motif_prix = "Tarif indicatif référentiel CI"
             total_fcfa += prix
-
-        confiance = l.get("confiance", "haute")
-        if "confirmer" in l.get("posologie_recopiee", "").lower() or "?" in dosage:
-            confiance = "douteux"
-
-        valide = (confiance == "haute")
+        elif statut_confiance == "CONFIRME" and not med_ref:
+            prix = None
+            motif_prix = "Médicament non répertorié dans la base locale"
+        else:
+            prix = None
+            motif_prix = "Non inclus dans l'estimation : ligne incertaine à chiffrer en officine"
 
         lignes_enrichies.append(LignePrescription(
             id=lid,
+            raw_text=raw_text,
             nom_medicament=nom_med,
             dosage=dosage,
-            forme=l.get("forme", "Forme galénique"),
-            posologie_recopiee=l.get("posologie_recopiee", ""),
-            confiance=confiance,
-            note_securite=l.get("note_securite"),
-            valide_par_pharmacien=valide,
+            forme=forme,
+            posologie_recopiee=posologie,
+            score_confiance=score,
+            statut_confiance=statut_confiance,
+            motif_incertitude=motif,
+            needs_confirmation=needs_conf,
+            confiance="haute" if statut_confiance == "CONFIRME" else "douteux",
+            note_securite=motif or "Lecture claire",
+            valide_par_pharmacien=(statut_confiance == "CONFIRME"),
             code_catalogue=code,
             nom_catalogue=nom_cat,
             prix_reference_fcfa=prix,
+            motif_prix=motif_prix,
             groupe_therapeutique=grp
         ))
 
-    contient_doutes = any(l.confiance == "douteux" for l in lignes_enrichies)
+    total_lignes = len(lignes_enrichies)
+    confirmees = sum(1 for l in lignes_enrichies if l.statut_confiance == "CONFIRME")
+    incertaines = total_lignes - confirmees
 
     return AnalyseOrdonnance(
         patient_nom=raw_data.get("patient_nom", "Patient"),
@@ -250,8 +308,11 @@ async def analyser_ordonnance_reelle(
         date_prescription=raw_data.get("date_prescription", "Date non spécifiée"),
         etablissement=raw_data.get("etablissement", "Cabinet Médical / Centre Hospitalier"),
         lignes=lignes_enrichies,
-        statut_global="contient_doutes" if contient_doutes else "pret_pour_validation",
+        total_lignes=total_lignes,
+        lignes_confirmees=confirmees,
+        lignes_incertaines=incertaines,
+        statut_global="contient_doutes" if incertaines > 0 else "pret_pour_validation",
         total_estime_fcfa=total_fcfa,
         modele_utilise=f"Google AI Studio ({model_utilise})",
-        source_donnees="Analyse Multimodale en direct (Vraie ordonnance)"
+        source_donnees="Extraction structurée Google AI Studio + Référentiel CI"
     )
