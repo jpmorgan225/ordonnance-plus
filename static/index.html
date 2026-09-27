@@ -145,76 +145,70 @@
         </span>
       </div>
 
-      <!-- Smart Viewfinder Window -->
-      <div class="relative w-full h-56 rounded-2xl bg-slate-900 overflow-hidden flex flex-col items-center justify-center text-center p-4 shadow-inner group">
-        <!-- Background preview or uploaded image -->
-        <img id="prescription-img" src="/static/samples/ordonnance_reelle_1.jpg" alt="Ordonnance aperçu" class="absolute inset-0 w-full h-full object-contain opacity-60 transition duration-300">
+      <!-- Smart Viewfinder Window (Zone d'import patient) -->
+      <div id="drop-zone" class="relative w-full min-h-[240px] rounded-2xl bg-slate-900 border-2 border-dashed border-slate-700 hover:border-emerald-400 overflow-hidden flex flex-col items-center justify-center text-center p-6 shadow-inner group transition-all cursor-pointer" onclick="document.getElementById('file-input').click()">
+        <!-- Aperçu de l'image importée par l'utilisateur -->
+        <img id="prescription-img" src="" alt="Aperçu ordonnance" class="absolute inset-0 w-full h-full object-contain opacity-95 transition duration-300 hidden z-0">
         
-        <!-- Framing Corner Overlays -->
+        <!-- Framing Corner Overlays (Google Health Viseur) -->
         <div class="absolute inset-4 pointer-events-none flex flex-col justify-between z-10">
           <div class="flex justify-between w-full">
             <div class="w-6 h-6 border-t-2 border-l-2 border-emerald-400 rounded-tl"></div>
             <div class="w-6 h-6 border-t-2 border-r-2 border-emerald-400 rounded-tr"></div>
           </div>
-          <!-- Animated Scanline -->
-          <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#34d399] animate-pulse"></div>
+          <!-- Animated Scanline lors de l'analyse -->
+          <div id="scan-line" class="w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#34d399] animate-pulse hidden"></div>
           <div class="flex justify-between w-full">
             <div class="w-6 h-6 border-b-2 border-l-2 border-emerald-400 rounded-bl"></div>
             <div class="w-6 h-6 border-b-2 border-r-2 border-emerald-400 rounded-br"></div>
           </div>
         </div>
 
-        <div class="relative z-20 flex flex-col items-center gap-2">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-emerald-300 text-xs font-semibold shadow-sm">
-            <span class="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Google Gemini Multimodal Prêt</span>
+        <!-- Placeholder avant sélection d'image -->
+        <div id="viewfinder-placeholder" class="relative z-20 flex flex-col items-center gap-3 py-4">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition shadow-sm">
+            <span class="material-symbols-outlined text-4xl">document_scanner</span>
           </div>
-          <p class="text-xs text-slate-200 font-body max-w-xs" id="label-image-source">
-            Alignez votre ordonnance ou prenez-la en photo pour une lecture immédiate
-          </p>
+          <div>
+            <h4 class="text-white font-bold text-base sm:text-lg">Importez ou photographiez votre ordonnance</h4>
+            <p class="text-xs text-slate-300 mt-1 max-w-sm">
+              Glissez-déposez votre image ici, prenez une photo ou choisissez un fichier (JPG, PNG, PDF)
+            </p>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-emerald-300 text-xs font-semibold shadow-sm mt-1">
+            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+            <span>Google Gemini Multimodal direct</span>
+          </div>
         </div>
 
-        <!-- Loading spinner -->
-        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-30">
+        <!-- Badge montrant le nom du document importé -->
+        <div id="label-container" class="hidden absolute bottom-3 z-20 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-emerald-300 text-xs font-mono">
+          <span id="label-image-source"></span>
+        </div>
+
+        <!-- Indicateur d'analyse en cours -->
+        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-30">
           <div class="w-10 h-10 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-sm font-bold text-white">Déchiffrage par l'IA en cours...</p>
-          <span class="text-xs text-slate-300">Lecture attentive sans extrapolation</span>
+          <p class="text-sm font-bold text-white">Déchiffrage de votre ordonnance en cours...</p>
+          <span class="text-xs text-slate-300">Analyse attentive sans extrapolation</span>
         </div>
       </div>
 
       <!-- Action Buttons : Camera & File Upload -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <!-- Take photo from camera -->
+        <!-- Prendre une photo depuis la caméra -->
         <label class="w-full h-12 rounded-full bg-primary hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99] cursor-pointer">
           <span class="material-symbols-outlined text-xl">photo_camera</span>
           <span>Prendre une photo instantanée</span>
           <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="uploadPhoto(event)">
         </label>
 
-        <!-- Upload from gallery / file -->
+        <!-- Téléverser depuis la galerie / disque -->
         <label class="w-full h-12 rounded-full bg-surface-container hover:bg-slate-200 text-primary font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.99] cursor-pointer">
           <span class="material-symbols-outlined text-xl">upload_file</span>
-          <span>Téléverser une image ou scan</span>
+          <span>Importer une image ou un scan</span>
           <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden" onchange="uploadPhoto(event)">
         </label>
-      </div>
-
-      <!-- Sample Test Shortcuts for Demonstration -->
-      <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <span class="text-slate-500 font-semibold flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm text-primary">science</span> Exemples réels :
-        </span>
-        <div class="flex flex-wrap items-center gap-1.5" id="sample-buttons">
-          <button onclick="chargerSampleReel('reelle_1')" class="sample-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-primary border border-emerald-200 transition" data-id="reelle_1">
-            1. Cursive Smartphone
-          </button>
-          <button onclick="chargerSampleReel('reelle_2')" class="sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition" data-id="reelle_2">
-            2. Clinique Scannée
-          </button>
-          <button onclick="chargerSampleReel('reelle_3')" class="sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition" data-id="reelle_3">
-            3. Hospitalier Scanné
-          </button>
-        </div>
       </div>
     </section>
 
@@ -273,8 +267,8 @@
         <!-- Populated by JS -->
       </div>
 
-      <!-- Print / Export Bar -->
-      <div class="mt-2 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4">
+      <!-- Print / Export Bar (Affiché après analyse) -->
+      <div id="fiche-export-bar" class="mt-2 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4 hidden">
         <div>
           <span class="text-xs font-bold text-slate-900 block">Prêt à vous rendre en officine ?</span>
           <span class="text-[11px] text-slate-500">Présentez toujours votre ordonnance médicale papier originale au pharmacien.</span>
@@ -417,81 +411,75 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       renderPharmaciesGarde();
-      chargerSampleReel('reelle_1');
+      renderInitialEmptyState();
+      setupDragAndDrop();
     });
 
-    function renderPharmaciesGarde() {
-      const container = document.getElementById('pharmacies-garde-list');
-      container.innerHTML = '';
-      PHARMACIES_ABIDJAN.forEach(p => {
-        const d = document.createElement('div');
-        d.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex flex-col justify-between";
-        d.innerHTML = `
-          <div>
-            <strong class="text-slate-900 block font-semibold">${escapeHtml(p.nom)}</strong>
-            <span class="text-slate-500 text-[11px] block mt-0.5">${escapeHtml(p.commune)} • ${escapeHtml(p.adresse)}</span>
+    function renderInitialEmptyState() {
+      const container = document.getElementById('lines-container');
+      container.innerHTML = `
+        <div class="p-8 text-center bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400 shadow-sm flex flex-col items-center justify-center">
+          <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mb-2">
+            <span class="material-symbols-outlined text-2xl">receipt_long</span>
           </div>
-          <a href="tel:${p.tel.replace(/\\s/g, '')}" class="text-primary font-mono font-bold text-xs inline-flex items-center gap-1 mt-2 hover:underline">
-            <span class="material-symbols-outlined text-xs">call</span> ${escapeHtml(p.tel)}
-          </a>
-        `;
-        container.appendChild(d);
-      });
+          <p class="font-bold text-slate-700 text-sm">En attente de votre ordonnance</p>
+          <p class="text-xs text-slate-400 mt-1 max-w-sm">Prenez une photo ou importez une image ci-dessus pour lancer le déchiffrage automatique et l'estimation des prix en FCFA.</p>
+        </div>
+      `;
     }
 
-    // Load sample
-    async function chargerSampleReel(sampleId) {
-      document.querySelectorAll('.sample-btn').forEach(b => {
-        if (b.dataset.id === sampleId) {
-          b.className = "sample-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-primary border border-emerald-300 shadow-sm transition";
-        } else {
-          b.className = "sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition";
-        }
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('drop-zone');
+      if (!dropZone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('border-emerald-400', 'bg-slate-800');
+        }, false);
       });
 
-      const mapImg = {
-        'reelle_1': { url: '/static/samples/ordonnance_reelle_1.jpg', label: 'Ordonnance manuscrite smartphone (Wikimedia/Kisangani)' },
-        'reelle_2': { url: '/static/samples/ordonnance_reelle_2.png', label: 'Prescription clinique scannée réelle' },
-        'reelle_3': { url: '/static/samples/ordonnance_reelle_3.png', label: 'Prescription hospitalière scannée réelle' }
-      };
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('border-emerald-400', 'bg-slate-800');
+        }, false);
+      });
 
-      const info = mapImg[sampleId] || mapImg['reelle_1'];
-      document.getElementById('prescription-img').src = info.url;
-      document.getElementById('label-image-source').textContent = info.label;
-
-      showLoading(true);
-      try {
-        const formData = new FormData();
-        formData.append('sample_id', sampleId);
-
-        const res = await fetch('/api/analyze', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (res.ok) {
-          currentPrescription = await res.json();
-          renderPrescription();
-        } else {
-          const err = await res.json();
-          alert("Information : " + (err.detail || "Erreur de traitement"));
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          processFile(files[0]);
         }
-      } catch (err) {
-        console.error("Erreur analyse:", err);
-      } finally {
-        showLoading(false);
-      }
+      });
     }
 
     // Upload custom photo from device
-    async function uploadPhoto(event) {
+    function uploadPhoto(event) {
       const file = event.target.files[0];
       if (!file) return;
+      processFile(file);
+      event.target.value = '';
+    }
 
+    async function processFile(file) {
       const reader = new FileReader();
       reader.onload = e => {
-        document.getElementById('prescription-img').src = e.target.result;
-        document.getElementById('label-image-source').textContent = "Votre photo : " + file.name;
+        const img = document.getElementById('prescription-img');
+        img.src = e.target.result;
+        img.classList.remove('hidden');
+
+        document.getElementById('viewfinder-placeholder').classList.add('hidden');
+        
+        const labelContainer = document.getElementById('label-container');
+        if (labelContainer) labelContainer.classList.remove('hidden');
+        document.getElementById('label-image-source').textContent = file.name;
+        
+        const scanLine = document.getElementById('scan-line');
+        if (scanLine) scanLine.classList.remove('hidden');
       };
       reader.readAsDataURL(file);
 
@@ -514,6 +502,7 @@
         }
       } catch (err) {
         console.error("Erreur upload:", err);
+        alert("Impossible de joindre le serveur pour analyser l'ordonnance.");
       } finally {
         showLoading(false);
       }
@@ -531,6 +520,9 @@
       document.getElementById('patient-age-badge').textContent = currentPrescription.patient_age || 'Âge non précisé';
       document.getElementById('doctor-name').textContent = currentPrescription.medecin_nom || 'Médecin Praticien';
       document.getElementById('prescription-date').textContent = currentPrescription.date_prescription || 'Date non précisée';
+
+      const exportBar = document.getElementById('fiche-export-bar');
+      if (exportBar) exportBar.classList.remove('hidden');
 
       renderLines();
       updateTotalPrice();
