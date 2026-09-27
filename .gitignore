@@ -6,3 +6,4 @@ env/
 .env
 .DS_Store
 killer-saas-docs/
+audio_cache/

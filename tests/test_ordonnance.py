@@ -72,5 +72,16 @@ class TestOrdonnancePlus(unittest.TestCase):
         for p in data_geo["pharmacies"]:
             self.assertEqual(p["commune"], data_geo["commune_active"])
 
+    def test_endpoint_tts(self):
+        from app import app
+        from fastapi.testclient import TestClient
+
+        client = TestClient(app)
+        res = client.get("/api/tts?text=Bonjour&voice=vivienne")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.headers.get("content-type"), "audio/mpeg")
+        self.assertGreater(len(res.content), 1000)
+
 if __name__ == "__main__":
     unittest.main()
+

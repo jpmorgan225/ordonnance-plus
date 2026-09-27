@@ -1242,6 +1242,53 @@ async def validate_prescription(payload: ValidationPayload):
 
     return fiche_patient
 
+import hashlib
+import edge_tts
+from fastapi import Response
+
+AUDIO_CACHE_DIR = os.path.join(BASE_DIR, "audio_cache")
+os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
+
+@app.get("/api/tts")
+@app.post("/api/tts")
+async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualNeural", rate: str = "-4%"):
+    """Génère un flux audio MP3 naturel et humain via synthèse vocale neuronale HD."""
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="Texte manquant")
+    
+    VOIX_VALIDES = {
+        "vivienne": "fr-FR-VivienneMultilingualNeural",
+        "remy": "fr-FR-RemyMultilingualNeural",
+        "denise": "fr-FR-DeniseNeural",
+        "eloise": "fr-FR-EloiseNeural",
+        "henri": "fr-FR-HenriNeural",
+    }
+    voice_key = voice.lower().strip()
+    selected_voice = VOIX_VALIDES.get(voice_key, voice)
+    
+    cache_key = hashlib.md5(f"{selected_voice}_{rate}_{text.strip()}".encode("utf-8")).hexdigest()
+    cache_file = os.path.join(AUDIO_CACHE_DIR, f"{cache_key}.mp3")
+    
+    if os.path.exists(cache_file):
+        with open(cache_file, "rb") as f:
+            return Response(content=f.read(), media_type="audio/mpeg")
+            
+    try:
+        communicate = edge_tts.Communicate(text.strip(), voice=selected_voice, rate=rate)
+        chunks = []
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio":
+                chunks.append(chunk["data"])
+        audio_data = b"".join(chunks)
+        
+        with open(cache_file, "wb") as f:
+            f.write(audio_data)
+            
+        return Response(content=audio_data, media_type="audio/mpeg")
+    except Exception as e:
+        print("Erreur edge-tts:", e)
+        raise HTTPException(status_code=500, detail=f"Erreur de synthèse vocale : {str(e)}")
+
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
