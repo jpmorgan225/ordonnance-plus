@@ -994,6 +994,16 @@
 
       renderLines();
       updateTotalPrice();
+
+      // Pré-génération discrète en tâche de fond pour un démarrage vocal instantané (0 ms d'attente)
+      setTimeout(() => {
+        try {
+          const tGlobal = genererTexteAudioGlobal();
+          const voiceSelect = document.getElementById('select-audio-voice');
+          const v = voiceSelect ? voiceSelect.value : 'vivienne';
+          fetch(`/api/tts?voice=${encodeURIComponent(v)}&text=${encodeURIComponent(tGlobal)}`).catch(() => {});
+        } catch (_) {}
+      }, 400);
     }
 
     function renderLines() {
@@ -1207,6 +1217,15 @@
       return t.replace(/\s+/g, " ").trim();
     }
 
+    function formaterDosageVocal(dosage) {
+      if (!dosage) return "Le dosage n'est pas précisé.";
+      const d = dosage.trim().toLowerCase();
+      if (d.includes('non précisé') || d.includes('non precise') || d.includes('illisible') || d.includes('inconnu') || d === 'null' || d === '-' || d === 'aucun') {
+        return "Le dosage n'est pas précisé.";
+      }
+      return `C'est dosé à ${normaliserTexteOral(dosage)}.`;
+    }
+
     function genererTexteAudioGlobal() {
       if (!currentPrescription || !currentPrescription.lignes || currentPrescription.lignes.length === 0) {
         return "Bonjour, aucune ordonnance n'est encore chargée.";
@@ -1222,7 +1241,7 @@
       texte += `Voici les explications bienveillantes de votre ordonnance. `;
       texte += `Le docteur vous a prescrit ${nb} médicament${nb > 1 ? 's' : ''}. `;
       if (totalPrix > 0) {
-        texte += `À la pharmacie, le montant total indicatif est d'environ ${totalPrix.toLocaleString()} francs CFA. `;
+        texte += `À la pharmacie, le prix moyen total est estimé à environ ${totalPrix.toLocaleString()} francs CFA. `;
       }
       texte += `Écoutez attentivement les conseils pour chaque médicament : `;
 
@@ -1235,9 +1254,8 @@
       currentPrescription.lignes.forEach((l, i) => {
         const prefixe = ordinaux[i] || `Médicament numéro ${i + 1}`;
         texte += `${prefixe} : ${l.nom_medicament}. `;
-        if (l.dosage) {
-          texte += `C'est dosé à ${l.dosage}. `;
-        }
+        texte += `${formaterDosageVocal(l.dosage)} `;
+
         const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
         if (posologieAConter) {
           texte += `Conseil de prise : ${posologieAConter}. `;
@@ -1246,7 +1264,7 @@
           texte += `Attention, l'écriture du docteur n'était pas très facile à lire sur cette ligne. Montrez-la bien au pharmacien pour confirmation. `;
         }
         if (l.prix_reference_fcfa) {
-          texte += `Prix indicatif officiel : ${l.prix_reference_fcfa.toLocaleString()} francs CFA. `;
+          texte += `Prix moyen : ${l.prix_reference_fcfa.toLocaleString()} francs CFA. `;
         }
       });
 
@@ -1256,22 +1274,38 @@
 
     function genererTexteLigne(l, idx) {
       let texte = `Pour le ${l.nom_medicament} : `;
-      if (l.dosage) texte += `Dosage ${l.dosage}. `;
+      texte += `${formaterDosageVocal(l.dosage)} `;
       const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
       if (posologieAConter) texte += `Conseil de prise : ${posologieAConter}. `;
       if (l.motif_incertitude) {
         texte += `Attention, l'écriture du médecin est peu lisible sur ce médicament, demandez confirmation à votre pharmacien. `;
       }
       if (l.prix_reference_fcfa) {
-        texte += `Prix indicatif : ${l.prix_reference_fcfa.toLocaleString()} francs CFA.`;
+        texte += `Prix moyen : ${l.prix_reference_fcfa.toLocaleString()} francs CFA.`;
       }
       return texte;
     }
 
+    let currentAudioPlayer = null;
+    let isAudioPlaying = false;
+    let isAudioLoading = false;
+    let activeLineAudioIndex = null;
+
     function toggleAudioLectureGlobale() {
-      if (isAudioPlaying) {
+      if (isAudioLoading) {
         arreterAudioLecture();
         return;
+      }
+      if (isAudioPlaying && currentAudioPlayer) {
+        if (!currentAudioPlayer.paused) {
+          currentAudioPlayer.pause();
+          mettreAJourUIAudio('pause', null);
+          return;
+        } else {
+          currentAudioPlayer.play();
+          mettreAJourUIAudio('lecture', null);
+          return;
+        }
       }
 
       const texte = genererTexteAudioGlobal();
@@ -1281,7 +1315,7 @@
     function lirePosologieLigne(idx) {
       if (!currentPrescription || !currentPrescription.lignes || !currentPrescription.lignes[idx]) return;
 
-      if (isAudioPlaying && activeLineAudioIndex === idx) {
+      if ((isAudioPlaying || isAudioLoading) && activeLineAudioIndex === idx) {
         arreterAudioLecture();
         return;
       }
@@ -1299,18 +1333,24 @@
       const voiceSelect = document.getElementById('select-audio-voice');
       const voice = voiceSelect ? voiceSelect.value : 'vivienne';
 
-      isAudioPlaying = true;
+      isAudioLoading = true;
       activeLineAudioIndex = lineIdx;
-      mettreAJourUIAudio(true, lineIdx, "Préparation de la voix haute définition...");
+      mettreAJourUIAudio('chargement', lineIdx);
 
       const audioUrl = `/api/tts?voice=${encodeURIComponent(voice)}&text=${encodeURIComponent(texte)}`;
       const audio = new Audio(audioUrl);
       currentAudioPlayer = audio;
 
       audio.onplaying = () => {
-        mettreAJourUIAudio(true, lineIdx, lineIdx !== null 
-          ? `Lecture du médicament #${lineIdx + 1} (Voix HD naturelle)...` 
-          : "Lecture de l'ordonnance en cours (Voix HD naturelle)...");
+        isAudioLoading = false;
+        isAudioPlaying = true;
+        mettreAJourUIAudio('lecture', lineIdx);
+      };
+
+      audio.onpause = () => {
+        if (isAudioPlaying && !audio.ended) {
+          mettreAJourUIAudio('pause', lineIdx);
+        }
       };
 
       audio.onended = () => {
@@ -1342,10 +1382,14 @@
       const frVoice = voices.find(v => v.lang && (v.lang === 'fr-FR' || v.lang.startsWith('fr')));
       if (frVoice) utter.voice = frVoice;
 
+      utter.onstart = () => {
+        isAudioLoading = false;
+        isAudioPlaying = true;
+        mettreAJourUIAudio('lecture', lineIdx);
+      };
       utter.onend = () => arreterAudioLecture();
       utter.onerror = () => arreterAudioLecture();
 
-      mettreAJourUIAudio(true, lineIdx, "Lecture vocale locale...");
       window.speechSynthesis.speak(utter);
     }
 
@@ -1358,13 +1402,14 @@
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
+      isAudioLoading = false;
       isAudioPlaying = false;
       const prevLine = activeLineAudioIndex;
       activeLineAudioIndex = null;
-      mettreAJourUIAudio(false, prevLine);
+      mettreAJourUIAudio('repos', prevLine);
     }
 
-    function mettreAJourUIAudio(enLecture, lineIdx = null, customMsg = null) {
+    function mettreAJourUIAudio(etat, lineIdx = null) {
       const btnPlay = document.getElementById('btn-audio-play');
       const btnPlayIcon = document.getElementById('btn-audio-play-icon');
       const btnPlayLabel = document.getElementById('btn-audio-play-label');
@@ -1372,63 +1417,114 @@
       const audioIcon = document.getElementById('audio-icon-main');
       const statusText = document.getElementById('audio-status-text');
 
-      if (enLecture) {
-        if (btnPlay) btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-        if (btnPlayIcon) btnPlayIcon.textContent = "pause";
-        if (btnPlayLabel) btnPlayLabel.textContent = "Mettre en pause";
-        if (btnStop) btnStop.classList.remove('hidden');
-        if (audioIcon) {
-          audioIcon.classList.add('animate-pulse', 'text-emerald-300');
-        }
-        if (statusText) {
-          statusText.textContent = customMsg || (lineIdx !== null 
-            ? `Lecture en cours du médicament #${lineIdx + 1}...` 
-            : "Lecture vocale de l'ordonnance en cours...");
-        }
-
-        if (lineIdx !== null) {
-          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
-          const lineIcon = document.getElementById(`icon-audio-line-${lineIdx}`);
-          const card = document.getElementById(`med-card-${lineIdx}`);
-          if (lineBtn) {
-            lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 border border-emerald-400 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-md";
-          }
-          if (lineIcon) {
-            lineIcon.textContent = "graphic_eq";
-            lineIcon.classList.add('animate-pulse');
-          }
-          if (card) {
-            card.classList.add('ring-2', 'ring-emerald-500');
-          }
-        }
-      } else {
-        if (btnPlay) btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-        if (btnPlayIcon) btnPlayIcon.textContent = "play_arrow";
-        if (btnPlayLabel) btnPlayLabel.textContent = "Écouter mon ordonnance";
-        if (btnStop) btnStop.classList.add('hidden');
-        if (audioIcon) {
-          audioIcon.classList.remove('animate-pulse', 'text-emerald-300');
-        }
-        if (statusText) {
-          statusText.textContent = "Explication vocale naturelle et chaleureuse : posologies, prises par jour et budget total.";
-        }
-
-        if (currentPrescription && currentPrescription.lignes) {
-          currentPrescription.lignes.forEach((_, idx) => {
+      if (currentPrescription && currentPrescription.lignes) {
+        currentPrescription.lignes.forEach((_, idx) => {
+          if (idx !== lineIdx || etat === 'repos') {
             const lineBtn = document.getElementById(`btn-audio-line-${idx}`);
-            const lineIcon = document.getElementById(`icon-audio-line-${idx}`);
             const card = document.getElementById(`med-card-${idx}`);
             if (lineBtn) {
               lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs";
-            }
-            if (lineIcon) {
-              lineIcon.textContent = "volume_up";
-              lineIcon.classList.remove('animate-pulse');
+              lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm" id="icon-audio-line-${idx}">volume_up</span> <span>Écouter</span>`;
             }
             if (card) {
               card.classList.remove('ring-2', 'ring-emerald-500');
             }
-          });
+          }
+        });
+      }
+
+      if (etat === 'chargement') {
+        if (btnPlay) {
+          btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        }
+        if (btnPlayIcon) {
+          btnPlayIcon.textContent = "progress_activity";
+          btnPlayIcon.className = "material-symbols-outlined text-xl animate-spin";
+        }
+        if (btnPlayLabel) btnPlayLabel.textContent = "Génération de la voix...";
+        if (btnStop) btnStop.classList.remove('hidden');
+        if (audioIcon) {
+          audioIcon.className = "material-symbols-outlined text-2xl animate-spin text-amber-400";
+          audioIcon.textContent = "progress_activity";
+        }
+        if (statusText) {
+          statusText.textContent = lineIdx !== null
+            ? `Préparation vocale du médicament #${lineIdx + 1}... Veuillez patienter.`
+            : "⏳ Génération de la voix haute définition en cours... Veuillez patienter un instant.";
+        }
+
+        if (lineIdx !== null) {
+          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
+          const card = document.getElementById(`med-card-${lineIdx}`);
+          if (lineBtn) {
+            lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-slate-950 border border-amber-400 transition flex items-center gap-1 shadow-sm";
+            lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> <span>Chargement...</span>`;
+          }
+          if (card) card.classList.add('ring-2', 'ring-emerald-500');
+        }
+      } else if (etat === 'lecture') {
+        if (btnPlay) {
+          btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        }
+        if (btnPlayIcon) {
+          btnPlayIcon.textContent = "pause";
+          btnPlayIcon.className = "material-symbols-outlined text-xl";
+        }
+        if (btnPlayLabel) btnPlayLabel.textContent = "Mettre en pause";
+        if (btnStop) btnStop.classList.remove('hidden');
+        if (audioIcon) {
+          audioIcon.className = "material-symbols-outlined text-2xl animate-pulse text-emerald-300";
+          audioIcon.textContent = "volume_up";
+        }
+        if (statusText) {
+          statusText.textContent = lineIdx !== null 
+            ? `Lecture en cours du médicament #${lineIdx + 1} (Voix HD naturelle)...` 
+            : "Lecture vocale de l'ordonnance en cours (Voix HD naturelle)...";
+        }
+
+        if (lineIdx !== null) {
+          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
+          const card = document.getElementById(`med-card-${lineIdx}`);
+          if (lineBtn) {
+            lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 border border-emerald-400 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-md";
+            lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-pulse">graphic_eq</span> <span>En lecture</span>`;
+          }
+          if (card) card.classList.add('ring-2', 'ring-emerald-500');
+        }
+      } else if (etat === 'pause') {
+        if (btnPlay) {
+          btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        }
+        if (btnPlayIcon) {
+          btnPlayIcon.textContent = "play_arrow";
+          btnPlayIcon.className = "material-symbols-outlined text-xl";
+        }
+        if (btnPlayLabel) btnPlayLabel.textContent = "Reprendre la lecture";
+        if (btnStop) btnStop.classList.remove('hidden');
+        if (audioIcon) {
+          audioIcon.className = "material-symbols-outlined text-2xl text-emerald-400";
+          audioIcon.textContent = "volume_up";
+        }
+        if (statusText) {
+          statusText.textContent = "Lecture en pause. Cliquez pour reprendre.";
+        }
+      } else {
+        // repos
+        if (btnPlay) {
+          btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        }
+        if (btnPlayIcon) {
+          btnPlayIcon.textContent = "play_arrow";
+          btnPlayIcon.className = "material-symbols-outlined text-xl";
+        }
+        if (btnPlayLabel) btnPlayLabel.textContent = "Écouter mon ordonnance";
+        if (btnStop) btnStop.classList.add('hidden');
+        if (audioIcon) {
+          audioIcon.className = "material-symbols-outlined text-2xl text-emerald-400";
+          audioIcon.textContent = "volume_up";
+        }
+        if (statusText) {
+          statusText.textContent = "Explication vocale naturelle et chaleureuse : posologies, prises par jour et budget total.";
         }
       }
     }

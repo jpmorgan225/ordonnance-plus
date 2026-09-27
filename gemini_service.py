@@ -218,6 +218,8 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
      * "1 sach au couch" -> "Prenez un sachet à dissoudre dans un verre d'eau au coucher le soir"
      * "1 dose-poids x3/j" -> "Donnez une dose selon le poids de l'enfant avec la pipette graduée, trois fois par jour"
    - Précise toujours les moments de la journée pour que ce soit limpide à l'écoute.
+   - Si le dosage n'est pas précisé, dis exactement "Le dosage n'est pas précisé" (ne dis JAMAIS "c'est dosé à non précisé").
+   - Pour les prix, utilise l'expression "Prix moyen" (ne dis JAMAIS "prix indicatif officiel").
 
 4. STRUCTURE DU JSON ATTENDU :
 {
