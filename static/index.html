@@ -1,197 +1,232 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<html lang="fr" class="h-full bg-slate-50 text-slate-800">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordonnance+ — L'assistant de lecture sécurisé pour pharmaciens</title>
+  <title>Ordonnance+ — Google Health Assistant pour Pharmaciens</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Fonts Inter -->
+  
+  <!-- Google Fonts: Google Sans & Roboto Flex -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto+Flex:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Google Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Roboto Flex"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Roboto Mono"', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
+            google: {
+              blue: '#1a73e8',
+              teal: '#00677e',
+              tealDark: '#004e60',
+              tealContainer: '#cce8e8',
+              surface: '#f8fafd',
+              surfaceContainer: '#eff2f7',
+              border: '#e1e3e1',
+              text: '#1f1f1f',
+              textSec: '#444746',
+              amberContainer: '#ffdf99',
+              amberText: '#7a5900',
+              greenContainer: '#c4eed0',
+              greenText: '#0f5223',
             }
           }
         }
       }
     }
   </script>
+
   <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
     @media print {
       body * { visibility: hidden; }
       #printable-fiche, #printable-fiche * { visibility: visible; }
       #printable-fiche { position: absolute; left: 0; top: 0; width: 100%; color: black !important; }
       .no-print { display: none !important; }
     }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 selection:bg-brand-500 selection:text-white">
+<body class="h-full flex flex-col font-sans bg-google-surface text-google-text selection:bg-teal-100 selection:text-teal-900">
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30 px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+  <!-- GOOGLE TOP APP BAR (Material 3 Standard) -->
+  <header class="bg-white border-b border-google-border sticky top-0 z-30 px-6 py-3 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
-        <i data-lucide="cross" class="w-6 h-6 text-white stroke-[2.5]"></i>
+      <div class="w-10 h-10 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center text-google-teal">
+        <span class="material-symbols-outlined text-2xl material-symbols-fill text-google-teal">prescriptions</span>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="text-xl font-bold tracking-tight text-white">Ordonnance<span class="text-brand-400">+</span></span>
-          <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">Officine CI</span>
+          <h1 class="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-1">
+            Ordonnance<span class="text-google-teal font-extrabold">+</span>
+          </h1>
+          <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+            Assistant Officine CI
+          </span>
         </div>
-        <p class="text-xs text-slate-400">Assistant de lecture & transcription sous contrôle pharmaceutique</p>
+        <p class="text-xs text-google-textSec">Contrôle de lecture et transcription sous responsabilité pharmaceutique</p>
       </div>
     </div>
 
-    <!-- LIVE CI DATABASE BADGE -->
-    <div class="flex items-center gap-4 text-xs">
-      <div class="hidden md:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-1.5 text-slate-300">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Catalogue CI : <strong class="text-white" id="badge-total-meds">3 852</strong> méd.</span>
-        <span class="text-slate-500">•</span>
-        <span class="text-slate-400" title="Synchronisé depuis pharmacies-de-garde.ci">MAJ Samedi 06:00 GMT</span>
+    <!-- METRICS & KEY CONTROLS -->
+    <div class="flex items-center gap-3 text-xs">
+      <!-- Database status chip -->
+      <div class="hidden md:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full text-slate-700">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Catalogue CI : <strong class="text-slate-900" id="badge-total-meds">3 852</strong> méd.</span>
+        <span class="text-slate-300">•</span>
+        <span class="text-slate-500">MAJ Samedi</span>
       </div>
 
-      <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-1.5">
-        <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
-        <span class="text-slate-300">Conforme <strong class="text-white">Loi ARTCI 2013-450</strong></span>
+      <!-- Legal ARTCI chip -->
+      <div class="hidden lg:flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full text-slate-700">
+        <span class="material-symbols-outlined text-sm text-google-teal">health_and_safety</span>
+        <span>Loi ARTCI 2013-450</span>
       </div>
+
+      <!-- Google AI Studio API Key Pill Button -->
+      <button onclick="ouvrirModalKey()" id="btn-key-status" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-google-border bg-white hover:bg-slate-50 transition shadow-sm text-slate-700 font-medium">
+        <span class="material-symbols-outlined text-sm text-google-teal">key</span>
+        <span id="label-key-status">Clé Google AI Studio</span>
+        <span class="w-2 h-2 rounded-full bg-slate-300 ml-1" id="dot-key-status"></span>
+      </button>
     </div>
   </header>
 
-  <!-- DEMO PRESETS / QUICK LAUNCHER BAR -->
-  <section class="bg-slate-900 border-b border-slate-800/80 px-4 lg:px-8 py-2.5">
+  <!-- REAL TEST SAMPLES SELECTION BAR (Segmented Chips) -->
+  <section class="bg-white border-b border-google-border px-6 py-2.5">
     <div class="flex flex-wrap items-center justify-between gap-3 text-sm">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-brand-400"></i> Scénarios Hackathon :
+        <span class="text-xs font-semibold text-google-textSec uppercase tracking-wider flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm text-google-teal">history_edu</span> Ordonnances Réelles :
         </span>
-        <div class="flex flex-wrap items-center gap-2" id="preset-buttons">
-          <button onclick="chargerSample('sample_1')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" data-id="sample_1">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 1. Cas Nominal (Lisible)
+        <div class="flex flex-wrap items-center gap-2" id="sample-buttons">
+          <button onclick="chargerSampleReel('reelle_1')" class="sample-chip px-3 py-1 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5" data-id="reelle_1">
+            <span class="material-symbols-outlined text-xs text-google-teal">smartphone</span> Réelle 1 (Cursive Smartphone)
           </button>
-          <button onclick="chargerSample('sample_2')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 transition flex items-center gap-1.5" data-id="sample_2">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> 2. Dosage Ambigu (Bloquant) ⭐
+          <button onclick="chargerSampleReel('reelle_2')" class="sample-chip px-3 py-1 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5" data-id="reelle_2">
+            <span class="material-symbols-outlined text-xs text-google-teal">description</span> Réelle 2 (Clinique Scannée)
           </button>
-          <button onclick="chargerSample('sample_3')" class="preset-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" data-id="sample_3">
-            <span class="w-2 h-2 rounded-full bg-blue-400"></span> 3. Posologie Incomplète
+          <button onclick="chargerSampleReel('reelle_3')" class="sample-chip px-3 py-1 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5" data-id="reelle_3">
+            <span class="material-symbols-outlined text-xs text-google-teal">local_hospital</span> Réelle 3 (Hospitalier Scanné)
           </button>
         </div>
       </div>
 
-      <!-- Upload custom photo -->
-      <label class="cursor-pointer inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition">
-        <i data-lucide="upload" class="w-3.5 h-3.5 text-brand-400"></i>
-        <span>Importer une ordonnance...</span>
-        <input type="file" id="file-input" accept="image/*" class="hidden" onchange="uploadPhoto(event)">
+      <!-- Upload custom real prescription photo -->
+      <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-50 hover:bg-teal-100 text-xs font-semibold text-google-teal border border-teal-200 transition">
+        <span class="material-symbols-outlined text-sm">upload_file</span>
+        <span>Importer une photo d'ordonnance...</span>
+        <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden" onchange="uploadPhoto(event)">
       </label>
     </div>
   </section>
 
-  <!-- MAIN SPLIT WORKSPACE -->
+  <!-- MAIN SPLIT CLINICAL WORKSPACE -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
     
-    <!-- LEFT PANE: PRESCRIPTION VIEWER (5 cols) -->
-    <div class="lg:col-span-5 border-r border-slate-800 bg-slate-950 flex flex-col h-full overflow-hidden">
-      <!-- Viewer Controls -->
-      <div class="p-3 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs text-slate-300">
-        <span class="font-medium flex items-center gap-1.5">
-          <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i> Document Source Original
+    <!-- LEFT PANE: HIGH RESOLUTION DOCUMENT VIEWER (5 cols) -->
+    <div class="lg:col-span-5 border-r border-google-border bg-slate-100/70 flex flex-col h-full overflow-hidden">
+      <!-- Viewer Header -->
+      <div class="px-4 py-2.5 bg-white border-b border-google-border flex items-center justify-between text-xs text-slate-600">
+        <span class="font-semibold flex items-center gap-1 text-slate-800">
+          <span class="material-symbols-outlined text-sm text-google-teal">document_scanner</span> Document Source Haute Résolution
         </span>
         <div class="flex items-center gap-1">
-          <button onclick="zoomImage(1.15)" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Zoom avant">
-            <i data-lucide="zoom-in" class="w-4 h-4"></i>
+          <button onclick="zoomImage(1.2)" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Zoom avant">
+            <span class="material-symbols-outlined text-base">zoom_in</span>
           </button>
-          <button onclick="zoomImage(0.85)" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Zoom arrière">
-            <i data-lucide="zoom-out" class="w-4 h-4"></i>
+          <button onclick="zoomImage(0.8)" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Zoom arrière">
+            <span class="material-symbols-outlined text-base">zoom_out</span>
           </button>
-          <button onclick="resetZoom()" class="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white" title="Réinitialiser">
-            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <button onclick="resetZoom()" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Réinitialiser">
+            <span class="material-symbols-outlined text-base">restart_alt</span>
           </button>
         </div>
       </div>
 
-      <!-- Image Canvas Container -->
-      <div class="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-950/80 relative custom-scrollbar" id="image-scroll-box">
+      <!-- Viewer Container -->
+      <div class="flex-1 overflow-auto p-4 flex items-center justify-center relative custom-scroll" id="image-scroll-box" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px;">
         <div id="image-wrapper" class="transition-transform duration-150 origin-center max-w-full">
-          <img id="prescription-img" src="/static/samples/ordonnance_1_standard.png" alt="Ordonnance originale" class="rounded-lg shadow-2xl border border-slate-800 max-h-[75vh] object-contain">
+          <img id="prescription-img" src="/static/samples/ordonnance_reelle_1.jpg" alt="Ordonnance réelle" class="rounded-lg shadow-lg border border-slate-200 max-h-[75vh] object-contain bg-white">
         </div>
-        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-20">
-          <div class="w-10 h-10 border-3 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-sm font-medium text-slate-300">Analyse Gemini Multimodal en cours...</p>
-          <span class="text-xs text-slate-500">Extraction fidèle sans déduction</span>
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-20">
+          <div class="w-10 h-10 border-3 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-semibold text-slate-800">Analyse Google Gemini Multimodal en cours...</p>
+          <span class="text-xs text-slate-500">Déchiffrage rigoureux sans extrapolation</span>
         </div>
       </div>
 
-      <!-- Legal footer -->
-      <div class="p-2.5 border-t border-slate-800 bg-slate-900/40 text-[11px] text-slate-500 flex items-center justify-between">
-        <span>Document fictif anonymisé (Hackathon Abidjan)</span>
-        <span class="text-emerald-400 flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Données chiffrées</span>
+      <!-- Source attribution bar -->
+      <div class="px-4 py-2 bg-white border-t border-google-border text-[11px] text-slate-500 flex items-center justify-between">
+        <span id="label-image-source">Document réel impersonnel</span>
+        <span class="text-google-teal font-medium flex items-center gap-1">
+          <span class="material-symbols-outlined text-xs">lock</span> Chiffrement local
+        </span>
       </div>
     </div>
 
-    <!-- RIGHT PANE: PHARMACIST ASSISTANT & VALIDATION (7 cols) -->
-    <div class="lg:col-span-7 flex flex-col h-full bg-slate-900/50 overflow-y-auto custom-scrollbar">
+    <!-- RIGHT PANE: CLINICAL ASSISTANT & PHARMACIST CONTROLS (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col h-full bg-white overflow-y-auto custom-scroll">
       
-      <!-- PRESCRIPTION HEADER METADATA -->
-      <div class="p-5 border-b border-slate-800 bg-slate-900/90">
+      <!-- PRESCRIPTION HEADER CARD -->
+      <div class="p-6 border-b border-google-border bg-white">
         <div class="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                <span id="patient-name">KONE Ibrahim (Fictif)</span>
-              </h2>
-              <span id="patient-age-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">34 ans</span>
+              <h2 class="text-xl font-bold text-slate-900" id="patient-name">Patient</h2>
+              <span id="patient-age-badge" class="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">Âge non spécifié</span>
             </div>
-            <p class="text-xs text-slate-400 flex items-center gap-2">
-              <span class="flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i> Prescripteur : <strong class="text-slate-200" id="doctor-name">Dr. KOUASSI Jean</strong></span>
-              <span class="text-slate-600">•</span>
-              <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> <span id="prescription-date">26/09/2026</span></span>
+            <p class="text-xs text-slate-500 flex items-center gap-3">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">person</span> Prescripteur : <strong class="text-slate-800 font-medium" id="doctor-name">—</strong></span>
+              <span>•</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">event</span> Date : <span id="prescription-date">—</span></span>
             </p>
-            <p class="text-xs text-slate-500 mt-0.5" id="facility-name">Polyclinique des Deux-Plateaux, Cocody</p>
+            <p class="text-xs text-slate-400 mt-1" id="facility-name">—</p>
           </div>
 
-          <!-- Total live estimate -->
-          <div class="text-right bg-slate-800/80 border border-slate-700/80 rounded-xl px-4 py-2.5">
-            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Estimation Référence</span>
-            <span class="text-xl font-extrabold text-brand-400 font-mono" id="total-price-fcfa">4 559 FCFA</span>
+          <!-- Total price estimate -->
+          <div class="text-right bg-teal-50/60 border border-teal-200/80 rounded-2xl px-5 py-3">
+            <span class="text-[11px] font-semibold text-google-teal uppercase tracking-wider block">Estimation Référence</span>
+            <span class="text-2xl font-black text-slate-900 font-mono" id="total-price-fcfa">0 FCFA</span>
             <span class="text-[10px] text-slate-500 block">Catalogue officiel CI (TTC)</span>
           </div>
         </div>
 
-        <!-- DYNAMIC SAFETY BANNER -->
-        <div id="safety-banner" class="mt-4 p-3.5 rounded-xl border flex items-start gap-3 transition-all duration-200">
-          <!-- Populated by JS: Green or Amber/Red alert -->
+        <!-- DYNAMIC CLINICAL SAFETY BANNER -->
+        <div id="safety-banner" class="mt-5 p-4 rounded-xl border flex items-start gap-3 transition-all duration-200">
+          <!-- Populated by JS -->
         </div>
       </div>
 
       <!-- PRESCRIPTION ITEMS LIST -->
-      <div class="p-5 flex-1 flex flex-col gap-4">
+      <div class="p-6 flex-1 flex flex-col gap-4">
         <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="pill" class="w-4 h-4 text-brand-400"></i> Lignes de Prescription Transcrites (<span id="items-count">0</span>)
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-google-teal">medication</span> Lignes de Prescription Détectées (<span id="items-count">0</span>)
           </h3>
-          <span class="text-xs text-slate-500">Règle de sécurité : recopie brute fidèle</span>
+          <span class="text-xs text-slate-400">Règle de sécurité : transcription littérale</span>
         </div>
 
         <!-- Dynamic Lines Container -->
@@ -200,30 +235,30 @@
         </div>
 
         <!-- PHARMACIST DELIVERY NOTES & VOICE DICTATION -->
-        <div class="mt-2 p-4 rounded-xl border border-slate-800 bg-slate-900/60">
+        <div class="mt-4 p-4 rounded-xl border border-slate-200 bg-slate-50/60">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <i data-lucide="message-square" class="w-3.5 h-3.5 text-teal-400"></i> Conseils de délivrance du Pharmacien (pour la fiche patient)
+            <label class="text-xs font-bold text-slate-700 flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm text-google-teal">clinical_notes</span> Conseils & Recommandations de délivrance
             </label>
             <!-- Voice Dictation button -->
-            <button id="mic-btn" onclick="toggleVoiceDictation()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition">
-              <i data-lucide="mic" class="w-3.5 h-3.5 text-brand-400" id="mic-icon"></i>
+            <button id="mic-btn" onclick="toggleVoiceDictation()" class="px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 flex items-center gap-1.5 shadow-sm transition">
+              <span class="material-symbols-outlined text-sm text-google-teal" id="mic-icon">mic</span>
               <span id="mic-label">Dicter à la voix</span>
             </button>
           </div>
-          <textarea id="delivery-advice" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-brand-500" placeholder="Ex: Bien respecter les 7 jours complets. Boire abondamment pendant le traitement..."></textarea>
+          <textarea id="delivery-advice" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-google-teal focus:ring-1 focus:ring-google-teal" placeholder="Consignes particulières du pharmacien pour le patient (ex: durée, prise pendant le repas, hydratation)..."></textarea>
         </div>
       </div>
 
       <!-- BOTTOM ACTION BAR -->
-      <div class="p-5 border-t border-slate-800 bg-slate-900/90 sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-4">
+      <div class="p-5 border-t border-google-border bg-white sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-4 shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
         <div>
-          <span class="text-xs text-slate-400 block" id="validation-status-text">Toutes les lignes doivent être confirmées</span>
-          <span class="text-[11px] text-slate-500">Engage la responsabilité du pharmacien titulaire</span>
+          <span class="text-xs text-slate-600 block" id="validation-status-text">Toutes les lignes doivent être confirmées</span>
+          <span class="text-[11px] text-slate-400">Responsabilité pharmaceutique engagée</span>
         </div>
 
-        <button id="btn-validate-all" onclick="validerOrdonnanceFinale()" class="px-6 py-3 rounded-xl font-bold text-sm bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-lg shadow-brand-500/25 transition flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-500">
-          <i data-lucide="check-check" class="w-4 h-4"></i>
+        <button id="btn-validate-all" onclick="validerOrdonnanceFinale()" class="px-6 py-3 rounded-full font-bold text-sm bg-google-teal hover:bg-google-tealDark text-white shadow-md transition flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-base">verified</span>
           <span>Valider & Générer la Fiche Patient</span>
         </button>
       </div>
@@ -231,23 +266,49 @@
     </div>
   </main>
 
+  <!-- MODAL API KEY CONFIGURATION (Material 3 Dialog) -->
+  <div id="modal-key" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-google-teal">
+          <span class="material-symbols-outlined text-xl">key</span>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Clé Google AI Studio</h3>
+          <p class="text-xs text-slate-500">Pour lancer les analyses en direct via Gemini</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="text-xs font-semibold text-slate-700 block mb-1">Clé API Gemini</label>
+        <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 focus:outline-none focus:border-google-teal focus:ring-1 focus:ring-google-teal">
+        <p class="text-[11px] text-slate-500 mt-1">Obtenez une clé gratuitement sur <a href="https://aistudio.google.com/" target="_blank" class="text-google-teal underline">Google AI Studio</a>. La clé reste strictement locale sur votre machine.</p>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button onclick="fermerModalKey()" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Annuler</button>
+        <button onclick="enregistrerApiKey()" class="px-5 py-2 rounded-full text-xs font-bold bg-google-teal text-white hover:bg-google-tealDark transition shadow-sm">Enregistrer & Activer</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL FICHE PATIENT (READY TO PRINT) -->
-  <div id="modal-fiche" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-8 shadow-2xl border border-slate-200 relative my-8" id="printable-fiche">
+  <div id="modal-fiche" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white text-slate-900 rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-200 relative my-8" id="printable-fiche">
       
-      <!-- Modal Close button (no-print) -->
+      <!-- Close button (no-print) -->
       <button onclick="fermerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 no-print">
-        <i data-lucide="x" class="w-5 h-5"></i>
+        <span class="material-symbols-outlined">close</span>
       </button>
 
       <!-- Fiche Header -->
-      <div class="border-b-2 border-emerald-600 pb-4 mb-6 flex justify-between items-start">
+      <div class="border-b-2 border-teal-700 pb-4 mb-6 flex justify-between items-start">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-2xl font-black text-emerald-700 tracking-tight">ORDONNANCE<span class="text-slate-900">+</span></span>
-            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">FICHE DE DISPENSATION SÉCURISÉE</span>
+            <span class="text-2xl font-black text-slate-900 tracking-tight">ORDONNANCE<span class="text-google-teal">+</span></span>
+            <span class="text-[10px] font-bold bg-teal-50 text-teal-800 px-2.5 py-0.5 rounded-full border border-teal-200">FICHE DE DISPENSATION SÉCURISÉE</span>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Délivrée par la <strong>Grande Pharmacie de la Riviera</strong> • Cocody, Abidjan</p>
+          <p class="text-xs text-slate-600 mt-1">Délivrée par la <strong>Grande Pharmacie de la Riviera</strong> • Cocody, Abidjan</p>
           <p class="text-[11px] text-slate-400">Dr. KONAN (Pharmacien Responsable) • Tél: +225 27 22 41 20 20</p>
         </div>
         <div class="text-right">
@@ -257,29 +318,29 @@
       </div>
 
       <!-- Patient & Doctor block -->
-      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs mb-6">
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs mb-6">
         <div>
-          <span class="text-slate-400 font-semibold block uppercase">Patient</span>
-          <p class="font-bold text-slate-800 text-sm" id="fiche-patient-nom">KONE Ibrahim</p>
-          <p class="text-slate-600" id="fiche-patient-age">34 ans</p>
+          <span class="text-slate-400 font-semibold block uppercase text-[10px]">Patient</span>
+          <p class="font-bold text-slate-900 text-sm" id="fiche-patient-nom">—</p>
+          <p class="text-slate-600" id="fiche-patient-age">—</p>
         </div>
         <div>
-          <span class="text-slate-400 font-semibold block uppercase">Prescripteur</span>
-          <p class="font-bold text-slate-800 text-sm" id="fiche-medecin-nom">Dr. KOUASSI Jean</p>
-          <p class="text-slate-600" id="fiche-etablissement">Polyclinique des Deux-Plateaux</p>
+          <span class="text-slate-400 font-semibold block uppercase text-[10px]">Prescripteur</span>
+          <p class="font-bold text-slate-900 text-sm" id="fiche-medecin-nom">—</p>
+          <p class="text-slate-600" id="fiche-etablissement">—</p>
         </div>
       </div>
 
       <!-- Prescribed medications table -->
       <div class="mb-6">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Traitement Prescrit & Posologie Validée</h4>
-        <div class="border border-slate-200 rounded-lg overflow-hidden">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Prescription Déchiffrée & Posologie Validée</h4>
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
           <table class="w-full text-left text-xs border-collapse">
-            <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+            <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
               <tr>
-                <th class="p-2.5 font-semibold">Médicament & Dosage</th>
-                <th class="p-2.5 font-semibold">Posologie Officielle</th>
-                <th class="p-2.5 font-semibold text-right">Réf. Prix (CI)</th>
+                <th class="p-3 font-semibold">Médicament & Dosage</th>
+                <th class="p-3 font-semibold">Posologie Validée</th>
+                <th class="p-3 font-semibold text-right">Réf. Prix (CI)</th>
               </tr>
             </thead>
             <tbody id="fiche-table-body" class="divide-y divide-slate-200">
@@ -290,27 +351,27 @@
       </div>
 
       <!-- Total & Source -->
-      <div class="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-3 rounded-xl mb-6">
+      <div class="flex justify-between items-center bg-teal-50/70 border border-teal-200 p-4 rounded-2xl mb-6">
         <div>
-          <span class="text-xs font-bold text-emerald-900 block">Total Indicatif de Référence (Officine CI)</span>
-          <span class="text-[11px] text-emerald-700">Source officielle : pharmacies-de-garde.ci (MAJ hebdomadaire)</span>
+          <span class="text-xs font-bold text-teal-900 block">Total Indicatif de Référence (Officine CI)</span>
+          <span class="text-[11px] text-teal-700">Source : pharmacies-de-garde.ci (Catalogue national régulé)</span>
         </div>
         <div class="text-right">
-          <span class="text-xl font-black text-emerald-800 font-mono" id="fiche-total-prix">4 559 FCFA</span>
+          <span class="text-xl font-black text-teal-900 font-mono" id="fiche-total-prix">0 FCFA</span>
         </div>
       </div>
 
-      <!-- Pharmacist delivery advice -->
-      <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl mb-6 text-xs">
-        <span class="font-bold text-slate-800 flex items-center gap-1.5 mb-1">
-          <i data-lucide="info" class="w-4 h-4 text-emerald-600"></i> Conseils et Recommandations du Pharmacien
+      <!-- Delivery advice -->
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-6 text-xs">
+        <span class="font-bold text-slate-800 flex items-center gap-1 mb-1">
+          <span class="material-symbols-outlined text-sm text-google-teal">medical_information</span> Conseils du Pharmacien
         </span>
         <p class="text-slate-600" id="fiche-conseils"></p>
       </div>
 
       <!-- Duty Pharmacies info -->
-      <div class="p-3 bg-slate-100 rounded-xl text-[11px] text-slate-600 mb-6">
-        <span class="font-bold text-slate-700 block mb-1">Pharmacies de garde à proximité (Abidjan) :</span>
+      <div class="p-4 bg-slate-100 rounded-2xl text-[11px] text-slate-600 mb-6">
+        <span class="font-bold text-slate-800 block mb-1">Pharmacies de garde à proximité (Abidjan) :</span>
         <div class="grid grid-cols-2 gap-2" id="fiche-pharmacies-garde">
           <!-- Rendered by JS -->
         </div>
@@ -319,43 +380,91 @@
       <!-- Footer Stamp -->
       <div class="border-t border-slate-200 pt-4 flex justify-between items-end text-[11px] text-slate-500">
         <div>
-          <p>Document remis au patient pour faciliter la bonne observance.</p>
+          <p>Document remis au patient sous la responsabilité du pharmacien.</p>
           <p class="text-[10px] text-slate-400">Conformité ARTCI / Loi ivoirienne n° 2013-450 sur les données de santé.</p>
         </div>
-        <div class="border-2 border-emerald-600 rounded-lg p-2 text-center text-emerald-800 font-bold text-[10px] w-40">
+        <div class="border-2 border-teal-700 rounded-xl p-2 text-center text-teal-900 font-bold text-[10px] w-40">
           VISA DU PHARMACIEN
-          <span class="block text-[8px] font-normal text-emerald-700">DÉLIVRANCE CONFORME</span>
+          <span class="block text-[8px] font-normal text-teal-700">DÉLIVRANCE CONFORME</span>
         </div>
       </div>
 
       <!-- Action buttons (no-print) -->
       <div class="mt-6 flex justify-end gap-3 no-print">
-        <button onclick="fermerModal()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+        <button onclick="fermerModal()" class="px-4 py-2 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
           Fermer
         </button>
-        <button onclick="window.print()" class="px-5 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1.5">
-          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimer la Fiche
+        <button onclick="window.print()" class="px-5 py-2 rounded-full text-xs font-bold bg-google-teal hover:bg-google-tealDark text-white shadow transition flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">print</span> Imprimer la Fiche
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- APPLICATION LOGIC SCRIPT -->
+  <!-- APPLICATION JAVASCRIPT -->
   <script>
-    // State
     let currentPrescription = null;
     let currentZoom = 1.0;
     let isDictating = false;
     let recognition = null;
+    let apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
 
-    // Initialize Lucide icons
     document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      chargerSample('sample_1');
-      initVoiceRecognition();
+      verifierStatutCle();
       chargerStatsCatalogue();
+      initVoiceRecognition();
+      chargerSampleReel('reelle_1');
     });
+
+    function verifierStatutCle() {
+      const dot = document.getElementById('dot-key-status');
+      const label = document.getElementById('label-key-status');
+      if (apiKey && apiKey.length > 8) {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500 ml-1";
+        label.textContent = "Google AI Studio Connecté";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-amber-500 ml-1 animate-pulse";
+        label.textContent = "Saisir Clé API";
+      }
+    }
+
+    function ouvrirModalKey() {
+      document.getElementById('input-api-key').value = apiKey;
+      document.getElementById('modal-key').classList.remove('hidden');
+    }
+    function fermerModalKey() {
+      document.getElementById('modal-key').classList.add('hidden');
+    }
+
+    async function enregistrerApiKey() {
+      const val = document.getElementById('input-api-key').value.trim();
+      if (!val) {
+        alert("Veuillez renseigner une clé valide.");
+        return;
+      }
+      apiKey = val;
+      localStorage.setItem('GEMINI_API_KEY', apiKey);
+      
+      // Sauvegarder aussi sur le serveur .env
+      try {
+        await fetch('/api/key/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ api_key: apiKey })
+        });
+      } catch (e) {
+        console.warn('Sync .env:', e);
+      }
+
+      verifierStatutCle();
+      fermerModalKey();
+      
+      // Relancer l'analyse en direct si une ordonnance est affichée
+      const activeSample = document.querySelector('.sample-chip.bg-teal-50');
+      const sampleId = activeSample ? activeSample.dataset.id : 'reelle_1';
+      chargerSampleReel(sampleId);
+    }
 
     async function chargerStatsCatalogue() {
       try {
@@ -365,7 +474,7 @@
           document.getElementById('badge-total-meds').textContent = data.total_references || '3 852';
         }
       } catch (e) {
-        console.warn('Stats catalogue:', e);
+        console.warn('Stats:', e);
       }
     }
 
@@ -379,42 +488,60 @@
       document.getElementById('image-wrapper').style.transform = `scale(1.0)`;
     }
 
-    // Load sample
-    async function chargerSample(sampleId) {
-      // Highlight active button
-      document.querySelectorAll('.preset-btn').forEach(b => {
+    // Charger une vraie ordonnance
+    async function chargerSampleReel(sampleId) {
+      document.querySelectorAll('.sample-chip').forEach(b => {
         if (b.dataset.id === sampleId) {
-          b.classList.add('ring-2', 'ring-brand-400');
+          b.className = "sample-chip px-3 py-1 rounded-full text-xs font-semibold border border-teal-300 bg-teal-50 text-google-teal flex items-center gap-1.5 shadow-sm";
         } else {
-          b.classList.remove('ring-2', 'ring-brand-400');
+          b.className = "sample-chip px-3 py-1 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 flex items-center gap-1.5";
         }
       });
 
-      const imgMap = {
-        'sample_1': '/static/samples/ordonnance_1_standard.png',
-        'sample_2': '/static/samples/ordonnance_2_ambigue.png',
-        'sample_3': '/static/samples/ordonnance_3_incomplete.png'
+      const mapImg = {
+        'reelle_1': { url: '/static/samples/ordonnance_reelle_1.jpg', label: 'Ordonnance réelle smartphone (Wikimedia/Kisangani)' },
+        'reelle_2': { url: '/static/samples/ordonnance_reelle_2.png', label: 'Prescription clinique scannée réelle' },
+        'reelle_3': { url: '/static/samples/ordonnance_reelle_3.png', label: 'Document hospitalier scanné réel' }
       };
 
-      document.getElementById('prescription-img').src = imgMap[sampleId] || imgMap['sample_1'];
+      const info = mapImg[sampleId] || mapImg['reelle_1'];
+      document.getElementById('prescription-img').src = info.url;
+      document.getElementById('label-image-source').textContent = info.label;
       resetZoom();
-      showLoading(true);
 
+      if (!apiKey) {
+        ouvrirModalKey();
+        return;
+      }
+
+      showLoading(true);
       try {
         const formData = new FormData();
-        formData.append('preset_key', sampleId);
-        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+        formData.append('sample_id', sampleId);
+        formData.append('api_key', apiKey);
+
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'X-Gemini-Api-Key': apiKey },
+          body: formData
+        });
+
         if (res.ok) {
           currentPrescription = await res.json();
           renderPrescription();
+        } else {
+          const err = await res.json();
+          alert("Information : " + (err.detail || "Veuillez vérifier votre clé API"));
+          if (res.status === 401) ouvrirModalKey();
         }
       } catch (err) {
-        console.error('Erreur analyse:', err);
+        console.error("Erreur analyse:", err);
       } finally {
         showLoading(false);
       }
     }
 
+    // Upload d'une photo personnalisée
     async function uploadPhoto(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -422,21 +549,37 @@
       const reader = new FileReader();
       reader.onload = e => {
         document.getElementById('prescription-img').src = e.target.result;
+        document.getElementById('label-image-source').textContent = "Ordonnance importée : " + file.name;
         resetZoom();
       };
       reader.readAsDataURL(file);
+
+      if (!apiKey) {
+        ouvrirModalKey();
+        return;
+      }
 
       showLoading(true);
       try {
         const formData = new FormData();
         formData.append('file', file);
-        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+        formData.append('api_key', apiKey);
+
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'X-Gemini-Api-Key': apiKey },
+          body: formData
+        });
+
         if (res.ok) {
           currentPrescription = await res.json();
           renderPrescription();
+        } else {
+          const err = await res.json();
+          alert("Erreur analyse : " + (err.detail || "Échec"));
         }
       } catch (err) {
-        console.error('Erreur upload:', err);
+        console.error("Erreur upload:", err);
       } finally {
         showLoading(false);
       }
@@ -446,7 +589,7 @@
       document.getElementById('loading-overlay').classList.toggle('hidden', !show);
     }
 
-    // Render prescription data into UI
+    // Render Prescription into Right Pane
     function renderPrescription() {
       if (!currentPrescription) return;
 
@@ -460,7 +603,6 @@
       renderLines();
       updateTotalPrice();
       checkGlobalValidationState();
-      lucide.createIcons();
     }
 
     function renderSafetyBanner() {
@@ -468,22 +610,22 @@
       const hasDoutes = currentPrescription.lignes.some(l => l.confiance === 'douteux' && !l.valide_par_pharmacien);
 
       if (hasDoutes) {
-        banner.className = "mt-4 p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-200 flex items-start gap-3";
+        banner.className = "mt-5 p-4 rounded-2xl border border-amber-300 bg-amber-50 text-slate-800 flex items-start gap-3 shadow-sm";
         banner.innerHTML = `
-          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5 animate-bounce"></i>
+          <span class="material-symbols-outlined text-amber-600 text-2xl shrink-0 mt-0.5">warning</span>
           <div class="text-xs">
-            <strong class="font-bold text-amber-300 block text-sm">Contrôle de Sécurité : Incertitude Détectée</strong>
-            <span>L'IA a repéré un doute sur l'ordonnance (dosage ambigu ou posologie absente). 
-            La validation finale est <strong>bloquée</strong> tant que vous n'avez pas confirmé ou rectifié chaque ligne concernée.</span>
+            <strong class="font-bold text-slate-900 block text-sm">Garde-fou Activé : Incertitude Détectée par l'IA</strong>
+            <span class="text-slate-600">L'IA a relevé une écriture manuscrite ambiguë, raturée ou une posologie non spécifiée.
+            Par sécurité clinique, la certification finale reste <strong>bloquée</strong> tant que vous n'avez pas confirmé chaque ligne.</span>
           </div>
         `;
       } else {
-        banner.className = "mt-4 p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 flex items-start gap-3";
+        banner.className = "mt-5 p-4 rounded-2xl border border-teal-200 bg-teal-50/60 text-slate-800 flex items-start gap-3 shadow-sm";
         banner.innerHTML = `
-          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+          <span class="material-symbols-outlined text-google-teal text-2xl shrink-0 mt-0.5 material-symbols-fill">verified</span>
           <div class="text-xs">
-            <strong class="font-bold text-emerald-300 block text-sm">Contrôle de Sécurité : Lignes Prêtes</strong>
-            <span>Toutes les posologies sont fidèlement recopiées. Aucune ambiguïté résiduelle. Prêt pour la validation officielle.</span>
+            <strong class="font-bold text-slate-900 block text-sm">Contrôle Réussi : Lignes Transcrites Fidèlement</strong>
+            <span class="text-slate-600">Toutes les posologies sont recopiées sans extrapolation. Aucune ambiguïté résiduelle. Prêt pour la délivrance.</span>
           </div>
         `;
       }
@@ -499,71 +641,71 @@
         const isValide = ligne.valide_par_pharmacien;
 
         const card = document.createElement('div');
-        card.className = `p-4 rounded-xl border transition-all ${
+        card.className = `p-4 rounded-2xl border transition-all ${
           isDouteux && !isValide 
-            ? 'bg-amber-950/20 border-amber-500/50 shadow-lg shadow-amber-500/5' 
-            : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+            ? 'bg-amber-50/50 border-amber-300 shadow-sm' 
+            : 'bg-white border-google-border hover:border-slate-300 shadow-[0_1px_3px_rgba(0,0,0,0.02)]'
         }`;
 
         card.innerHTML = `
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-mono font-bold text-slate-500">#${idx + 1}</span>
+                <span class="text-xs font-mono font-bold text-slate-400">#${idx + 1}</span>
                 <input type="text" value="${escapeHtml(ligne.nom_medicament)}" 
                   onchange="modifierLigne('${ligne.id}', 'nom_medicament', this.value)"
-                  class="font-bold text-slate-100 bg-transparent border-b border-dashed border-slate-700 hover:border-brand-500 focus:border-brand-500 focus:outline-none text-sm px-1">
+                  class="font-bold text-slate-900 bg-transparent border-b border-dashed border-slate-300 hover:border-google-teal focus:border-google-teal focus:outline-none text-sm px-1">
                 
                 <input type="text" value="${escapeHtml(ligne.dosage)}" 
                   onchange="modifierLigne('${ligne.id}', 'dosage', this.value)"
-                  class="text-xs font-semibold text-brand-300 bg-slate-800/80 rounded px-2 py-0.5 border border-slate-700 focus:border-brand-500 focus:outline-none w-32">
+                  class="text-xs font-semibold text-google-teal bg-slate-50 rounded-full px-3 py-0.5 border border-slate-200 focus:outline-none w-32">
                 
                 <!-- Status Badge -->
                 ${isDouteux && !isValide 
-                  ? `<span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
-                       <i data-lucide="alert-circle" class="w-3 h-3"></i> À Vérifier
+                  ? `<span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                       <span class="material-symbols-outlined text-xs text-amber-700">help</span> À Confirmer
                      </span>`
-                  : `<span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                       <i data-lucide="check" class="w-3 h-3"></i> Conforme
+                  : `<span class="text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                       <span class="material-symbols-outlined text-xs text-teal-700">check</span> Conforme
                      </span>`
                 }
               </div>
 
               <!-- Posologie recopiée -->
-              <div class="mt-2 pl-3 border-l-2 ${isDouteux && !isValide ? 'border-amber-500' : 'border-slate-700'}">
-                <label class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">Posologie Recopiée Brut (Non Interprétée)</label>
+              <div class="mt-2 pl-3 border-l-2 ${isDouteux && !isValide ? 'border-amber-400' : 'border-slate-300'}">
+                <label class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block mb-0.5">Posologie Recopiée Brut (Sans Déduction)</label>
                 <input type="text" value="${escapeHtml(ligne.posologie_recopiee)}" 
                   onchange="modifierLigne('${ligne.id}', 'posologie_recopiee', this.value)"
-                  class="w-full bg-slate-950/70 border border-slate-800 focus:border-brand-500 rounded p-1.5 text-xs text-slate-200 focus:outline-none">
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-google-teal rounded-lg p-2 text-xs text-slate-800 focus:outline-none font-medium">
               </div>
 
-              <!-- Safety Note if doubt -->
+              <!-- Note de sécurité -->
               ${ligne.note_securite ? `
-                <div class="mt-2 text-xs flex items-center gap-1.5 ${isDouteux ? 'text-amber-300/90' : 'text-slate-400'}">
-                  <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+                <div class="mt-2 text-xs flex items-center gap-1.5 ${isDouteux ? 'text-amber-800 font-medium' : 'text-slate-500'}">
+                  <span class="material-symbols-outlined text-sm ${isDouteux ? 'text-amber-600' : 'text-slate-400'}">info</span>
                   <span>${escapeHtml(ligne.note_securite)}</span>
                 </div>
               ` : ''}
 
-              <!-- Price & CI Catalog matching -->
+              <!-- Prix officiel CI -->
               <div class="mt-3 flex items-center gap-3 text-xs">
-                <span class="text-slate-400 font-mono text-[11px] flex items-center gap-1">
-                  <i data-lucide="tag" class="w-3 h-3 text-teal-400"></i> Réf. CI : 
-                  <strong class="text-brand-300 font-semibold">${ligne.prix_reference_fcfa ? ligne.prix_reference_fcfa.toLocaleString() + ' FCFA' : 'Prix non répertorié'}</strong>
+                <span class="text-slate-600 font-mono text-[11px] flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs text-google-teal">sell</span> Réf. CI : 
+                  <strong class="text-slate-900 font-bold">${ligne.prix_reference_fcfa ? ligne.prix_reference_fcfa.toLocaleString() + ' FCFA' : 'Non répertorié'}</strong>
                 </span>
-                ${ligne.nom_catalogue ? `<span class="text-[10px] text-slate-500 truncate max-w-xs" title="${escapeHtml(ligne.nom_catalogue)}">(${escapeHtml(ligne.nom_catalogue)})</span>` : ''}
+                ${ligne.nom_catalogue ? `<span class="text-[10px] text-slate-400 truncate max-w-xs">(${escapeHtml(ligne.nom_catalogue)})</span>` : ''}
               </div>
             </div>
 
-            <!-- Pharmacist validation button for this line -->
+            <!-- Pharmacist validation button -->
             <div class="flex flex-col items-end justify-center shrink-0">
-              <button onclick="toggleValiderLigne('${ligne.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+              <button onclick="toggleValiderLigne('${ligne.id}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
                 isValide 
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30' 
-                  : 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-md shadow-amber-500/20 animate-pulse'
+                  ? 'bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100' 
+                  : 'bg-amber-500 text-white font-bold hover:bg-amber-600 shadow-sm'
               }">
-                <i data-lucide="${isValide ? 'check-circle-2' : 'shield-alert'}" class="w-4 h-4"></i>
-                <span>${isValide ? 'Vérifié' : 'Confirmer la ligne'}</span>
+                <span class="material-symbols-outlined text-sm">${isValide ? 'check_circle' : 'verified_user'}</span>
+                <span>${isValide ? 'Vérifié' : 'Confirmer'}</span>
               </button>
             </div>
           </div>
@@ -577,7 +719,6 @@
       const ligne = currentPrescription.lignes.find(l => l.id === id);
       if (ligne) {
         ligne[field] = value;
-        // Si l'utilisateur modifie manuellement, on marque comme validé
         if (field === 'dosage' || field === 'posologie_recopiee') {
           ligne.valide_par_pharmacien = true;
           ligne.confiance = 'haute';
@@ -607,10 +748,10 @@
 
       if (hasPendingDoutes) {
         btn.disabled = true;
-        statusText.innerHTML = `<span class="text-amber-400 font-semibold flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5 inline"></i> Validation bloquée : confirmez la ligne douteuse</span>`;
+        statusText.innerHTML = `<span class="text-amber-600 font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">lock</span> Validation bloquée : confirmez la ligne avec doute</span>`;
       } else {
         btn.disabled = false;
-        statusText.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 inline"></i> Toutes les lignes sont prêtes à être certifiées</span>`;
+        statusText.innerHTML = `<span class="text-teal-700 font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> Toutes les lignes sont prêtes pour certification</span>`;
       }
     }
 
@@ -637,7 +778,7 @@
           afficherFichePatient(fiche);
         } else {
           const err = await res.json();
-          alert("Erreur de validation : " + (err.detail || "Sécurité non satisfaite"));
+          alert("Erreur de sécurité : " + (err.detail || "Sécurité non satisfaite"));
         }
       } catch (e) {
         console.error("Erreur validation:", e);
@@ -659,9 +800,9 @@
       fiche.medicaments.forEach(m => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="p-2.5 font-bold text-slate-800">${escapeHtml(m.nom)} <span class="text-emerald-700 font-semibold">${escapeHtml(m.dosage)}</span></td>
-          <td class="p-2.5 text-slate-700 font-medium">${escapeHtml(m.posologie_officielle)}</td>
-          <td class="p-2.5 text-right font-mono font-semibold text-slate-900">${m.prix_reference_fcfa ? m.prix_reference_fcfa.toLocaleString() + ' FCFA' : '-'}</td>
+          <td class="p-3 font-bold text-slate-900">${escapeHtml(m.nom)} <span class="text-teal-800 font-semibold">${escapeHtml(m.dosage)}</span></td>
+          <td class="p-3 text-slate-700 font-medium">${escapeHtml(m.posologie_officielle)}</td>
+          <td class="p-3 text-right font-mono font-bold text-slate-900">${m.prix_reference_fcfa ? m.prix_reference_fcfa.toLocaleString() + ' FCFA' : '-'}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -670,17 +811,16 @@
       pharmaciesDiv.innerHTML = '';
       (fiche.pharmacies_garde_recommandees || []).forEach(p => {
         const item = document.createElement('div');
-        item.className = "p-2 bg-white rounded border border-slate-200";
+        item.className = "p-2.5 bg-white rounded-xl border border-slate-200";
         item.innerHTML = `
-          <strong class="text-slate-800 block">${escapeHtml(p.nom)} (${escapeHtml(p.commune)})</strong>
+          <strong class="text-slate-900 block">${escapeHtml(p.nom)} (${escapeHtml(p.commune)})</strong>
           <span class="text-slate-500">${escapeHtml(p.adresse)}</span><br>
-          <span class="text-emerald-700 font-mono font-bold">${escapeHtml(p.tel)}</span>
+          <span class="text-teal-700 font-mono font-bold">${escapeHtml(p.tel)}</span>
         `;
         pharmaciesDiv.appendChild(item);
       });
 
       document.getElementById('modal-fiche').classList.remove('hidden');
-      lucide.createIcons();
     }
 
     function fermerModal() {
@@ -690,10 +830,8 @@
     // Voice Dictation (Web Speech API)
     function initVoiceRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        document.getElementById('mic-btn').title = "Dictée vocale non supportée sur ce navigateur";
-        return;
-      }
+      if (!SpeechRecognition) return;
+
       recognition = new SpeechRecognition();
       recognition.lang = 'fr-FR';
       recognition.continuous = false;
@@ -701,7 +839,7 @@
 
       recognition.onstart = () => {
         isDictating = true;
-        document.getElementById('mic-btn').classList.add('bg-red-500/20', 'text-red-300', 'border-red-500/50');
+        document.getElementById('mic-btn').className = "px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold border border-red-200 flex items-center gap-1.5 shadow-sm";
         document.getElementById('mic-label').textContent = "Écoute en cours...";
       };
 
@@ -713,7 +851,7 @@
 
       recognition.onend = () => {
         isDictating = false;
-        document.getElementById('mic-btn').classList.remove('bg-red-500/20', 'text-red-300', 'border-red-500/50');
+        document.getElementById('mic-btn').className = "px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 flex items-center gap-1.5 shadow-sm";
         document.getElementById('mic-label').textContent = "Dicter à la voix";
       };
     }

@@ -1,9 +1,10 @@
 """
-Service d'analyse et de transcription d'ordonnances médicales via Gemini Multimodal.
-Respecte les principes d'éthique et de sécurité :
-1. "Ne rien déduire" : recopie strictement la posologie sans inventer.
-2. Signale tout doute (dosage raturé, ambiguïté) et bloque la validation sans approbation du pharmacien.
-3. Rapprochement automatique avec le catalogue de prix officiel de Côte d'Ivoire.
+Service d'analyse multimodale d'ordonnances réelles via Google Gemini (Google AI Studio).
+Architecture clinique Google Health :
+- Zéro données fictives inventées
+- Respect strict de la règle "Ne rien déduire"
+- Analyse en direct de vraies ordonnances manuscrites réelles
+- Rapprochement en temps réel avec le référentiel de prix de Côte d'Ivoire (3 852 médicaments)
 """
 
 import os
@@ -42,34 +43,33 @@ class AnalyseOrdonnance(BaseModel):
     lignes: List[LignePrescription]
     statut_global: str = Field(description="'pret_pour_validation' ou 'contient_doutes'")
     total_estime_fcfa: int = 0
-    mentions_legales: str = "Conforme Loi ivoirienne n° 2013-450 (Protection des données de santé). Transcription sous contrôle strict du pharmacien."
+    modele_utilise: str = "Google Gemini Multimodal"
+    source_donnees: str = "Analyse en direct Google AI Studio"
+    mentions_legales: str = "Données traitées sous contrôle strict du pharmacien diplômé. Conforme Loi n° 2013-450 (Protection des données sensibles de santé)."
 
 def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") -> Optional[Dict[str, Any]]:
-    """Recherche rapide dans la base locale SQLite des médicaments de Côte d'Ivoire."""
+    """Recherche floue rapide dans le catalogue officiel des médicaments de Côte d'Ivoire."""
     if not os.path.exists(DB_PATH):
         return None
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Nettoyage des mots clés
     mots = re.findall(r'[a-zA-Z0-9]+', (nom_cherche + " " + dosage_cherche).lower())
-    mots_filtres = [m for m in mots if len(m) > 2 and m not in ['comprime', 'comprimes', 'gelule', 'gelules', 'sirop', 'suspension']]
+    mots_filtres = [m for m in mots if len(m) > 2 and m not in ['comprime', 'comprimes', 'gelule', 'gelules', 'sirop', 'suspension', 'injectable', 'ampoule']]
 
     if not mots_filtres:
         conn.close()
         return None
 
-    # Recherche 1: Premier mot clé principal (ex: DOLIPRANE, AMOXICILLINE, SPASFON, COARTEM)
     cle_principale = mots_filtres[0]
-    cursor.execute("SELECT code, nom, groupe, prix_fcfa FROM medicaments WHERE nom_normalise LIKE ? LIMIT 20", (f"%{cle_principale}%",))
+    cursor.execute("SELECT code, nom, groupe, prix_fcfa FROM medicaments WHERE nom_normalise LIKE ? LIMIT 25", (f"%{cle_principale}%",))
     rows = cursor.fetchall()
-
     conn.close()
+
     if not rows:
         return None
 
-    # Score de correspondance avec le dosage
     meilleur_match = None
     meilleur_score = -1
 
@@ -91,144 +91,40 @@ def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") ->
 
     return meilleur_match
 
-# Analyses étalons pré-calibrées pour les 3 ordonnances types de test
-# Garantit 100% de succès démo même en cas de panne réseau / quota API
-PRESETS_ANALYSES = {
-    "sample_1": {
-        "patient_nom": "KONE Ibrahim (Fictif)",
-        "patient_age": "34 ans (Poids: 72 kg)",
-        "medecin_nom": "Dr. KOUASSI Jean (Médecine Interne)",
-        "date_prescription": "26/09/2026",
-        "etablissement": "Polyclinique des Deux-Plateaux, Cocody",
-        "lignes": [
-            {
-                "id": "l-1",
-                "nom_medicament": "Doliprane",
-                "dosage": "1000 mg",
-                "forme": "Comprimé",
-                "posologie_recopiee": "1 comprimé en cas de douleur (max 3/jour)",
-                "confiance": "haute",
-                "note_securite": "Écriture claire et sans ambiguïté.",
-                "valide_par_pharmacien": True
-            },
-            {
-                "id": "l-2",
-                "nom_medicament": "Amoxicilline",
-                "dosage": "500 mg",
-                "forme": "Gélule",
-                "posologie_recopiee": "1 gélule matin, midi et soir pendant 7 jours",
-                "confiance": "haute",
-                "note_securite": "Posologie standard recopiée fidèlement.",
-                "valide_par_pharmacien": True
-            },
-            {
-                "id": "l-3",
-                "nom_medicament": "Spasfon",
-                "dosage": "80 mg",
-                "forme": "Comprimé",
-                "posologie_recopiee": "2 comprimés si spasmes ou crampes abdominales",
-                "confiance": "haute",
-                "note_securite": "Posologie conforme telle qu'écrite.",
-                "valide_par_pharmacien": True
-            }
-        ],
-        "statut_global": "pret_pour_validation"
-    },
-    "sample_2": {
-        "patient_nom": "BAKAYOKO Aminata (Fictif)",
-        "patient_age": "42 ans",
-        "medecin_nom": "Dr. AMANI Brigitte (Médecin Généraliste)",
-        "date_prescription": "25/09/2026",
-        "etablissement": "Centre Médical du Plateau, Immeuble Horizon",
-        "lignes": [
-            {
-                "id": "l-1",
-                "nom_medicament": "Spasfon",
-                "dosage": "80 mg",
-                "forme": "Comprimé",
-                "posologie_recopiee": "2 comprimés en cas de crise",
-                "confiance": "haute",
-                "note_securite": "Écriture lisible.",
-                "valide_par_pharmacien": True
-            },
-            {
-                "id": "l-2",
-                "nom_medicament": "Ciprofloxacine",
-                "dosage": "250 mg ou 500 mg (?)",
-                "forme": "Comprimé",
-                "posologie_recopiee": "1 cp matin et soir pendant 5 jours",
-                "confiance": "douteux",
-                "note_securite": "⚠️ DOSAGE AMBIGU / RATURÉ : L'écriture manuscrite hésite entre 250mg et 500mg. Validation bloquée tant que le pharmacien n'a pas confirmé le dosage exact.",
-                "valide_par_pharmacien": False
-            }
-        ],
-        "statut_global": "contient_doutes"
-    },
-    "sample_3": {
-        "patient_nom": "DIARRA Seydou (Fictif)",
-        "patient_age": "28 ans",
-        "medecin_nom": "Dr. TOURE Moussa (Généraliste / Pédiatrie)",
-        "date_prescription": "26/09/2026",
-        "etablissement": "Cabinet Médical Saint-Michel, Yopougon Maroc",
-        "lignes": [
-            {
-                "id": "l-1",
-                "nom_medicament": "Coartem",
-                "dosage": "80/480 mg",
-                "forme": "Comprimé (Bte/6)",
-                "posologie_recopiee": "À confirmer auprès du pharmacien",
-                "confiance": "douteux",
-                "note_securite": "⚠️ POSOLOGIE ABSENTE OU ILLISIBLE SUR L'ORDONNANCE : Règle d'or de sécurité appliquée — aucune posologie n'a été inventée. Le pharmacien doit préciser la prise avec le patient.",
-                "valide_par_pharmacien": False
-            },
-            {
-                "id": "l-2",
-                "nom_medicament": "Efferalgan",
-                "dosage": "1 g (1000 mg)",
-                "forme": "Comprimé effervescent",
-                "posologie_recopiee": "1 cp dans un verre d'eau si fièvre",
-                "confiance": "haute",
-                "note_securite": "Posologie claire et recopiée fidèlement.",
-                "valide_par_pharmacien": True
-            }
-        ],
-        "statut_global": "contient_doutes"
-    }
-}
+SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", l'assistant clinique officiel de lecture et transcription d'ordonnances médicales pour les pharmaciens d'officine.
+Ton rôle est de lire l'image de l'ordonnance médicale manuscrite fournie et d'en extraire les informations avec une rigueur chirurgicale.
 
-SYSTEM_PROMPT = """Tu es "Ordonnance+", l'assistant IA de lecture et transcription d'ordonnances manuscrites dédié exclusivement aux pharmaciens d'officine.
+PROTOCOLE DE SÉCURITÉ PATIENT (OBLIGATOIRE) :
+1. "NE RIEN INTERPRÉTER NI INVENTER" :
+   - Recopie fidèlement la posologie telle qu'elle est écrite par le praticien.
+   - Ne déduis JAMAIS une répartition inexistante (n'invente pas "matin, midi et soir" si ce n'est pas expressément écrit).
+   - N'invente pas de consignes de repas ("avant/après manger").
 
-TES RÈGLES DE SÉCURITÉ ABSOLUES (CRITIQUES) :
-1. "NE RIEN DÉDUIRE NI INTERPRÉTER" :
-   - Recopie fidèlement la posologie telle qu'elle est écrite par le médecin.
-   - Ne devine JAMAIS une répartition (n'invente pas "matin/midi/soir" si ce n'est pas explicite).
-   - N'invente JAMAIS "avant ou après les repas".
+2. "DÉTECTION SYSTÉMATIQUE DU DOUTE" :
+   - Si une écriture manuscrite est cursive, difficile à lire, hésitante ou raturée : marque confiance = "douteux" et explique précisément le doute dans "note_securite".
+   - Si un dosage est ambigu (ex: chiffre ambigu entre 250mg et 500mg, virgule mal placée) : marque confiance = "douteux".
+   - Si la posologie est absente ou illisible sur le document : écris strictement "À confirmer auprès du pharmacien" et marque confiance = "douteux".
+   - Si la lecture est limpide et sans équivoque : marque confiance = "haute".
 
-2. "SAVOIR SIGNALER L'INCERTITUDE" :
-   - Si une posologie est absente, partielle, ou illisible : écris strictement "À confirmer auprès du pharmacien" et marque confiance = "douteux".
-   - Si un dosage est ambigu (ex: 250mg vs 500mg, chiffre raturé, virgule douteuse) : marque confiance = "douteux" et explique l'ambiguïté dans "note_securite".
-   - Si tout est net et sans équivoque : marque confiance = "haute".
+3. ANONYMISATION DES DONNÉES SENSIBLES :
+   - Si l'ordonnance comporte un nom réel, préserve le prénom ou anonymise sous forme "Patient Anonymisé" ou le nom tel quel s'il s'agit d'un spécimen.
 
-3. CADRE ÉTHIQUE & LÉGAL (Côte d'Ivoire - Loi n° 2013-450) :
-   - Traite uniquement les données utiles à la délivrance pharmaceutique.
-   - Tu ne prescris pas, tu aides le pharmacien à déchiffrer.
-
-Tu dois répondre UNIQUEMENT par un objet JSON valide avec la structure suivante :
+FORMAT DE SORTIE JSON STRICT :
 {
-  "patient_nom": "Nom patient ou Fictif",
-  "patient_age": "Âge si présent",
-  "medecin_nom": "Nom du médecin",
+  "patient_nom": "Nom ou Anonymisé",
+  "patient_age": "Âge si mentionné",
+  "medecin_nom": "Nom du médecin prescripteur",
   "date_prescription": "Date jj/mm/aaaa",
-  "etablissement": "Nom du cabinet/clinique",
+  "etablissement": "Nom de la clinique ou cabinet médical",
   "lignes": [
     {
       "id": "l-1",
-      "nom_medicament": "Nom commercial ou DCI",
-      "dosage": "Dosage exact (ex: 500 mg, 1g)",
-      "forme": "Comprimé / Gélule / Sirop / etc.",
-      "posologie_recopiee": "Texte exact ou 'À confirmer auprès du pharmacien'",
+      "nom_medicament": "Nom du médicament",
+      "dosage": "Dosage exact relevé",
+      "forme": "Comprimé, gélule, sirop, etc.",
+      "posologie_recopiee": "Texte exact tel quel ou 'À confirmer auprès du pharmacien'",
       "confiance": "haute" ou "douteux",
-      "note_securite": "Détail de l'incertitude ou 'Lecture claire'",
+      "note_securite": "Explication du doute clinique ou 'Lecture claire'",
       "valide_par_pharmacien": false
     }
   ],
@@ -236,71 +132,78 @@ Tu dois répondre UNIQUEMENT par un objet JSON valide avec la structure suivante
 }
 """
 
-async def analyser_ordonnance_gemini(image_bytes: bytes, mime_type: str = "image/png", preset_key: str = None) -> AnalyseOrdonnance:
-    """Analyse l'image via Gemini multimodal ou via preset sécurisé."""
+async def analyser_ordonnance_reelle(
+    image_bytes: bytes, 
+    mime_type: str = "image/png", 
+    api_key_override: Optional[str] = None
+) -> AnalyseOrdonnance:
+    """Effectue la vraie analyse par vision multimodale sur Google Gemini."""
     
-    # Si un preset d'ordonnance de test est demandé directement
-    if preset_key and preset_key in PRESETS_ANALYSES:
-        raw_data = PRESETS_ANALYSES[preset_key]
-    else:
-        api_key = os.getenv("GEMINI_API_KEY", "").strip()
-        raw_data = None
+    api_key = (api_key_override or os.getenv("GEMINI_API_KEY", "")).strip()
 
-        if api_key:
-            # Appel API Gemini 2.5 Flash ou 1.5 Flash
-            models_to_try = ["gemini-2.5-flash", "gemini-1.5-flash"]
-            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
-            
-            payload = {
-                "contents": [
+    if not api_key:
+        raise ValueError("Clé API Google AI Studio manquante. Veuillez saisir votre clé API pour lancer l'analyse en direct.")
+
+    # Modèles Gemini multimodaux par ordre de précision
+    models = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+    image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": SYSTEM_PROMPT_GOOGLE_HEALTH},
                     {
-                        "parts": [
-                            {"text": SYSTEM_PROMPT},
-                            {
-                                "inline_data": {
-                                    "mime_type": mime_type,
-                                    "data": image_b64
-                                }
-                            },
-                            {"text": "Transcris fidèlement cette ordonnance médicale selon le schéma JSON demandé."}
-                        ]
-                    }
-                ],
-                "generationConfig": {
-                    "temperature": 0.1,
-                    "responseMimeType": "application/json"
-                }
+                        "inline_data": {
+                            "mime_type": mime_type,
+                            "data": image_b64
+                        }
+                    },
+                    {"text": "Transcris fidèlement et rigoureusement cette ordonnance médicale manuscrite selon le schéma JSON."}
+                ]
             }
+        ],
+        "generationConfig": {
+            "temperature": 0.05,
+            "responseMimeType": "application/json"
+        }
+    }
 
-            async with httpx.AsyncClient(timeout=25.0) as client:
-                for model in models_to_try:
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-                    try:
-                        resp = await client.post(url, json=payload)
-                        if resp.status_code == 200:
-                            data = resp.json()
-                            candidate_text = data["candidates"][0]["content"]["parts"][0]["text"]
-                            raw_data = json.loads(candidate_text)
-                            break
-                        else:
-                            print(f"[!] Gemini {model} error: {resp.status_code} - {resp.text}")
-                    except Exception as e:
-                        print(f"[!] Erreur appel Gemini {model}: {e}")
+    raw_data = None
+    dernier_erreur = ""
+    model_utilise = "gemini-2.5-flash"
 
-        # Fallback de secours si pas de clé ou échec API
-        if not raw_data:
-            print("[INFO] Utilisation du fallback pré-calibré.")
-            # Par défaut preset 1 ou fallback générique
-            raw_data = PRESETS_ANALYSES.get("sample_1")
+    async with httpx.AsyncClient(timeout=35.0) as client:
+        for model in models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            try:
+                resp = await client.post(url, json=payload)
+                if resp.status_code == 200:
+                    result_json = resp.json()
+                    candidate_text = result_json["candidates"][0]["content"]["parts"][0]["text"]
+                    raw_data = json.loads(candidate_text)
+                    model_utilise = model
+                    break
+                else:
+                    dernier_erreur = f"Status {resp.status_code}: {resp.text}"
+                    print(f"[!] Gemini {model} error: {dernier_erreur}")
+            except Exception as e:
+                dernier_erreur = str(e)
+                print(f"[!] Erreur appel Gemini {model}: {e}")
 
-    # Enrichissement avec les prix du catalogue de Côte d'Ivoire
+    if not raw_data:
+        raise RuntimeError(f"Échec de l'appel Google Gemini : {dernier_erreur}")
+
+    # Rapprochement avec le catalogue de prix officiel de Côte d'Ivoire
     lignes_enrichies: List[LignePrescription] = []
     total_fcfa = 0
 
     for idx, l in enumerate(raw_data.get("lignes", [])):
         lid = l.get("id") or f"l-{idx+1}"
-        med_ref = chercher_medicament_catalogue(l.get("nom_medicament", ""), l.get("dosage", ""))
-        
+        nom_med = l.get("nom_medicament", "").strip()
+        dosage = l.get("dosage", "").strip()
+
+        med_ref = chercher_medicament_catalogue(nom_med, dosage)
         prix = med_ref["prix_fcfa"] if med_ref else None
         code = med_ref["code"] if med_ref else None
         nom_cat = med_ref["nom"] if med_ref else None
@@ -310,17 +213,16 @@ async def analyser_ordonnance_gemini(image_bytes: bytes, mime_type: str = "image
             total_fcfa += prix
 
         confiance = l.get("confiance", "haute")
-        # Si la posologie est "À confirmer", la confiance est obligatoirement douteuse
-        if "confirmer" in l.get("posologie_recopiee", "").lower():
+        if "confirmer" in l.get("posologie_recopiee", "").lower() or "?" in dosage:
             confiance = "douteux"
 
         valide = (confiance == "haute")
 
         lignes_enrichies.append(LignePrescription(
             id=lid,
-            nom_medicament=l.get("nom_medicament", ""),
-            dosage=l.get("dosage", ""),
-            forme=l.get("forme", "Forme standard"),
+            nom_medicament=nom_med,
+            dosage=dosage,
+            forme=l.get("forme", "Forme galénique"),
             posologie_recopiee=l.get("posologie_recopiee", ""),
             confiance=confiance,
             note_securite=l.get("note_securite"),
@@ -332,15 +234,16 @@ async def analyser_ordonnance_gemini(image_bytes: bytes, mime_type: str = "image
         ))
 
     contient_doutes = any(l.confiance == "douteux" for l in lignes_enrichies)
-    statut_global = "contient_doutes" if contient_doutes else "pret_pour_validation"
 
     return AnalyseOrdonnance(
-        patient_nom=raw_data.get("patient_nom", "Patient Anonymisé"),
+        patient_nom=raw_data.get("patient_nom", "Patient"),
         patient_age=raw_data.get("patient_age"),
-        medecin_nom=raw_data.get("medecin_nom", "Dr. Non Spécifié"),
-        date_prescription=raw_data.get("date_prescription", "Date non détectée"),
-        etablissement=raw_data.get("etablissement", "Établissement de Santé"),
+        medecin_nom=raw_data.get("medecin_nom", "Médecin Prescripteur"),
+        date_prescription=raw_data.get("date_prescription", "Date non spécifiée"),
+        etablissement=raw_data.get("etablissement", "Cabinet Médical / Centre Hospitalier"),
         lignes=lignes_enrichies,
-        statut_global=statut_global,
-        total_estime_fcfa=total_fcfa
+        statut_global="contient_doutes" if contient_doutes else "pret_pour_validation",
+        total_estime_fcfa=total_fcfa,
+        modele_utilise=f"Google AI Studio ({model_utilise})",
+        source_donnees="Analyse Multimodale en direct (Vraie ordonnance)"
     )
