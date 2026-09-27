@@ -951,17 +951,15 @@
 
       currentPrescription.lignes.forEach((ligne, idx) => {
         const score = ligne.score_confiance !== undefined ? ligne.score_confiance : (ligne.confiance === 'haute' ? 95 : 62);
-        const statut = ligne.statut_confiance || (score >= 80 ? 'CONFIRME' : (score >= 50 ? 'INCERTAIN' : 'NON_IDENTIFIE'));
+        const statut = ligne.statut_confiance || (score >= 40 ? 'CONFIRME' : 'INCERTAIN');
         const isConfirme = (statut === 'CONFIRME');
-        const isIncertain = (statut === 'INCERTAIN');
+        const isIncertain = !isConfirme;
 
         const card = document.createElement('div');
         card.className = `p-4 sm:p-5 rounded-2xl border transition-all ${
           isConfirme 
             ? 'bg-white border-slate-200/90 hover:border-emerald-300 shadow-sm'
-            : isIncertain
-              ? 'bg-amber-50/40 border-amber-300 shadow-sm'
-              : 'bg-rose-50/40 border-rose-300 shadow-sm'
+            : 'bg-amber-50/40 border-amber-300 shadow-sm'
         }`;
 
         let statusBadgeHtml = '';
@@ -970,24 +968,17 @@
         if (isConfirme) {
           statusBadgeHtml = `
             <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs text-emerald-700">check_circle</span> Lecture nette (${score}%)
+              <span class="material-symbols-outlined text-xs text-emerald-700">check_circle</span> Validé (${score}%)
             </span>
           `;
           barColor = 'bg-emerald-500';
-        } else if (isIncertain) {
+        } else {
           statusBadgeHtml = `
             <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs text-amber-700">warning</span> Incertain (${score}%) • À vérifier
+              <span class="material-symbols-outlined text-xs text-amber-700">warning</span> Faible lisibilité (${score}%) • À vérifier
             </span>
           `;
           barColor = 'bg-amber-500';
-        } else {
-          statusBadgeHtml = `
-            <span class="text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-900 border border-rose-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs text-rose-700">error</span> Non identifié (${score}%)
-            </span>
-          `;
-          barColor = 'bg-rose-500';
         }
 
         card.innerHTML = `

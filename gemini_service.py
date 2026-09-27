@@ -59,8 +59,18 @@ class AnalyseOrdonnance(BaseModel):
     source_donnees: str = "Extraction structurée Google AI Studio + Référentiel CI"
     mentions_legales: str = "Traitement éphémère en mémoire vive. Conçu selon les principes de minimisation et de confidentialité des données."
 
+SYNONYMES_DCI = {
+    "prednisone": ["predni", "solupred", "cortancyl"],
+    "prednisolone": ["predni", "solupred"],
+    "paracetamol": ["doliprane", "efferalgan", "perfalgan"],
+    "amoxicilline": ["amox", "clamoxyl", "augmentin"],
+    "ibuprofene": ["advil", "nurofen"],
+    "metronidazole": ["flagyl", "metro", "metrol"],
+    "ciprofloxacine": ["cipro", "ciflox"]
+}
+
 def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") -> Optional[Dict[str, Any]]:
-    """Recherche floue rapide dans le catalogue officiel des médicaments de Côte d'Ivoire."""
+    """Recherche floue et robuste dans les 3 852 médicaments officiels de Côte d'Ivoire."""
     if not os.path.exists(DB_PATH):
         return None
 
@@ -68,30 +78,52 @@ def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") ->
     cursor = conn.cursor()
 
     mots = re.findall(r'[a-zA-Z0-9]+', (nom_cherche + " " + dosage_cherche).lower())
-    mots_filtres = [m for m in mots if len(m) > 2 and m not in ['comprime', 'comprimes', 'gelule', 'gelules', 'sirop', 'suspension', 'injectable', 'ampoule']]
+    stop_words = {
+        'medicament', 'medicaments', 'comprime', 'comprimes', 'gelule', 'gelules',
+        'sirop', 'suspension', 'injectable', 'ampoule', 'infusion', 'perfusion',
+        'solution', 'gouttes', 'sachet', 'sachets', 'flacon', 'tube', 'pommade', 'creme'
+    }
+    mots_filtres = [m for m in mots if len(m) >= 3 and m not in stop_words]
 
     if not mots_filtres:
         conn.close()
         return None
 
-    cle_principale = mots_filtres[0]
-    cursor.execute("SELECT code, nom, groupe, prix_fcfa FROM medicaments WHERE nom_normalise LIKE ? LIMIT 25", (f"%{cle_principale}%",))
-    rows = cursor.fetchall()
+    candidates = list(mots_filtres)
+    for m in mots_filtres:
+        if m in SYNONYMES_DCI:
+            candidates.extend(SYNONYMES_DCI[m])
+
+    rows = []
+    seen_codes = set()
+    for cand in candidates:
+        if len(cand) >= 3:
+            cursor.execute("SELECT code, nom, groupe, prix_fcfa FROM medicaments WHERE nom_normalise LIKE ? LIMIT 35", (f"%{cand}%",))
+            for r in cursor.fetchall():
+                if r[0] not in seen_codes:
+                    seen_codes.add(r[0])
+                    rows.append(r)
+
     conn.close()
 
     if not rows:
         return None
 
     meilleur_match = None
-    meilleur_score = -1
+    meilleur_score = 0
 
     for row in rows:
         code, nom, groupe, prix = row
         nom_low = nom.lower()
-        score = 1
-        for m in mots_filtres[1:]:
-            if m in nom_low:
-                score += 2
+        score = 0
+        for cand in candidates:
+            if cand in nom_low:
+                score += 3
+
+        # Bonus si le dosage apparaît dans le libellé
+        if dosage_cherche and any(d in nom_low for d in re.findall(r'\d+', dosage_cherche)):
+            score += 2
+
         if score > meilleur_score:
             meilleur_score = score
             meilleur_match = {
@@ -101,7 +133,7 @@ def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") ->
                 "prix_fcfa": prix
             }
 
-    return meilleur_match
+    return meilleur_match if meilleur_score >= 3 else None
 
 SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", un moteur de vision clinique expert chargé d'extraire fidèlement des ordonnances médicales manuscrites réelles.
 Tu produis STRICTEMENT un objet JSON valide, sans texte additionnel ni markdown en dehors du JSON.
@@ -109,15 +141,14 @@ Tu produis STRICTEMENT un objet JSON valide, sans texte additionnel ni markdown 
 PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
 1. "NE RIEN INVENTER NI DÉDUIRE" :
    - Recopie fidèlement le texte manuscrit tel quel.
-   - Si un dosage est ambigu ou raturé, signale-le immédiatement comme incertain : n'extrapole JAMAIS.
+   - Si un dosage est ambigu ou raturé, signale-le immédiatement : n'extrapole JAMAIS.
    - Si la posologie est illisible ou absente, écris exactement "À confirmer auprès du pharmacien".
 
-2. "ÉVALUATION RIGOUREUSE DE LA CONFIANCE" :
+2. "ÉVALUATION DE LA CONFIANCE CLINIQUE (SEUIL DE VALIDATION 40%)" :
    Pour chaque ligne de prescription identifiée, évalue la lisibilité :
    - score_confiance (0 à 100) :
-     * 80 à 100 : lecture nette, sans ambiguïté -> statut_confiance = "CONFIRME", needs_confirmation = false
-     * 50 à 79 : écriture cursive difficile, dosage ambigu, chiffre peu lisible -> statut_confiance = "INCERTAIN", needs_confirmation = true, avec motif_incertitude détaillé.
-     * 0 à 49 : mot raturé ou illisible -> statut_confiance = "NON_IDENTIFIE", needs_confirmation = true.
+     * Dès que le score est supérieur ou égal à 40 (>= 40%) : la mention est identifiable et exploitable -> statut_confiance = "CONFIRME", needs_confirmation = false
+     * Inférieur à 40 (< 40%) : mention totalement illisible ou raturée méconnaissable -> statut_confiance = "INCERTAIN", needs_confirmation = true, avec motif_incertitude détaillé.
 
 3. STRUCTURE DU JSON ATTENDU :
 {
@@ -242,28 +273,23 @@ async def analyser_ordonnance_reelle(
         if "?" in dosage or "illisible" in dosage.lower() or "non précisé" in dosage.lower() or "confirmer" in posologie.lower():
             score = min(score, 68)
 
-        # Statut à 3 niveaux
-        if score >= 80:
+        # RÈGLE VALIDATION : Dès que le score de confiance est >= 40%, on valide la ligne et on affiche son prix
+        if score >= 40:
             statut_confiance = "CONFIRME"
             needs_conf = False
             motif = None
-        elif score >= 50:
+        else:
             statut_confiance = "INCERTAIN"
             needs_conf = True
-            motif = l.get("motif_incertitude") or l.get("note_securite") or "Dosage ou écriture manuscrite difficilement lisible"
-        else:
-            statut_confiance = "NON_IDENTIFIE"
-            needs_conf = True
-            motif = l.get("motif_incertitude") or "Mention raturée ou méconnaissable : vérification directe requise"
+            motif = l.get("motif_incertitude") or "Lisibilité insuffisante (< 40%) : confirmation requise auprès du pharmacien"
 
-        # Rapprochement catalogue métier
-        med_ref = chercher_medicament_catalogue(nom_med, dosage if statut_confiance == "CONFIRME" else "")
+        # Rapprochement catalogue officiel Côte d'Ivoire (3 852 médicaments)
+        med_ref = chercher_medicament_catalogue(nom_med, dosage)
         code = med_ref["code"] if med_ref else None
         nom_cat = med_ref["nom"] if med_ref else None
         grp = med_ref["groupe"] if med_ref else None
 
-        # RÈGLE MÉTIER DE CALCUL DU PRIX :
-        # Si la ligne est incertaine ou non identifiée, nous n'inventons pas de prix (exclu du total estimé)
+        # RÈGLE DE CALCUL DU PRIX (Validé dès >= 40%)
         if statut_confiance == "CONFIRME" and med_ref:
             prix = med_ref["prix_fcfa"]
             motif_prix = "Tarif indicatif référentiel CI"
@@ -273,7 +299,7 @@ async def analyser_ordonnance_reelle(
             motif_prix = "Médicament non répertorié dans la base locale"
         else:
             prix = None
-            motif_prix = "Non inclus dans l'estimation : ligne incertaine à chiffrer en officine"
+            motif_prix = "Score inférieur à 40% : à chiffrer en pharmacie"
 
         lignes_enrichies.append(LignePrescription(
             id=lid,
