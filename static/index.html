@@ -233,6 +233,22 @@
           <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden" onchange="uploadPhoto(event)">
         </label>
       </div>
+
+      <!-- Exemples d'ordonnances réelles en 1-clic (Démonstration Jury) -->
+      <div class="flex items-center gap-2 flex-wrap pt-1">
+        <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-xs text-amber-500">auto_awesome</span> Tester avec un exemple :
+        </span>
+        <button onclick="chargerExemple('reelle_1')" type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition active:scale-95 cursor-pointer shadow-2xs">
+          📋 Ordonnance #1 (Cursive)
+        </button>
+        <button onclick="chargerExemple('reelle_2')" type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition active:scale-95 cursor-pointer shadow-2xs">
+          📋 Ordonnance #2 (Abidjan)
+        </button>
+        <button onclick="chargerExemple('reelle_3')" type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition active:scale-95 cursor-pointer shadow-2xs">
+          📋 Ordonnance #3 (Manuscrite)
+        </button>
+      </div>
     </section>
 
     <!-- ETHICAL GUARDRAIL ALERT (Minimisation & Zéro extrapolation) -->
@@ -877,6 +893,73 @@
       event.target.value = '';
     }
 
+    async function chargerExemple(sampleId) {
+      const mapping = {
+        'reelle_1': { src: '/static/samples/ordonnance_reelle_1.jpg', name: 'Ordonnance manuscrite #1 (Cursive)' },
+        'reelle_2': { src: '/static/samples/ordonnance_reelle_2.png', name: 'Ordonnance réelle #2 (Abidjan)' },
+        'reelle_3': { src: '/static/samples/ordonnance_reelle_3.png', name: 'Ordonnance réelle #3 (Manuscrite)' }
+      };
+      const info = mapping[sampleId] || mapping['reelle_1'];
+
+      const img = document.getElementById('prescription-img');
+      img.src = info.src;
+      img.classList.remove('hidden');
+      document.getElementById('viewfinder-placeholder').classList.add('hidden');
+      const labelContainer = document.getElementById('label-container');
+      if (labelContainer) labelContainer.classList.remove('hidden');
+      document.getElementById('label-image-source').textContent = info.name;
+      const scanLine = document.getElementById('scan-line');
+      if (scanLine) scanLine.classList.remove('hidden');
+
+      showLoading(true);
+      resetStepper();
+
+      setStepState('step-1', 'active', '1. Extraction visuelle multimodale (Gemini)');
+
+      stepperTimers.push(setTimeout(() => {
+        setStepState('step-1', 'done', '1. Extraction visuelle terminée');
+        setStepState('step-2', 'active', '2. Évaluation de la confiance & doutes');
+      }, 900));
+
+      stepperTimers.push(setTimeout(() => {
+        setStepState('step-2', 'done', '2. Confiance évaluée sans extrapolation');
+        setStepState('step-3', 'active', '3. Normalisation & Rapprochement référentiel CI');
+      }, 1800));
+
+      try {
+        const formData = new FormData();
+        formData.append('sample_id', sampleId);
+
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          setStepState('step-3', 'done', '3. Référentiel CI rapproché');
+          setStepState('step-4', 'active', '4. Calcul du panier indicatif & pharmacies');
+          
+          currentPrescription = await res.json();
+          
+          setTimeout(() => {
+            setStepState('step-4', 'done', '4. Fiche prête');
+            setTimeout(() => {
+              showLoading(false);
+              renderPrescription();
+            }, 350);
+          }, 450);
+        } else {
+          showLoading(false);
+          const err = await res.json();
+          alert("Erreur de déchiffrage : " + (err.detail || "Échec"));
+        }
+      } catch (err) {
+        showLoading(false);
+        console.error("Erreur analyse exemple:", err);
+        alert("Impossible de joindre le serveur pour analyser l'ordonnance.");
+      }
+    }
+
     let stepperTimers = [];
 
     function resetStepper() {
@@ -1191,10 +1274,6 @@
        ASSISTANCE VOCALE POUR PATIENTS (Voix Neuronale HD Humaine & Bienveillante)
        Synthèse neuronale humaine haute fidélité (edge-tts) avec secours WebSpeech
        ========================================================================== */
-    let currentAudioPlayer = null;
-    let isAudioPlaying = false;
-    let activeLineAudioIndex = null;
-
     function normaliserTexteOral(texte) {
       if (!texte) return "";
       let t = " " + texte + " ";
