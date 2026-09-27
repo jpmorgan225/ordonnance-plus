@@ -259,12 +259,13 @@ async def analyser_ordonnance_reelle(
     if not api_key:
         raise ValueError("Clé API Google AI Studio manquante. Veuillez saisir votre clé API pour lancer l'analyse en direct.")
 
-    # Modèles Gemini multimodaux par ordre de disponibilité et performance
+    # Modèles Gemini multimodaux 2026 par ordre d'intelligence et de performance
     models = [
-        "gemini-3.1-flash-lite",
-        "gemini-3.7-flash",
-        "gemini-flash-lite-latest",
-        "gemini-3-flash-preview"
+        "gemini-3.8-flash",       # Modèle 2026 Google AI Studio de référence (haute précision visuelle)
+        "gemini-3.5-flash-lite",  # Modèle 2026 ultra-rapide optimisé pour haut débit
+        "gemini-3.1-flash-lite",  # Repli stable
+        "gemini-3.7-flash",       # Repli si disponible
+        "gemini-flash-lite-latest"
     ]
     image_b64 = base64.b64encode(image_bytes).decode("utf-8")
 
@@ -291,7 +292,7 @@ async def analyser_ordonnance_reelle(
 
     raw_data = None
     dernier_erreur = ""
-    model_utilise = "gemini-2.5-flash"
+    model_utilise = "gemini-3.8-flash"
 
     async with httpx.AsyncClient(timeout=35.0) as client:
         for model in models:

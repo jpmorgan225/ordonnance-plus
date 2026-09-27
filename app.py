@@ -7,6 +7,8 @@ Exécution directe sans données fictives (Google AI Studio Gemini Multimodal).
 import os
 import json
 import sqlite3
+import base64
+import httpx
 from typing import Optional, List
 from fastapi import FastAPI, File, UploadFile, Form, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -1261,6 +1263,50 @@ async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualN
     # Traduction automatique des abréviations médicales en langage soignant oral
     texte_oral = traduire_abreviations_medicales(raw_text)
     
+    GEMINI_VOICES = {
+        "kore": "Kore",
+        "aoede": "Aoede",
+        "fenrir": "Fenrir",
+    }
+    voice_key = voice.lower().strip()
+
+    # 1. Prise en charge des voix Studio Google Gemini 3.8 Flash TTS
+    if voice_key in GEMINI_VOICES:
+        gemini_voice = GEMINI_VOICES[voice_key]
+        cache_key = hashlib.md5(f"gemini_38_tts_{gemini_voice}_{texte_oral}".encode("utf-8")).hexdigest()
+        cache_file = os.path.join(AUDIO_CACHE_DIR, f"{cache_key}.wav")
+        if os.path.exists(cache_file):
+            with open(cache_file, "rb") as f:
+                return Response(content=f.read(), media_type="audio/wav")
+        
+        api_key = os.getenv("GEMINI_API_KEY", "").strip()
+        if api_key:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent?key={api_key}"
+                payload = {
+                    "contents": [{"parts": [{"text": texte_oral}]}],
+                    "generationConfig": {
+                        "responseModalities": ["AUDIO"],
+                        "speechConfig": {
+                            "voiceConfig": {
+                                "prebuiltVoiceConfig": {"voiceName": gemini_voice}
+                            }
+                        }
+                    }
+                }
+                async with httpx.AsyncClient(timeout=20.0) as client:
+                    resp = await client.post(url, json=payload)
+                    if resp.status_code == 200:
+                        parts = resp.json().get("candidates", [{}])[0].get("content", {}).get("parts", [])
+                        for p in parts:
+                            if "inlineData" in p and p["inlineData"].get("data"):
+                                audio_bytes = base64.b64decode(p["inlineData"]["data"])
+                                with open(cache_file, "wb") as f:
+                                    f.write(audio_bytes)
+                                return Response(content=audio_bytes, media_type="audio/wav")
+            except Exception as ge:
+                print(f"Gemini TTS error ({ge}), bascule vers synthèse neuronale...")
+
     VOIX_VALIDES = {
         "vivienne": "fr-FR-VivienneMultilingualNeural",
         "remy": "fr-FR-RemyMultilingualNeural",
@@ -1268,8 +1314,7 @@ async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualN
         "eloise": "fr-FR-EloiseNeural",
         "henri": "fr-FR-HenriNeural",
     }
-    voice_key = voice.lower().strip()
-    selected_voice = VOIX_VALIDES.get(voice_key, voice)
+    selected_voice = VOIX_VALIDES.get(voice_key, "fr-FR-VivienneMultilingualNeural")
     
     cache_key = hashlib.md5(f"{selected_voice}_{rate}_{texte_oral}".encode("utf-8")).hexdigest()
     cache_file = os.path.join(AUDIO_CACHE_DIR, f"{cache_key}.mp3")
