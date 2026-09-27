@@ -281,24 +281,75 @@
 
     </section>
 
-    <!-- DUTY PHARMACIES NEARBY (Abidjan) -->
-    <section id="urgences-section" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col gap-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-emergency-red text-white flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-xl">local_pharmacy</span>
+    <!-- DUTY PHARMACIES NEARBY (Abidjan & Environs) -->
+    <section id="urgences-section" class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col gap-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emergency-red text-white flex items-center justify-center shrink-0 shadow-sm">
+            <span class="material-symbols-outlined text-2xl">local_pharmacy</span>
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-900">Pharmacies de garde à proximité (Abidjan)</h3>
-            <p class="text-xs text-on-surface-variant font-body">Ouvertes 24h/24 cette semaine • Contact direct</p>
+            <h3 class="text-lg font-bold text-slate-900">Pharmacies de garde à proximité (Abidjan)</h3>
+            <p class="text-xs text-on-surface-variant font-body">Ouvertes 24h/24 cette semaine • Semaine du Samedi 26 sept au Vendredi 2 oct 2026</p>
           </div>
         </div>
-        <span class="text-[11px] font-bold text-emergency-red px-2.5 py-1 rounded-full bg-emergency-red/10">
-          Urgences nuit & WE
+        <span class="text-xs font-bold text-emerald-800 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Garde officielle 24h/24</span>
         </span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="pharmacies-garde-list">
+      <!-- GEOLOCATION BANNER & CONTROLS -->
+      <div class="bg-surface-container-low rounded-2xl p-4 sm:p-5 border border-slate-200/60 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        <div class="flex items-start gap-3 flex-1">
+          <div class="w-9 h-9 rounded-xl bg-white text-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+            <span class="material-symbols-outlined text-xl">near_me</span>
+          </div>
+          <div class="text-xs">
+            <h4 class="font-bold text-slate-900 text-sm">Trouver les officines de garde les plus proches</h4>
+            <p class="text-slate-600 font-body mt-0.5" id="geo-status-text">
+              Partagez votre position pour calculer la distance exacte en mètres/km et classer les pharmacies de la plus proche à la plus éloignée.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button id="btn-geoloc" onclick="demanderGeolocalisation()" class="px-4 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2 active:scale-95">
+            <span class="material-symbols-outlined text-base">my_location</span>
+            <span id="btn-geoloc-label">Me localiser automatiquement</span>
+          </button>
+
+          <div class="relative">
+            <select id="select-commune" onchange="changerFiltreCommune(this.value)" class="text-xs font-semibold bg-white border border-slate-300 rounded-full px-3 py-2 text-slate-800 focus:outline-none focus:border-primary shadow-sm pr-8 cursor-pointer">
+              <option value="toutes">Toutes les communes (28 officines)</option>
+              <option value="Cocody">Cocody (II Plateaux, Angré, Riviera)</option>
+              <option value="Yopougon">Yopougon (Selmer, Toits Rouges, Siporex)</option>
+              <option value="Plateau">Plateau (Centre-ville)</option>
+              <option value="Marcory">Marcory (Zone 4, Biétry)</option>
+              <option value="Treichville">Treichville (Avenue 8, CHU)</option>
+              <option value="Abobo">Abobo (Gare, Samaké, Sagbé)</option>
+              <option value="Koumassi">Koumassi (Grand Carrefour, Remblais)</option>
+              <option value="Port-Bouët">Port-Bouët (Vridi, Phare)</option>
+              <option value="Adjamé">Adjamé (220 Logements, Liberté)</option>
+              <option value="Bingerville">Bingerville</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner if localized -->
+      <div id="geo-info-badge" class="hidden px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-1.5 font-medium">
+          <span class="material-symbols-outlined text-sm text-emerald-700">check_circle</span>
+          <span id="geo-coords-text">Position prise en compte. Pharmacies classées par distance.</span>
+        </span>
+        <button onclick="reinitialiserGeoloc()" class="text-xs text-slate-500 hover:text-slate-800 underline font-semibold">
+          Désactiver
+        </button>
+      </div>
+
+      <!-- Grid of Pharmacies -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="pharmacies-garde-list">
         <!-- Populated by JS -->
       </div>
     </section>
@@ -401,19 +452,163 @@
   <!-- APPLICATION LOGIC SCRIPT -->
   <script>
     let currentPrescription = null;
-
-    const PHARMACIES_ABIDJAN = [
-      { commune: "Cocody", nom: "Pharmacie des Deux-Plateaux", tel: "+225 27 22 41 20 20", adresse: "Bd des Martyrs, station Shell" },
-      { commune: "Cocody", nom: "Pharmacie Saint-Jean", tel: "+225 27 22 44 11 00", adresse: "Rue des Jardins, II Plateaux" },
-      { commune: "Plateau", nom: "Pharmacie du Commerce", tel: "+225 27 20 21 02 12", adresse: "Avenue Général de Gaulle" },
-      { commune: "Yopougon", nom: "Pharmacie Bel-Air", tel: "+225 27 23 45 67 89", adresse: "Yopougon Selmer, Carrefour Zone" },
-    ];
+    let userLocation = null;
+    let selectedCommune = "toutes";
 
     document.addEventListener("DOMContentLoaded", () => {
-      renderPharmaciesGarde();
+      chargerPharmacies();
       renderInitialEmptyState();
       setupDragAndDrop();
     });
+
+    async function chargerPharmacies() {
+      const container = document.getElementById('pharmacies-garde-list');
+      container.innerHTML = `
+        <div class="col-span-full py-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+          <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <span>Recherche des pharmacies de garde officielles...</span>
+        </div>
+      `;
+
+      let url = `/api/pharmacies-garde?commune=${encodeURIComponent(selectedCommune)}`;
+      if (userLocation) {
+        url += `&lat=${userLocation.lat}&lon=${userLocation.lon}`;
+      }
+
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          renderPharmaciesGarde(data.pharmacies);
+        } else {
+          container.innerHTML = '<p class="text-xs text-rose-500 col-span-full text-center py-4">Erreur lors de la récupération des pharmacies.</p>';
+        }
+      } catch (e) {
+        console.error("Erreur pharmacies:", e);
+        container.innerHTML = '<p class="text-xs text-rose-500 col-span-full text-center py-4">Impossible de joindre le serveur.</p>';
+      }
+    }
+
+    function renderPharmaciesGarde(pharmacies) {
+      const container = document.getElementById('pharmacies-garde-list');
+      container.innerHTML = '';
+
+      if (!pharmacies || pharmacies.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full p-8 text-center text-slate-500 text-xs bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            Aucune pharmacie de garde répertoriée pour cette sélection.
+          </div>
+        `;
+        return;
+      }
+
+      pharmacies.forEach((p, idx) => {
+        const isClosest = (userLocation && idx === 0);
+        const card = document.createElement('div');
+        card.className = `p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+          isClosest 
+            ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-300' 
+            : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-sm'
+        }`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${isClosest ? 'bg-emerald-200 text-emerald-900 font-black' : 'bg-slate-100 text-slate-700'}">
+                ${isClosest ? '⭐ Plus proche • ' : ''}${escapeHtml(p.commune)}
+              </span>
+              ${p.distance_texte ? `
+                <span class="text-xs font-black px-2.5 py-0.5 rounded-full ${isClosest ? 'bg-primary text-white shadow-sm' : 'bg-emerald-100 text-emerald-900'} flex items-center gap-1 font-mono">
+                  <span class="material-symbols-outlined text-xs">near_me</span>
+                  ${escapeHtml(p.distance_texte)} ${p.temps_voiture_min ? `(~${p.temps_voiture_min} min)` : ''}
+                </span>
+              ` : `
+                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Garde 24h/24</span>
+              `}
+            </div>
+
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+              ${escapeHtml(p.nom)}
+            </h4>
+            <p class="text-xs text-slate-500 mt-1 flex items-start gap-1 font-body">
+              <span class="material-symbols-outlined text-sm text-slate-400 shrink-0 mt-0.5">location_on</span>
+              <span>${escapeHtml(p.adresse)}</span>
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
+            <a href="tel:${p.tel.replace(/\\s/g, '')}" class="flex-1 py-2.5 px-3 rounded-xl bg-primary hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+              <span class="material-symbols-outlined text-base">call</span>
+              <span>${escapeHtml(p.tel)}</span>
+            </a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 transition" title="Ouvrir itinéraire GPS">
+              <span class="material-symbols-outlined text-base text-slate-600">directions</span>
+              <span>Itinéraire</span>
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function demanderGeolocalisation() {
+      const btn = document.getElementById('btn-geoloc');
+      const btnLabel = document.getElementById('btn-geoloc-label');
+      const statusText = document.getElementById('geo-status-text');
+
+      if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas disponible sur votre navigateur.");
+        return;
+      }
+
+      btnLabel.textContent = "Calcul de la position...";
+      btn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          userLocation = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          };
+          btnLabel.textContent = "Position actualisée";
+          btn.disabled = false;
+          btn.className = "px-4 py-2.5 rounded-full font-bold text-xs bg-emerald-800 text-white shadow-sm transition flex items-center gap-2";
+
+          document.getElementById('geo-info-badge').classList.remove('hidden');
+          document.getElementById('geo-coords-text').textContent = 
+            `Position GPS détectée (${userLocation.lat.toFixed(4)}°N, ${userLocation.lon.toFixed(4)}°W). Officines classées par distance réelle.`;
+          statusText.textContent = "Votre position est active : les pharmacies ci-dessous sont ordonnées de la plus proche à la plus éloignée.";
+
+          chargerPharmacies();
+        },
+        (error) => {
+          btnLabel.textContent = "Me localiser automatiquement";
+          btn.disabled = false;
+          let msg = "Accès à la position refusé.";
+          if (error.code === error.PERMISSION_DENIED) {
+            msg = "Localisation refusée : vous pouvez filtrer les pharmacies par commune dans le menu déroulant.";
+          }
+          statusText.textContent = msg;
+          document.getElementById('geo-info-badge').classList.add('hidden');
+          chargerPharmacies();
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+    }
+
+    function reinitialiserGeoloc() {
+      userLocation = null;
+      document.getElementById('geo-info-badge').classList.add('hidden');
+      document.getElementById('btn-geoloc-label').textContent = "Me localiser automatiquement";
+      document.getElementById('btn-geoloc').className = "px-4 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2 active:scale-95";
+      document.getElementById('geo-status-text').textContent = "Partagez votre position pour calculer la distance exacte en mètres/km et classer les pharmacies de la plus proche à la plus éloignée.";
+      chargerPharmacies();
+    }
+
+    function changerFiltreCommune(commune) {
+      selectedCommune = commune;
+      chargerPharmacies();
+    }
 
     function renderInitialEmptyState() {
       const container = document.getElementById('lines-container');

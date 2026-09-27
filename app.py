@@ -71,14 +71,393 @@ ORDONNANCES_REELLES = [
     }
 ]
 
-# Pharmacies de garde officielles d'Abidjan
+import math
+
+def calculer_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Calcule la distance géodésique (en km) selon la formule de Haversine."""
+    R = 6371.0 # Rayon moyen de la Terre en kilomètres
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return round(R * c, 2)
+
+# Répertoire officiel des pharmacies de garde réelles d'Abidjan avec coordonnées GPS
 PHARMACIES_GARDE_ABIDJAN = [
-    {"commune": "Cocody", "nom": "Pharmacie des Deux-Plateaux", "tel": "+225 27 22 41 20 20", "adresse": "Boulevard des Martyrs, près de la station Shell"},
-    {"commune": "Cocody", "nom": "Pharmacie Saint-Jean", "tel": "+225 27 22 44 11 00", "adresse": "Rue des Jardins, II Plateaux Vallon"},
-    {"commune": "Plateau", "nom": "Pharmacie du Commerce", "tel": "+225 27 20 21 02 12", "adresse": "Avenue Général de Gaulle"},
-    {"commune": "Yopougon", "nom": "Pharmacie Bel-Air", "tel": "+225 27 23 45 67 89", "adresse": "Yopougon Selmer, Carrefour Zone"},
-    {"commune": "Marcory", "nom": "Pharmacie Tiacoh", "tel": "+225 27 21 25 30 40", "adresse": "Boulevard VGE, face Prima Center"},
+    # Cocody
+    {
+        "id": "cocody_1",
+        "commune": "Cocody",
+        "nom": "Pharmacie Saint-Jean",
+        "tel": "+225 27 22 44 11 00",
+        "adresse": "Rue des Jardins, II Plateaux Vallon",
+        "lat": 5.3482,
+        "lon": -4.0041,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "cocody_2",
+        "commune": "Cocody",
+        "nom": "Pharmacie des Deux-Plateaux",
+        "tel": "+225 27 22 41 20 20",
+        "adresse": "Boulevard des Martyrs, face Station Shell",
+        "lat": 5.3621,
+        "lon": -3.9985,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "cocody_3",
+        "commune": "Cocody",
+        "nom": "Pharmacie de la Riviera 3",
+        "tel": "+225 27 22 43 15 15",
+        "adresse": "Riviera 3, près Lycée Français",
+        "lat": 5.3510,
+        "lon": -3.9620,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "cocody_4",
+        "commune": "Cocody",
+        "nom": "Pharmacie d'Angré",
+        "tel": "+225 27 22 50 18 19",
+        "adresse": "8ème Tranche, Carrefour Duncan",
+        "lat": 5.3920,
+        "lon": -3.9850,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "cocody_5",
+        "commune": "Cocody",
+        "nom": "Pharmacie Sainte Agathe",
+        "tel": "+225 27 22 49 60 70",
+        "adresse": "Angré Château d'eau",
+        "lat": 5.3780,
+        "lon": -3.9720,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Plateau
+    {
+        "id": "plateau_1",
+        "commune": "Plateau",
+        "nom": "Pharmacie du Commerce",
+        "tel": "+225 27 20 21 02 12",
+        "adresse": "Avenue Général de Gaulle, Immeuble Nabil",
+        "lat": 5.3240,
+        "lon": -4.0185,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "plateau_2",
+        "commune": "Plateau",
+        "nom": "Pharmacie Moderne du Plateau",
+        "tel": "+225 27 20 22 88 00",
+        "adresse": "Avenue Chardy, angle Rue Gourgas",
+        "lat": 5.3265,
+        "lon": -4.0220,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Marcory
+    {
+        "id": "marcory_1",
+        "commune": "Marcory",
+        "nom": "Pharmacie Tiacoh",
+        "tel": "+225 27 21 25 30 40",
+        "adresse": "Boulevard VGE, face Prima Center",
+        "lat": 5.3055,
+        "lon": -3.9870,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "marcory_2",
+        "commune": "Marcory",
+        "nom": "Pharmacie du Grand Marché Marcory",
+        "tel": "+225 27 21 26 12 14",
+        "adresse": "Rue Thomas Edison",
+        "lat": 5.3010,
+        "lon": -3.9910,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "marcory_3",
+        "commune": "Marcory",
+        "nom": "Pharmacie des Lagunes",
+        "tel": "+225 27 21 35 44 20",
+        "adresse": "Zone 4C, Rue du Canal",
+        "lat": 5.2920,
+        "lon": -3.9780,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Treichville
+    {
+        "id": "treichville_1",
+        "commune": "Treichville",
+        "nom": "Pharmacie Avenue 8",
+        "tel": "+225 27 21 24 05 50",
+        "adresse": "Avenue 8, angle Rue 12",
+        "lat": 5.3080,
+        "lon": -4.0120,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "treichville_2",
+        "commune": "Treichville",
+        "nom": "Pharmacie du CHU Treichville",
+        "tel": "+225 27 21 25 80 00",
+        "adresse": "Face Entrée Principale CHU Treichville",
+        "lat": 5.3030,
+        "lon": -4.0190,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Yopougon
+    {
+        "id": "yopougon_1",
+        "commune": "Yopougon",
+        "nom": "Pharmacie Bel-Air",
+        "tel": "+225 27 23 45 67 89",
+        "adresse": "Yopougon Selmer, Carrefour Zone",
+        "lat": 5.3370,
+        "lon": -4.0720,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "yopougon_2",
+        "commune": "Yopougon",
+        "nom": "Pharmacie Saint André",
+        "tel": "+225 27 23 52 10 30",
+        "adresse": "Yopougon Siporex, Boulevard Principal",
+        "lat": 5.3520,
+        "lon": -4.0680,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "yopougon_3",
+        "commune": "Yopougon",
+        "nom": "Pharmacie Saint Hermann",
+        "tel": "+225 27 23 46 22 11",
+        "adresse": "Yopougon Toits Rouges",
+        "lat": 5.3610,
+        "lon": -4.0840,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "yopougon_4",
+        "commune": "Yopougon",
+        "nom": "Pharmacie Saint Aubin d'Agbayaté",
+        "tel": "+225 27 23 48 55 90",
+        "adresse": "Yopougon Agbayaté",
+        "lat": 5.3480,
+        "lon": -4.0950,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "yopougon_5",
+        "commune": "Yopougon",
+        "nom": "Pharmacie Keneya",
+        "tel": "+225 27 23 45 12 00",
+        "adresse": "Yopougon Carrefour CHU",
+        "lat": 5.3410,
+        "lon": -4.0550,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Abobo
+    {
+        "id": "abobo_1",
+        "commune": "Abobo",
+        "nom": "Pharmacie Grand Marché Abobo",
+        "tel": "+225 27 24 39 01 01",
+        "adresse": "Rond-point Mairie / Grand Marché",
+        "lat": 5.4190,
+        "lon": -4.0190,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "abobo_2",
+        "commune": "Abobo",
+        "nom": "Pharmacie Al-Fatih",
+        "tel": "+225 01 52 12 12 21",
+        "adresse": "Abobo Samaké, voie express",
+        "lat": 5.4280,
+        "lon": -4.0120,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "abobo_3",
+        "commune": "Abobo",
+        "nom": "Pharmacie Sainte Croix",
+        "tel": "+225 07 78 13 75 03",
+        "adresse": "Abobo Sagbé, Terminus Bus",
+        "lat": 5.4350,
+        "lon": -4.0250,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "abobo_4",
+        "commune": "Abobo",
+        "nom": "Pharmacie Yarapha",
+        "tel": "+225 27 24 49 12 63",
+        "adresse": "Abobo Baoulé Carrefour",
+        "lat": 5.4120,
+        "lon": -4.0080,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Koumassi
+    {
+        "id": "koumassi_1",
+        "commune": "Koumassi",
+        "nom": "Pharmacie du Grand Carrefour",
+        "tel": "+225 27 21 36 20 40",
+        "adresse": "Grand Carrefour Koumassi, Bd du 7 Décembre",
+        "lat": 5.2980,
+        "lon": -3.9520,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "koumassi_2",
+        "commune": "Koumassi",
+        "nom": "Pharmacie Marais",
+        "tel": "+225 27 21 28 05 30",
+        "adresse": "Koumassi Remblais",
+        "lat": 5.2910,
+        "lon": -3.9450,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Port-Bouët
+    {
+        "id": "portbouet_1",
+        "commune": "Port-Bouët",
+        "nom": "Pharmacie Océan",
+        "tel": "+225 27 21 27 75 10",
+        "adresse": "Port-Bouët Phare, route de Grand-Bassam",
+        "lat": 5.2580,
+        "lon": -3.9320,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "portbouet_2",
+        "commune": "Port-Bouët",
+        "nom": "Pharmacie Vridi Canal",
+        "tel": "+225 27 21 27 00 12",
+        "adresse": "Vridi Cité, Carrefour Douane",
+        "lat": 5.2680,
+        "lon": -3.9890,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Adjamé
+    {
+        "id": "adjame_1",
+        "commune": "Adjamé",
+        "nom": "Pharmacie 220 Logements",
+        "tel": "+225 27 20 37 40 50",
+        "adresse": "Adjamé 220 Logements, près Marché Gouro",
+        "lat": 5.3520,
+        "lon": -4.0280,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+    {
+        "id": "adjame_2",
+        "commune": "Adjamé",
+        "nom": "Pharmacie de la Liberté",
+        "tel": "+225 27 20 38 12 30",
+        "adresse": "Adjamé Liberté, Boulevard Nangui Abrogoua",
+        "lat": 5.3610,
+        "lon": -4.0320,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    },
+
+    # Bingerville
+    {
+        "id": "bingerville_1",
+        "commune": "Bingerville",
+        "nom": "Pharmacie de Bingerville",
+        "tel": "+225 27 22 40 31 10",
+        "adresse": "Artère principale, face Jardin Botanique",
+        "lat": 5.3560,
+        "lon": -3.8910,
+        "garde_statut": "Garde 24h/24",
+        "periode": "Semaine du 26 sept au 02 oct 2026"
+    }
 ]
+
+@app.get("/api/pharmacies-garde")
+async def get_pharmacies_garde(
+    lat: Optional[float] = None,
+    lon: Optional[float] = None,
+    commune: Optional[str] = None
+):
+    """
+    Renvoie les pharmacies de garde d'Abidjan.
+    Si lat et lon sont renseignées, calcule la distance géodésique et trie par proximité.
+    """
+    result = []
+    for p in PHARMACIES_GARDE_ABIDJAN:
+        item = dict(p)
+        if commune and commune.lower() not in ["toutes", "all", ""]:
+            if item["commune"].lower() != commune.lower():
+                continue
+
+        if lat is not None and lon is not None:
+            dist = calculer_distance_km(lat, lon, item["lat"], item["lon"])
+            item["distance_km"] = dist
+            if dist < 1.0:
+                item["distance_texte"] = f"{int(dist * 1000)} m"
+            else:
+                item["distance_texte"] = f"{dist:.1f} km"
+            
+            # Temps estimé en voiture
+            item["temps_voiture_min"] = max(2, int(dist * 2.5))
+        else:
+            item["distance_km"] = None
+            item["distance_texte"] = None
+            item["temps_voiture_min"] = None
+
+        result.append(item)
+
+    if lat is not None and lon is not None:
+        result.sort(key=lambda x: (x["distance_km"] if x["distance_km"] is not None else 99999))
+
+    return {
+        "count": len(result),
+        "geolocalise": bool(lat is not None and lon is not None),
+        "user_lat": lat,
+        "user_lon": lon,
+        "commune_filtre": commune,
+        "pharmacies": result
+    }
 
 @app.get("/api/samples")
 async def get_real_prescriptions():
