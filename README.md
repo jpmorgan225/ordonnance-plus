@@ -40,10 +40,12 @@
 
 ## ⚡ Démarrage Rapide (1 Clic)
 
-Le serveur tourne déjà sur votre machine ! Ouvrez votre navigateur sur :
-👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
+L'application est accessible en ligne :
+👉 **[Ouvrir Ordonnance+ en production](https://ordonnance-plus.vercel.app/)**
 
-### Commandes utiles :
+### Lancer l'application en local
+
+Pour démarrer une version locale sur votre machine :
 ```bash
 # Activer l'environnement
 source .venv/bin/activate
