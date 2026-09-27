@@ -93,8 +93,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Rue des Jardins, II Plateaux Vallon",
         "lat": 5.3482,
         "lon": -4.0041,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "cocody_2",
@@ -104,8 +108,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Boulevard des Martyrs, face Station Shell",
         "lat": 5.3621,
         "lon": -3.9985,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "cocody_3",
@@ -115,8 +123,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Riviera 3, près Lycée Français",
         "lat": 5.3510,
         "lon": -3.9620,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
     {
         "id": "cocody_4",
@@ -126,8 +138,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "8ème Tranche, Carrefour Duncan",
         "lat": 5.3920,
         "lon": -3.9850,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "cocody_5",
@@ -137,8 +153,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Angré Château d'eau",
         "lat": 5.3780,
         "lon": -3.9720,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Plateau
@@ -150,8 +170,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Avenue Général de Gaulle, Immeuble Nabil",
         "lat": 5.3240,
         "lon": -4.0185,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "plateau_2",
@@ -161,8 +185,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Avenue Chardy, angle Rue Gourgas",
         "lat": 5.3265,
         "lon": -4.0220,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 19h30",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Marcory
@@ -174,8 +202,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Boulevard VGE, face Prima Center",
         "lat": 5.3055,
         "lon": -3.9870,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "marcory_2",
@@ -185,8 +217,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Rue Thomas Edison",
         "lat": 5.3010,
         "lon": -3.9910,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
     {
         "id": "marcory_3",
@@ -196,8 +232,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Zone 4C, Rue du Canal",
         "lat": 5.2920,
         "lon": -3.9780,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
 
     # Treichville
@@ -209,8 +249,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Avenue 8, angle Rue 12",
         "lat": 5.3080,
         "lon": -4.0120,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "treichville_2",
@@ -220,8 +264,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Face Entrée Principale CHU Treichville",
         "lat": 5.3030,
         "lon": -4.0190,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 07h30 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Yopougon
@@ -233,8 +281,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Yopougon Selmer, Carrefour Zone",
         "lat": 5.3370,
         "lon": -4.0720,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "yopougon_2",
@@ -244,8 +296,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Yopougon Siporex, Boulevard Principal",
         "lat": 5.3520,
         "lon": -4.0680,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "yopougon_3",
@@ -255,8 +311,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Yopougon Toits Rouges",
         "lat": 5.3610,
         "lon": -4.0840,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
     {
         "id": "yopougon_4",
@@ -266,8 +326,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Yopougon Agbayaté",
         "lat": 5.3480,
         "lon": -4.0950,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "yopougon_5",
@@ -277,8 +341,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Yopougon Carrefour CHU",
         "lat": 5.3410,
         "lon": -4.0550,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Abobo
@@ -290,8 +358,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Rond-point Mairie / Grand Marché",
         "lat": 5.4190,
         "lon": -4.0190,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "abobo_2",
@@ -301,8 +373,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Abobo Samaké, voie express",
         "lat": 5.4280,
         "lon": -4.0120,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "abobo_3",
@@ -312,8 +388,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Abobo Sagbé, Terminus Bus",
         "lat": 5.4350,
         "lon": -4.0250,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
     {
         "id": "abobo_4",
@@ -323,8 +403,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Abobo Baoulé Carrefour",
         "lat": 5.4120,
         "lon": -4.0080,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Koumassi
@@ -336,8 +420,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Grand Carrefour Koumassi, Bd du 7 Décembre",
         "lat": 5.2980,
         "lon": -3.9520,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "koumassi_2",
@@ -347,8 +435,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Koumassi Remblais",
         "lat": 5.2910,
         "lon": -3.9450,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Port-Bouët
@@ -360,8 +452,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Port-Bouët Phare, route de Grand-Bassam",
         "lat": 5.2580,
         "lon": -3.9320,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "portbouet_2",
@@ -371,8 +467,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Vridi Cité, Carrefour Douane",
         "lat": 5.2680,
         "lon": -3.9890,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Adjamé
@@ -384,8 +484,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Adjamé 220 Logements, près Marché Gouro",
         "lat": 5.3520,
         "lon": -4.0280,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     },
     {
         "id": "adjame_2",
@@ -395,8 +499,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Adjamé Liberté, Boulevard Nangui Abrogoua",
         "lat": 5.3610,
         "lon": -4.0320,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": False,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "jour_ouvrable",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Fermée la nuit et le dimanche",
+        "periode_garde": None
     },
 
     # Bingerville
@@ -408,8 +516,12 @@ PHARMACIES_GARDE_ABIDJAN = [
         "adresse": "Artère principale, face Jardin Botanique",
         "lat": 5.3560,
         "lon": -3.8910,
-        "garde_statut": "Garde 24h/24",
-        "periode": "Semaine du 26 sept au 02 oct 2026"
+        "est_de_garde": True,
+        "ouvert_jour_ouvrable": True,
+        "type_service": "garde_et_jour",
+        "horaires_jour": "Lun - Sam : 08h00 - 20h00",
+        "horaires_garde": "Garde 24h/24 (Nuit, Dimanche & Fériés)",
+        "periode_garde": "Semaine du 26 sept au 02 oct 2026"
     }
 ]
 
@@ -417,18 +529,46 @@ PHARMACIES_GARDE_ABIDJAN = [
 async def get_pharmacies_garde(
     lat: Optional[float] = None,
     lon: Optional[float] = None,
-    commune: Optional[str] = None
+    commune: Optional[str] = None,
+    service: Optional[str] = "tous"  # 'tous', 'garde', 'jour_ouvrable'
 ):
     """
-    Renvoie les pharmacies de garde d'Abidjan.
-    Si lat et lon sont renseignées, calcule la distance géodésique et trie par proximité.
+    Renvoie les pharmacies d'Abidjan filtrées STRICTEMENT par commune et triées par proximité.
+    Distingue :
+    - 'jour_ouvrable' (Lundi au Samedi en journée)
+    - 'garde' (Nuit, Week-end et Jours fériés 24h)
     """
+    communes_dispo = [
+        "Cocody", "Yopougon", "Plateau", "Marcory", "Treichville", 
+        "Abobo", "Koumassi", "Port-Bouët", "Adjamé", "Bingerville"
+    ]
+
+    commune_cible = (commune or "").strip()
+    
+    # Si géolocalisation fournie et aucune commune spécifiée (ou auto) :
+    # Déduire automatiquement la commune la plus proche
+    if (not commune_cible or commune_cible.lower() in ["auto", "toutes", ""]) and (lat is not None and lon is not None):
+        plus_proche = min(
+            PHARMACIES_GARDE_ABIDJAN,
+            key=lambda p: calculer_distance_km(lat, lon, p["lat"], p["lon"])
+        )
+        commune_cible = plus_proche["commune"]
+    elif not commune_cible or commune_cible.lower() in ["auto", "toutes", ""]:
+        commune_cible = "Cocody"
+
     result = []
     for p in PHARMACIES_GARDE_ABIDJAN:
+        # Restriction stricte à la commune demandée
+        if p["commune"].lower() != commune_cible.lower():
+            continue
+
         item = dict(p)
-        if commune and commune.lower() not in ["toutes", "all", ""]:
-            if item["commune"].lower() != commune.lower():
-                continue
+
+        # Filtre sur le régime de service
+        if service == "garde" and not item.get("est_de_garde", False):
+            continue
+        if service == "jour_ouvrable" and not item.get("ouvert_jour_ouvrable", True):
+            continue
 
         if lat is not None and lon is not None:
             dist = calculer_distance_km(lat, lon, item["lat"], item["lon"])
@@ -437,8 +577,6 @@ async def get_pharmacies_garde(
                 item["distance_texte"] = f"{int(dist * 1000)} m"
             else:
                 item["distance_texte"] = f"{dist:.1f} km"
-            
-            # Temps estimé en voiture
             item["temps_voiture_min"] = max(2, int(dist * 2.5))
         else:
             item["distance_km"] = None
@@ -447,15 +585,21 @@ async def get_pharmacies_garde(
 
         result.append(item)
 
+    # Tri par distance croissante si géolocalisé
     if lat is not None and lon is not None:
         result.sort(key=lambda x: (x["distance_km"] if x["distance_km"] is not None else 99999))
+    else:
+        # Pharmacies de garde d'abord, puis par nom
+        result.sort(key=lambda x: (not x.get("est_de_garde", False), x["nom"]))
 
     return {
         "count": len(result),
+        "commune_active": commune_cible,
+        "communes_disponibles": communes_dispo,
+        "service_filtre": service,
         "geolocalise": bool(lat is not None and lon is not None),
         "user_lat": lat,
         "user_lon": lon,
-        "commune_filtre": commune,
         "pharmacies": result
     }
 
@@ -631,7 +775,7 @@ async def validate_prescription(payload: ValidationPayload):
         "source_prix": "Catalogue officiel Côte d'Ivoire (pharmacies-de-garde.ci)",
         "conseils_delivrance": payload.conseils_delivrance or "Respecter scrupuleusement la durée prescrite. Contacter votre pharmacien en cas de questions.",
         "pharmacies_garde_recommandees": PHARMACIES_GARDE_ABIDJAN[:2],
-        "mentions_legales": "Fiche de dispensation sous le contrôle du pharmacien. Données sensibles protégées (Loi n° 2013-450 ARTCI)."
+        "mentions_legales": "Fiche de dispensation sous le contrôle du pharmacien. Données de santé protégées (traitement éphémère et confidentiel)."
     }
 
     return fiche_patient

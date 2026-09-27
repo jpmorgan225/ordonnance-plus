@@ -84,20 +84,20 @@
           </div>
           <div class="flex items-center gap-1.5 text-[11px] text-on-surface-variant">
             <span class="w-1.5 h-1.5 rounded-full bg-pharmacy-green animate-pulse"></span>
-            <span>3 852 médicaments officiels CI</span>
+            <span>Référentiel médicaments & officines CI</span>
           </div>
         </div>
       </div>
 
       <!-- Quick Actions -->
       <div class="flex items-center gap-2">
-        <a href="#urgences-section" class="h-9 px-3 rounded-full bg-emergency-red/10 text-emergency-red font-semibold text-xs flex items-center gap-1.5 hover:bg-emergency-red/20 transition">
-          <span class="material-symbols-outlined text-base">emergency</span>
-          <span class="hidden sm:inline">Gardes ce soir</span>
+        <a href="#pharmacies-section" class="h-9 px-3.5 rounded-full bg-emerald-50 text-primary hover:bg-emerald-100 font-semibold text-xs flex items-center gap-1.5 transition">
+          <span class="material-symbols-outlined text-base">local_pharmacy</span>
+          <span>Pharmacies</span>
         </a>
-        <div class="h-9 px-3 rounded-full bg-slate-100 text-slate-700 font-semibold text-xs flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm text-primary">security</span>
-          <span class="hidden md:inline">ARTCI 2013-450</span>
+        <div class="h-9 px-3.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-xs flex items-center gap-1.5" title="Traitement confidentiel sans stockage permanent">
+          <span class="material-symbols-outlined text-sm text-emerald-600">lock</span>
+          <span class="hidden sm:inline">100% Confidentiel</span>
         </div>
       </div>
 
@@ -314,34 +314,38 @@
 
     </section>
 
-    <!-- DUTY PHARMACIES NEARBY (Abidjan & Environs) -->
-    <section id="urgences-section" class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col gap-5">
-      <div class="flex flex-wrap items-center justify-between gap-3">
+    <!-- PHARMACIES PAR COMMUNE & PROXIMITÉ (Abidjan) -->
+    <section id="pharmacies-section" class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm flex flex-col gap-5">
+      
+      <!-- Section Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-emergency-red text-white flex items-center justify-center shrink-0 shadow-sm">
+          <div class="w-11 h-11 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-sm">
             <span class="material-symbols-outlined text-2xl">local_pharmacy</span>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-slate-900">Pharmacies de garde à proximité (Abidjan)</h3>
-            <p class="text-xs text-on-surface-variant font-body">Ouvertes 24h/24 cette semaine • Semaine du Samedi 26 sept au Vendredi 2 oct 2026</p>
+            <h3 class="text-lg font-bold text-slate-900">Pharmacies de proximité par commune</h3>
+            <p class="text-xs text-on-surface-variant font-body">Officines répertoriées par commune • Triées par ordre de proximité directe</p>
           </div>
         </div>
-        <span class="text-xs font-bold text-emerald-800 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Garde officielle 24h/24</span>
-        </span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-emerald-800 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center gap-1.5" id="badge-commune-info">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="badge-commune-text">Commune : Cocody</span>
+          </span>
+        </div>
       </div>
 
-      <!-- GEOLOCATION BANNER & CONTROLS -->
+      <!-- LOCALISATION & COMMUNE CONTROLS -->
       <div class="bg-surface-container-low rounded-2xl p-4 sm:p-5 border border-slate-200/60 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         <div class="flex items-start gap-3 flex-1">
           <div class="w-9 h-9 rounded-xl bg-white text-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
             <span class="material-symbols-outlined text-xl">near_me</span>
           </div>
           <div class="text-xs">
-            <h4 class="font-bold text-slate-900 text-sm">Trouver les officines de garde les plus proches</h4>
+            <h4 class="font-bold text-slate-900 text-sm">Sélection de votre commune</h4>
             <p class="text-slate-600 font-body mt-0.5" id="geo-status-text">
-              Partagez votre position pour calculer la distance exacte en mètres/km et classer les pharmacies de la plus proche à la plus éloignée.
+              Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les officines de la plus proche à la plus éloignée.
             </p>
           </div>
         </div>
@@ -352,37 +356,59 @@
             <span id="btn-geoloc-label">Me localiser automatiquement</span>
           </button>
 
-          <div class="relative">
-            <select id="select-commune" onchange="changerFiltreCommune(this.value)" class="text-xs font-semibold bg-white border border-slate-300 rounded-full px-3 py-2 text-slate-800 focus:outline-none focus:border-primary shadow-sm pr-8 cursor-pointer">
-              <option value="toutes">Toutes les communes (28 officines)</option>
-              <option value="Cocody">Cocody (II Plateaux, Angré, Riviera)</option>
+          <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-full px-3 py-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-sm text-slate-400">location_city</span>
+            <select id="select-commune" onchange="changerFiltreCommune(this.value)" class="text-xs font-bold text-slate-800 bg-transparent focus:outline-none cursor-pointer pr-2">
+              <option value="Cocody" selected>Cocody (II Plateaux, Angré, Riviera)</option>
               <option value="Yopougon">Yopougon (Selmer, Toits Rouges, Siporex)</option>
-              <option value="Plateau">Plateau (Centre-ville)</option>
+              <option value="Plateau">Plateau (Centre des affaires)</option>
               <option value="Marcory">Marcory (Zone 4, Biétry)</option>
               <option value="Treichville">Treichville (Avenue 8, CHU)</option>
               <option value="Abobo">Abobo (Gare, Samaké, Sagbé)</option>
               <option value="Koumassi">Koumassi (Grand Carrefour, Remblais)</option>
               <option value="Port-Bouët">Port-Bouët (Vridi, Phare)</option>
               <option value="Adjamé">Adjamé (220 Logements, Liberté)</option>
-              <option value="Bingerville">Bingerville</option>
+              <option value="Bingerville">Bingerville (Botanique, Carrefour)</option>
             </select>
           </div>
         </div>
       </div>
 
+      <!-- SERVICE REGIME FILTER TABS (Jour ouvrable vs Garde Nuit & WE) -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs" id="service-tabs">
+          <button id="tab-service-tous" onclick="changerFiltreService('tous')" class="px-3.5 py-1.5 rounded-full font-bold text-white bg-slate-900 shadow-sm transition flex items-center gap-1.5">
+            <span>Toutes les officines de la commune</span>
+            <span class="bg-white/20 px-1.5 py-0.2 rounded-full text-[10px]" id="count-tab-tous">—</span>
+          </button>
+          <button id="tab-service-garde" onclick="changerFiltreService('garde')" class="px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-emerald-600">nightlight</span>
+            <span>🌙 De garde (Nuit, WE & Fériés 24h)</span>
+          </button>
+          <button id="tab-service-jour" onclick="changerFiltreService('jour_ouvrable')" class="px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-blue-600">wb_sunny</span>
+            <span>☀️ Jour ouvrable (08h00 - 20h00)</span>
+          </button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 font-medium" id="order-indicator-text">
+          Trié par : <strong>Pharmacies de garde en priorité</strong>
+        </div>
+      </div>
+
       <!-- Banner if localized -->
-      <div id="geo-info-badge" class="hidden px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between gap-2">
-        <span class="flex items-center gap-1.5 font-medium">
-          <span class="material-symbols-outlined text-sm text-emerald-700">check_circle</span>
-          <span id="geo-coords-text">Position prise en compte. Pharmacies classées par distance.</span>
+      <div id="geo-info-badge" class="hidden px-4 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex flex-wrap items-center justify-between gap-2">
+        <span class="flex items-center gap-2 font-medium">
+          <span class="material-symbols-outlined text-base text-emerald-700">check_circle</span>
+          <span id="geo-coords-text">Position prise en compte. Officines classées de la plus proche à la plus éloignée.</span>
         </span>
-        <button onclick="reinitialiserGeoloc()" class="text-xs text-slate-500 hover:text-slate-800 underline font-semibold">
-          Désactiver
+        <button onclick="reinitialiserGeoloc()" class="text-xs text-emerald-800 hover:text-emerald-950 underline font-bold">
+          Désactiver le GPS
         </button>
       </div>
 
       <!-- Grid of Pharmacies -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="pharmacies-garde-list">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="pharmacies-garde-list">
         <!-- Populated by JS -->
       </div>
     </section>
@@ -486,7 +512,8 @@
   <script>
     let currentPrescription = null;
     let userLocation = null;
-    let selectedCommune = "toutes";
+    let selectedCommune = "Cocody";
+    let currentServiceFilter = "tous";
 
     document.addEventListener("DOMContentLoaded", () => {
       chargerPharmacies();
@@ -499,11 +526,11 @@
       container.innerHTML = `
         <div class="col-span-full py-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
           <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <span>Recherche des pharmacies de garde officielles...</span>
+          <span>Recherche des officines dans la commune de ${escapeHtml(selectedCommune)}...</span>
         </div>
       `;
 
-      let url = `/api/pharmacies-garde?commune=${encodeURIComponent(selectedCommune)}`;
+      let url = `/api/pharmacies-garde?commune=${encodeURIComponent(selectedCommune)}&service=${encodeURIComponent(currentServiceFilter)}`;
       if (userLocation) {
         url += `&lat=${userLocation.lat}&lon=${userLocation.lon}`;
       }
@@ -512,7 +539,36 @@
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          renderPharmaciesGarde(data.pharmacies);
+          // Mettre à jour la commune active détectée
+          selectedCommune = data.commune_active || selectedCommune;
+          const selectEl = document.getElementById('select-commune');
+          if (selectEl && selectEl.value !== selectedCommune) {
+            selectEl.value = selectedCommune;
+          }
+
+          // Mettre à jour l'en-tête de commune
+          const badgeText = document.getElementById('badge-commune-text');
+          if (badgeText) {
+            badgeText.textContent = `Commune : ${selectedCommune} (${data.count} officines)`;
+          }
+
+          // Compteur total de l'onglet tous
+          const countTous = document.getElementById('count-tab-tous');
+          if (countTous && currentServiceFilter === 'tous') {
+            countTous.textContent = data.count;
+          }
+
+          // Indicateur de tri
+          const orderText = document.getElementById('order-indicator-text');
+          if (orderText) {
+            if (data.geolocalise) {
+              orderText.innerHTML = `Trié par : <strong class="text-emerald-700">Proximité GPS croissante</strong> (du plus proche au plus éloigné)`;
+            } else {
+              orderText.innerHTML = `Trié par : <strong>Pharmacies de garde en priorité</strong>`;
+            }
+          }
+
+          renderPharmaciesGarde(data.pharmacies, data.geolocalise);
         } else {
           container.innerHTML = '<p class="text-xs text-rose-500 col-span-full text-center py-4">Erreur lors de la récupération des pharmacies.</p>';
         }
@@ -522,44 +578,52 @@
       }
     }
 
-    function renderPharmaciesGarde(pharmacies) {
+    function renderPharmaciesGarde(pharmacies, isGeolocalise) {
       const container = document.getElementById('pharmacies-garde-list');
       container.innerHTML = '';
 
       if (!pharmacies || pharmacies.length === 0) {
         container.innerHTML = `
           <div class="col-span-full p-8 text-center text-slate-500 text-xs bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-            Aucune pharmacie de garde répertoriée pour cette sélection.
+            Aucune pharmacie ne correspond aux critères sélectionnés dans la commune de <strong>${escapeHtml(selectedCommune)}</strong>.
           </div>
         `;
         return;
       }
 
       pharmacies.forEach((p, idx) => {
-        const isClosest = (userLocation && idx === 0);
+        const isClosest = (isGeolocalise && idx === 0);
         const card = document.createElement('div');
-        card.className = `p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+        card.className = `p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between gap-3.5 ${
           isClosest 
-            ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-300' 
-            : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-sm'
+            ? 'bg-emerald-50/80 border-emerald-400 shadow-md ring-2 ring-emerald-300/70' 
+            : 'bg-white border-slate-200/90 hover:border-slate-300 shadow-sm'
         }`;
 
         card.innerHTML = `
           <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${isClosest ? 'bg-emerald-200 text-emerald-900 font-black' : 'bg-slate-100 text-slate-700'}">
-                ${isClosest ? '⭐ Plus proche • ' : ''}${escapeHtml(p.commune)}
-              </span>
+            <!-- Top badge row : Proximité & Commune -->
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              ${isClosest ? `
+                <span class="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-700 text-white flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-xs">star</span>
+                  Officine la plus proche
+                </span>
+              ` : `
+                <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                  ${escapeHtml(p.commune)}
+                </span>
+              `}
+
               ${p.distance_texte ? `
-                <span class="text-xs font-black px-2.5 py-0.5 rounded-full ${isClosest ? 'bg-primary text-white shadow-sm' : 'bg-emerald-100 text-emerald-900'} flex items-center gap-1 font-mono">
+                <span class="text-xs font-black px-2.5 py-0.5 rounded-full ${isClosest ? 'bg-primary text-white shadow-sm' : 'bg-emerald-100 text-emerald-950'} flex items-center gap-1 font-mono">
                   <span class="material-symbols-outlined text-xs">near_me</span>
                   ${escapeHtml(p.distance_texte)} ${p.temps_voiture_min ? `(~${p.temps_voiture_min} min)` : ''}
                 </span>
-              ` : `
-                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Garde 24h/24</span>
-              `}
+              ` : ''}
             </div>
 
+            <!-- Nom & Adresse -->
             <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
               ${escapeHtml(p.nom)}
             </h4>
@@ -567,14 +631,46 @@
               <span class="material-symbols-outlined text-sm text-slate-400 shrink-0 mt-0.5">location_on</span>
               <span>${escapeHtml(p.adresse)}</span>
             </p>
+
+            <!-- Deux régimes clairement distingués -->
+            <div class="mt-3 flex flex-col gap-2">
+              
+              <!-- 1. Régime De Garde (Nuit, WE & Fériés) -->
+              ${p.est_de_garde ? `
+                <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300/80 text-xs flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-700 text-base shrink-0 mt-0.5">nightlight</span>
+                  <div class="leading-tight">
+                    <span class="font-black text-emerald-950 block">🌙 PHARMACIE DE GARDE (24h/24)</span>
+                    <span class="text-[11px] text-emerald-800 font-medium">Permanence Nuit, Dimanche & Jours fériés</span>
+                    <span class="block text-[10px] text-emerald-700 font-mono font-semibold mt-0.5">${escapeHtml(p.periode_garde || 'Semaine du 26 sept au 02 oct 2026')}</span>
+                  </div>
+                </div>
+              ` : `
+                <div class="p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center gap-2 text-slate-500">
+                  <span class="material-symbols-outlined text-slate-400 text-sm">bedtime_off</span>
+                  <span class="text-[11px]">Non de garde la nuit ni le week-end</span>
+                </div>
+              `}
+
+              <!-- 2. Régime Jour Ouvrable (Lundi au Samedi) -->
+              <div class="p-2.5 rounded-xl bg-sky-50/70 border border-sky-200 text-xs flex items-start gap-2 text-sky-950">
+                <span class="material-symbols-outlined text-sky-700 text-base shrink-0 mt-0.5">wb_sunny</span>
+                <div class="leading-tight">
+                  <span class="font-bold text-sky-950 block text-[11px]">☀️ PHARMACIE JOUR OUVRABLE</span>
+                  <span class="text-[11px] text-sky-800 font-medium">${escapeHtml(p.horaires_jour || 'Lun - Sam : 08h00 - 20h00')}</span>
+                </div>
+              </div>
+
+            </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
+          <!-- Bottom Action Buttons -->
+          <div class="pt-3 border-t border-slate-100 flex items-center gap-2 mt-auto">
             <a href="tel:${p.tel.replace(/\\s/g, '')}" class="flex-1 py-2.5 px-3 rounded-xl bg-primary hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
               <span class="material-symbols-outlined text-base">call</span>
               <span>${escapeHtml(p.tel)}</span>
             </a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 transition" title="Ouvrir itinéraire GPS">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1 transition" title="Ouvrir itinéraire GPS">
               <span class="material-symbols-outlined text-base text-slate-600">directions</span>
               <span>Itinéraire</span>
             </a>
@@ -582,6 +678,33 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    function changerFiltreService(service) {
+      currentServiceFilter = service;
+
+      // Mettre à jour l'apparence des onglets
+      const tabs = {
+        'tous': document.getElementById('tab-service-tous'),
+        'garde': document.getElementById('tab-service-garde'),
+        'jour_ouvrable': document.getElementById('tab-service-jour')
+      };
+
+      Object.entries(tabs).forEach(([key, btn]) => {
+        if (!btn) return;
+        if (key === service) {
+          btn.className = "px-3.5 py-1.5 rounded-full font-bold text-white bg-slate-900 shadow-sm transition flex items-center gap-1.5";
+        } else {
+          btn.className = "px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5";
+        }
+      });
+
+      chargerPharmacies();
+    }
+
+    function changerFiltreCommune(commune) {
+      selectedCommune = commune;
+      chargerPharmacies();
     }
 
     function demanderGeolocalisation() {
@@ -603,14 +726,17 @@
             lat: position.coords.latitude,
             lon: position.coords.longitude
           };
-          btnLabel.textContent = "Position actualisée";
+          btnLabel.textContent = "Position GPS active";
           btn.disabled = false;
           btn.className = "px-4 py-2.5 rounded-full font-bold text-xs bg-emerald-800 text-white shadow-sm transition flex items-center gap-2";
 
-          document.getElementById('geo-info-badge').classList.remove('hidden');
-          document.getElementById('geo-coords-text').textContent = 
-            `Position GPS détectée (${userLocation.lat.toFixed(4)}°N, ${userLocation.lon.toFixed(4)}°W). Officines classées par distance réelle.`;
-          statusText.textContent = "Votre position est active : les pharmacies ci-dessous sont ordonnées de la plus proche à la plus éloignée.";
+          const geoBadge = document.getElementById('geo-info-badge');
+          const geoText = document.getElementById('geo-coords-text');
+          if (geoBadge) geoBadge.classList.remove('hidden');
+          if (geoText) {
+            geoText.textContent = `Position GPS détectée (${userLocation.lat.toFixed(4)}°N, ${userLocation.lon.toFixed(4)}°W). Recherche de votre commune en cours...`;
+          }
+          statusText.textContent = "Géolocalisation active : votre commune a été automatiquement sélectionnée et les officines sont classées par proximité.";
 
           chargerPharmacies();
         },
@@ -619,10 +745,11 @@
           btn.disabled = false;
           let msg = "Accès à la position refusé.";
           if (error.code === error.PERMISSION_DENIED) {
-            msg = "Localisation refusée : vous pouvez filtrer les pharmacies par commune dans le menu déroulant.";
+            msg = "Localisation refusée : vous pouvez sélectionner votre commune manuellement ci-contre.";
           }
           statusText.textContent = msg;
-          document.getElementById('geo-info-badge').classList.add('hidden');
+          const geoBadge = document.getElementById('geo-info-badge');
+          if (geoBadge) geoBadge.classList.add('hidden');
           chargerPharmacies();
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -631,15 +758,11 @@
 
     function reinitialiserGeoloc() {
       userLocation = null;
-      document.getElementById('geo-info-badge').classList.add('hidden');
+      const geoBadge = document.getElementById('geo-info-badge');
+      if (geoBadge) geoBadge.classList.add('hidden');
       document.getElementById('btn-geoloc-label').textContent = "Me localiser automatiquement";
       document.getElementById('btn-geoloc').className = "px-4 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2 active:scale-95";
-      document.getElementById('geo-status-text').textContent = "Partagez votre position pour calculer la distance exacte en mètres/km et classer les pharmacies de la plus proche à la plus éloignée.";
-      chargerPharmacies();
-    }
-
-    function changerFiltreCommune(commune) {
-      selectedCommune = commune;
+      document.getElementById('geo-status-text').textContent = "Activez la géolocalisation pour détecter automatiquement votre commune et ordonner les officines de la plus proche à la plus éloignée.";
       chargerPharmacies();
     }
 

@@ -34,12 +34,30 @@ class TestOrdonnancePlus(unittest.TestCase):
         self.assertLess(d, 2.5)
 
         client = TestClient(app)
-        # Requête sans coordonnées
+        # Requête sans coordonnées (commune par défaut Cocody)
         res = client.get("/api/pharmacies-garde")
         self.assertEqual(res.status_code, 200)
         data = res.json()
-        self.assertGreaterEqual(data["count"], 25)
+        self.assertEqual(data["commune_active"], "Cocody")
+        self.assertGreater(data["count"], 0)
         self.assertFalse(data["geolocalise"])
+        for p in data["pharmacies"]:
+            self.assertEqual(p["commune"], "Cocody")
+
+        # Requête avec commune explicite (Yopougon)
+        res_yop = client.get("/api/pharmacies-garde?commune=Yopougon")
+        self.assertEqual(res_yop.status_code, 200)
+        data_yop = res_yop.json()
+        self.assertEqual(data_yop["commune_active"], "Yopougon")
+        for p in data_yop["pharmacies"]:
+            self.assertEqual(p["commune"], "Yopougon")
+
+        # Requête avec filtre service de garde
+        res_garde = client.get("/api/pharmacies-garde?commune=Cocody&service=garde")
+        self.assertEqual(res_garde.status_code, 200)
+        data_garde = res_garde.json()
+        for p in data_garde["pharmacies"]:
+            self.assertTrue(p["est_de_garde"])
 
         # Requête avec géolocalisation
         res_geo = client.get("/api/pharmacies-garde?lat=5.35&lon=-4.00")
@@ -50,6 +68,9 @@ class TestOrdonnancePlus(unittest.TestCase):
         # Doit être trié par distance croissante
         dists = [p["distance_km"] for p in data_geo["pharmacies"]]
         self.assertEqual(dists, sorted(dists))
+        # Toutes les pharmacies retournées doivent être de la commune détectée
+        for p in data_geo["pharmacies"]:
+            self.assertEqual(p["commune"], data_geo["commune_active"])
 
 if __name__ == "__main__":
     unittest.main()
