@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordonnance+ — Pitch Deck (Hackathon GOMYCODE 2026)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono-tech { font-family: 'Space Grotesk', monospace; }
+    
+    @media print {
+      body { background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .slide-card { page-break-after: always !important; display: flex !important; min-height: 100vh !important; }
+      .slide-container { display: block !important; }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col justify-between overflow-x-hidden select-none bg-radial from-slate-900 via-slate-950 to-slate-950">
+
+  <!-- TOP BAR / NAVIGATION HEADER -->
+  <header class="w-full px-6 py-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 no-print">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+        <span class="material-symbols-outlined text-2xl text-slate-950">medication</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-base tracking-tight text-white">Ordonnance<span class="text-emerald-400">+</span></span>
+          <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Pitch Deck</span>
+        </div>
+        <p class="text-[11px] text-slate-400">Hackathon GOMYCODE 2026 • Abidjan, Côte d'Ivoire</p>
+      </div>
+    </div>
+
+    <!-- Slide indicators & Controls -->
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full px-4 py-1.5 text-xs font-mono">
+        <span class="text-slate-400">Slide</span>
+        <span id="current-slide-num" class="text-emerald-400 font-bold text-sm">1</span>
+        <span class="text-slate-500">/</span>
+        <span class="text-slate-400 font-semibold">7</span>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button onclick="prevSlide()" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-sm" title="Diapositive précédente (←)">
+          <span class="material-symbols-outlined text-lg">chevron_left</span>
+        </button>
+        <button onclick="nextSlide()" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-sm" title="Diapositive suivante (→ ou Espace)">
+          <span class="material-symbols-outlined text-lg">chevron_right</span>
+        </button>
+      </div>
+
+      <div class="h-5 w-px bg-slate-800 mx-1"></div>
+
+      <!-- Live Demo Link -->
+      <a href="/" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-500/20 cursor-pointer">
+        <span class="material-symbols-outlined text-base">play_circle</span>
+        <span>Ouvrir l'App Live</span>
+      </a>
+
+      <!-- Print / Export PDF -->
+      <button onclick="window.print()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1 cursor-pointer" title="Imprimer ou enregistrer en PDF">
+        <span class="material-symbols-outlined text-sm">print</span>
+        <span class="hidden md:inline">PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SLIDES CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 md:p-8 flex items-center justify-center">
+
+    <!-- SLIDE 1: COUVERTURE -->
+    <div id="slide-1" class="slide-card w-full flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -top-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div>
+        <div class="flex items-center gap-2 mb-6">
+          <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold tracking-wide uppercase flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Hackathon GOMYCODE 2026 • Abidjan
+          </span>
+          <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700">Santé Numérique & IA Responsable</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+          Ordonnance<span class="text-emerald-400">+</span>
+        </h1>
+
+        <p class="text-lg sm:text-2xl text-slate-300 font-light max-w-3xl leading-relaxed mb-8">
+          L'assistant d'IA clinique multimodale et l'accompagnement vocal bienveillant qui <strong class="text-white font-bold">sécurisent la délivrance des médicaments</strong> et <strong class="text-emerald-400 font-bold">guident les patients analphabètes</strong> en Côte d'Ivoire.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-800/80">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-emerald-400 text-2xl">document_scanner</span>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Vision Multimodale</p>
+              <p class="text-sm font-semibold text-white">Google Gemini 3.8 Flash</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🇨🇮</span>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Voix Native Abidjan</p>
+              <p class="text-sm font-semibold text-white">Gemini 3.8 Flash TTS</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-emerald-400 text-2xl">local_pharmacy</span>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Référentiel National</p>
+              <p class="text-sm font-semibold text-white">3 852 Prix & Pharmacies</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex items-center justify-between pt-6 border-t border-slate-800/60 text-xs text-slate-400">
+        <span>Présenté par l'équipe <strong>Ordonnance+</strong></span>
+        <span>Appuyez sur <kbd class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-emerald-400 font-mono">Espace</kbd> ou <kbd class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-emerald-400 font-mono">→</kbd> pour naviguer</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: LE PROBLÈME -->
+    <div id="slide-2" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <span class="text-xs font-black uppercase tracking-widest text-rose-400 mb-2 block">01 / Le Constat Terrain</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          Le double choc sanitaire en officine
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Carte Choc 1 -->
+          <div class="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center mb-4">
+              <span class="material-symbols-outlined text-2xl">edit_off</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">1. L'écriture médicale indéchiffrable</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              En Côte d'Ivoire, plus de <strong class="text-rose-300">80% des ordonnances sont rédigées à la main</strong> avec des ratures et abréviations complexes. Un chiffre confus (ex: <em>250 mg</em> au lieu de <em>500 mg</em>) représente un risque mortel de sous-dosage ou d'intoxication.
+            </p>
+          </div>
+
+          <!-- Carte Choc 2 -->
+          <div class="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4">
+              <span class="material-symbols-outlined text-2xl">record_voice_over</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">2. Le mur de l'analphabétisme</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Plus de <strong class="text-amber-300">40% des patients ne savent pas lire</strong> leur prescription une fois rentrés chez eux. Sans accompagnement vocal adapté, ils prennent leurs médicaments au hasard, créant rechutes et résistances aux antibiotiques.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center gap-3">
+          <span class="material-symbols-outlined text-emerald-400 text-xl shrink-0">check_circle</span>
+          <p class="text-xs sm:text-sm text-slate-300">
+            <strong>Le besoin urgent :</strong> Un outil capable de transcrire fidèlement le manuscrit, de bloquer les hallucinations de l'IA, et d'expliquer oralement au patient comment se soigner dans son propre langage.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Le Problème</span>
+        <span>Slide 2 / 7</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: LA PHILOSOPHIE RESPONSABLE -->
+    <div id="slide-3" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <span class="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2 block">02 / Éthique & Sécurité Clinique</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          Notre Doctrine : <span class="text-emerald-400">Pharmacist-in-the-Loop</span>
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <div class="p-6 rounded-2xl bg-slate-800/70 border border-slate-700">
+            <div class="text-emerald-400 font-mono font-bold text-xl mb-2">01</div>
+            <h4 class="font-bold text-white text-base mb-2">Zéro Hallucination</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              L'IA ne devine jamais. Si une écriture est floue ou un dosage illisible, le système l'affiche mot à mot sans jamais inventer une molécule absente.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-slate-800/70 border border-slate-700">
+            <div class="text-emerald-400 font-mono font-bold text-xl mb-2">02</div>
+            <h4 class="font-bold text-white text-base mb-2">Seuil de validation à 40%</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Chaque ligne reçoit un score visuel strict. Au-dessus de 40%, elle est confirmée. En dessous, elle est flaguée « Douteux » et exige la confirmation physique du praticien.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-slate-800/70 border border-slate-700">
+            <div class="text-emerald-400 font-mono font-bold text-xl mb-2">03</div>
+            <h4 class="font-bold text-white text-base mb-2">Responsabilité Humaine</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              L'IA n'est pas un prescripteur : c'est une loupe augmentée. Le pharmacien engage sa signature et garde le contrôle absolu sur la dispensation.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/30 flex items-center justify-between">
+          <div>
+            <h4 class="text-sm font-bold text-emerald-300">Conforme au Design System Google Health & Réglementation Ivoirienne</h4>
+            <p class="text-xs text-slate-400">Respect strict du secret médical et minimisation : traitement éphémère en mémoire vive, aucune image conservée.</p>
+          </div>
+          <span class="material-symbols-outlined text-3xl text-emerald-400 shrink-0 ml-4">health_and_safety</span>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Sécurité & Éthique</span>
+        <span>Slide 3 / 7</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: LA SOLUTION TECHNOLOGIQUE -->
+    <div id="slide-4" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <span class="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2 block">03 / Architecture Technique</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          La puissance de Google Gemini 3.8 Flash
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-400 mt-0.5">visibility</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Vision Multimodale Haute Résolution</h4>
+                <p class="text-xs text-slate-300 mt-1">Modèle <strong>gemini-3.8-flash</strong> (2026) avec cascade de repli sur <em>gemini-3.5-flash-lite</em>. Analyse les écritures les plus difficiles en moins de 2 secondes.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-400 mt-0.5">translate</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Décodage Automatique des Abréviations</h4>
+                <p class="text-xs text-slate-300 mt-1"><code class="text-emerald-300 font-mono text-[11px]">1 cp x 3/j av rep pdt 5j</code> est automatiquement traduit en consignes limpides à l'oral.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-400 mt-0.5">dataset</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Rapprochement Référentiel CI Instantané</h4>
+                <p class="text-xs text-slate-300 mt-1">Fuzzy matching haute performance contre les <strong>3 852 médicaments officiels</strong> de Côte d'Ivoire.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pipeline visuel -->
+          <div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-center">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-4">Pipeline d'Analyse en 4 Étapes</h4>
+            <div class="space-y-3 font-mono text-xs">
+              <div class="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                <span>1. Scan multimodal & extraction brute</span>
+              </div>
+              <div class="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                <span>2. Évaluation de confiance sans extrapolation</span>
+              </div>
+              <div class="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                <span>3. Rapprochement catalogue & calcul prix FCFA</span>
+              </div>
+              <div class="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                <span>4. Synthèse vocale ivoirienne & pharmacies</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Technologie</span>
+        <span>Slide 4 / 7</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: L'EFFET WAHOU - LA VOIX IVOIRIENNE -->
+    <div id="slide-5" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-2xl">🇨🇮</span>
+          <span class="text-xs font-black uppercase tracking-widest text-amber-400">04 / L'Innovation d'Inclusion</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          La Voix Native d'Abidjan : <span class="text-amber-400">L'Inclusion pour Tous</span>
+        </h2>
+
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-emerald-500/10 border border-amber-500/30 mb-8">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-slate-950 shrink-0 shadow-lg">
+              <span class="material-symbols-outlined text-3xl">record_voice_over</span>
+            </div>
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-amber-300 font-bold">Google Gemini 3.8 Flash TTS (Voix Studio Kore)</span>
+              <h3 class="text-xl font-bold text-white mt-0.5 mb-2">Un langage parlé chaleureux, clair et bienveillant</h3>
+              <p class="text-sm sm:text-base text-slate-200 italic font-serif leading-relaxed">
+                « Bonjour mon cher ! Y'a pas à t'inquiéter, voici comment tu dois bien prendre tes médicaments pour vite guérir. Le docteur a écrit 2 médicaments sur ton papier... Faut prendre 1 comprimé deux fois dans la journée, un le matin et un le soir avant de manger pendant 5 jours sans sauter de jour... Son prix moyen, c'est environ 2 500 francs CFA... N'oublie jamais ton papier original de l'ordonnance. Que Dieu te donne la santé et bon rétablissement à toi ! »
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700">
+            <h4 class="text-xs font-bold text-amber-300 uppercase mb-1">Dédramatisant</h4>
+            <p class="text-xs text-slate-300">Rassure le patient, élimine le stress de l'ordonnance incomprise.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700">
+            <h4 class="text-xs font-bold text-amber-300 uppercase mb-1">Écoute Globale ou par Ligne</h4>
+            <p class="text-xs text-slate-300">Possibilité de réécouter chaque médicament individuellement.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700">
+            <h4 class="text-xs font-bold text-amber-300 uppercase mb-1">Zéro Latence</h4>
+            <p class="text-xs text-slate-300">Préchargement en arrière-plan : lecture instantanée au clic.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Innovation Vocale</span>
+        <span>Slide 5 / 7</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: ANCRAGE TERRAIN -->
+    <div id="slide-6" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <span class="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2 block">05 / Données Locales & Urgences</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          Ancrage 100% Ivoirien & Gardes de Nuit
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Carte 3852 Médicaments -->
+          <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+            <div class="flex items-center justify-between mb-4">
+              <span class="material-symbols-outlined text-3xl text-emerald-400">payments</span>
+              <span class="text-2xl font-black text-emerald-400 font-mono">3 852</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Catalogue National des Prix (FCFA)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Base officielle des médicaments commercialisés en pharmacie en Côte d'Ivoire. Le patient connaît immédiatement le <strong>prix moyen total</strong> de son traitement avant d'arriver au comptoir, évitant les mauvaises surprises.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+              ✓ Synchronisation automatique hebdomadaire
+            </div>
+          </div>
+
+          <!-- Carte Pharmacies de garde -->
+          <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+            <div class="flex items-center justify-between mb-4">
+              <span class="material-symbols-outlined text-3xl text-emerald-400">emergency</span>
+              <span class="text-2xl font-black text-emerald-400 font-mono">35+</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Pharmacies de Garde de Cocody</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Cartographie réelle des pharmacies de garde d'Abidjan : Deux-Plateaux, Saint-Jean, Riviera, Angré... avec calcul des distances réelles, statuts d'ouverture 24h/24 et numéros de téléphone directs.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+              ✓ Bouton d'appel d'urgence en 1 clic
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Données & Terrain</span>
+        <span>Slide 6 / 7</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: IMPACT & CONCLUSION -->
+    <div id="slide-7" class="slide-card w-full hidden flex flex-col justify-between p-8 sm:p-12 md:p-16 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <div>
+        <span class="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2 block">06 / Vision & Déploiement</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-8">
+          L'Impact & Les Prochaines Étapes
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+            <h4 class="font-bold text-white text-base mb-2">Gains Immédiats</h4>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• Déchiffrage en 2s (vs 2 min)</li>
+              <li>• Zéro erreur de dosage</li>
+              <li>• Observance thérapeutique x2 chez les patients analphabètes</li>
+            </ul>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+            <h4 class="font-bold text-white text-base mb-2">Intégration B2B</h4>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• API connectable aux logiciels de gestion d'officine (SmartPharm)</li>
+              <li>• Envoi vocal sur WhatsApp / SMS sans smartphone</li>
+            </ul>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+            <h4 class="font-bold text-white text-base mb-2">Modèle Économique</h4>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• SaaS B2B pour officines & cliniques (abonnement mensuel)</li>
+              <li>• Gratuité totale pour les patients</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 font-bold text-center">
+          <p class="text-lg sm:text-xl font-extrabold">
+            « Ordonnance+ : L'IA responsable qui redonne la vue et la voix à la santé pour tous en Côte d'Ivoire. »
+          </p>
+          <p class="text-xs font-semibold text-slate-900 mt-2 opacity-90">Merci aux membres du jury GOMYCODE ! Questions & Démo en direct.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between text-xs text-slate-500">
+        <span>Ordonnance+ • Conclusion</span>
+        <span>Slide 7 / 7</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM PROGRESS FOOTER -->
+  <footer class="w-full px-6 py-4 flex items-center justify-between border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky bottom-0 z-50 no-print">
+    <div class="flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+      <span class="text-xs text-slate-300 font-medium">Ordonnance+ • Hackathon GOMYCODE 2026</span>
+    </div>
+
+    <!-- Progress dots -->
+    <div class="flex items-center gap-2">
+      <button onclick="goToSlide(1)" id="dot-1" class="w-2.5 h-2.5 rounded-full bg-emerald-400 transition-all cursor-pointer" title="Slide 1"></button>
+      <button onclick="goToSlide(2)" id="dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 2"></button>
+      <button onclick="goToSlide(3)" id="dot-3" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 3"></button>
+      <button onclick="goToSlide(4)" id="dot-4" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 4"></button>
+      <button onclick="goToSlide(5)" id="dot-5" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 5"></button>
+      <button onclick="goToSlide(6)" id="dot-6" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 6"></button>
+      <button onclick="goToSlide(7)" id="dot-7" class="w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer" title="Slide 7"></button>
+    </div>
+
+    <div class="text-xs text-slate-400 flex items-center gap-3">
+      <span>Prêt pour le pitch</span>
+      <button onclick="toggleFullscreen()" class="p-1 rounded hover:bg-slate-800 text-slate-300 transition" title="Plein écran (F)">
+        <span class="material-symbols-outlined text-base">fullscreen</span>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        const dot = document.getElementById(`dot-${i}`);
+        if (slide) {
+          slide.classList.toggle('hidden', i !== currentSlide);
+        }
+        if (dot) {
+          if (i === currentSlide) {
+            dot.className = "w-6 h-2.5 rounded-full bg-emerald-400 transition-all cursor-pointer";
+          } else {
+            dot.className = "w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-600 transition-all cursor-pointer";
+          }
+        }
+      }
+
+      const counter = document.getElementById('current-slide-num');
+      if (counter) counter.textContent = currentSlide;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function goToSlide(idx) {
+      showSlide(idx);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key >= '1' && e.key <= '7') {
+        showSlide(parseInt(e.key));
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>

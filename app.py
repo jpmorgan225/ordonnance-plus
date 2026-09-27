@@ -1249,7 +1249,7 @@ import hashlib
 import edge_tts
 from fastapi import Response
 
-AUDIO_CACHE_DIR = os.path.join("/tmp", "ordonnance-plus-audio")
+AUDIO_CACHE_DIR = os.path.join(BASE_DIR, "audio_cache")
 os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
 
 @app.get("/api/tts")
@@ -1347,3 +1347,10 @@ async def serve_index():
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return {"message": "Ordonnance+ API en ligne."}
+
+@app.get("/slides")
+async def serve_slides():
+    slides_file = os.path.join(STATIC_DIR, "slides.html")
+    if os.path.exists(slides_file):
+        return FileResponse(slides_file)
+    return {"message": "Slides introuvables."}
