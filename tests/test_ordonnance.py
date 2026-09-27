@@ -104,6 +104,20 @@ class TestOrdonnancePlus(unittest.TestCase):
         t4 = traduire_abreviations_medicales("1 dose-poids x3/j")
         self.assertIn("pipette graduée", t4)
 
+    def test_adaptation_vers_ivoirien(self):
+        from gemini_service import adapter_vers_ivoirien
+
+        t1 = adapter_vers_ivoirien("Prenez 1 cp x2j av rep pdt 5j")
+        self.assertIn("faut prendre", t1)
+        self.assertIn("deux fois dans la journée", t1)
+        self.assertIn("avant de manger", t1)
+        self.assertIn("sans sauter de jour", t1)
+
+        t2 = adapter_vers_ivoirien("1 sachet à dissoudre dans un verre d'eau au coucher")
+        self.assertIn("bien mélanger dans un verre d'eau", t2)
+        self.assertIn("la nuit avant d'aller dormir", t2)
+
 if __name__ == "__main__":
     unittest.main()
+
 

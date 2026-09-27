@@ -27,6 +27,7 @@ class LignePrescription(BaseModel):
     forme: str
     posologie_recopiee: str
     posologie_orale_simple: Optional[str] = Field(default=None, description="Explication orale bienveillante et limpide de la posologie sans abréviations, en français soignant parlé accessible à un patient analphabète")
+    posologie_ivoirienne: Optional[str] = Field(default=None, description="Explication en français ivoirien populaire et bienveillant d'Abidjan pour patient non-lecteur")
     score_confiance: int = Field(default=95, description="Score de certitude visuelle de 0 à 100")
     statut_confiance: str = Field(default="CONFIRME", description="'CONFIRME' (>=80%), 'INCERTAIN' (50-79%), ou 'NON_IDENTIFIE' (<50%)")
     motif_incertitude: Optional[str] = None
@@ -194,6 +195,21 @@ def traduire_abreviations_medicales(texte: str) -> str:
     t = re.sub(r'\s+', ' ', t).strip()
     return t
 
+def adapter_vers_ivoirien(texte: str) -> str:
+    """Adapte la posologie en français populaire ivoirien d'Abidjan, chaleureux et bienveillant."""
+    if not texte:
+        return ""
+    t = traduire_abreviations_medicales(texte)
+    t = re.sub(r'\bprenez\b|\bvous devez (?:le )?prendre\b', 'faut prendre', t, flags=re.IGNORECASE)
+    t = re.sub(r'deux fois par jour, le matin et le soir', 'deux fois dans la journée, un le matin et un le soir', t)
+    t = re.sub(r'trois fois par jour, le matin, le midi et le soir', 'trois fois dans la journée, le matin, à midi et le soir', t)
+    t = re.sub(r'avant le repas', 'avant de manger', t)
+    t = re.sub(r'après le repas', 'après avoir mangé', t)
+    t = re.sub(r'au moment du coucher le soir', 'la nuit avant d\'aller dormir', t)
+    t = re.sub(r'pendant (\d+) jours', r'pendant \1 jours bien comptés sans sauter de jour', t)
+    t = re.sub(r'un sachet à dissoudre dans un verre d\'eau', 'un sachet à bien mélanger dans un verre d\'eau', t)
+    return t.strip()
+
 SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", un moteur de vision clinique expert chargé d'extraire fidèlement des ordonnances médicales manuscrites réelles.
 Tu produis STRICTEMENT un objet JSON valide, sans texte additionnel ni markdown en dehors du JSON.
 
@@ -221,7 +237,12 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
    - Si le dosage n'est pas précisé, dis exactement "Le dosage n'est pas précisé" (ne dis JAMAIS "c'est dosé à non précisé").
    - Pour les prix, utilise l'expression "Prix moyen" (ne dis JAMAIS "prix indicatif officiel").
 
-4. STRUCTURE DU JSON ATTENDU :
+4. "EXPLICATION EN FRANÇAIS IVOIRIEN D'ABIDJAN (posologie_ivoirienne)" :
+   Pour chaque ligne, formule aussi la posologie en français populaire ivoirien d'Abidjan, chaleureux et bienveillant :
+   - Ex: "Faut prendre un comprimé deux fois dans la journée, un le matin et un le soir avant de manger pendant 5 jours sans sauter de jour."
+   - Ex: "Faut donner une dose selon le poids de l'enfant avec la pipette graduée, trois fois dans la journée."
+
+5. STRUCTURE DU JSON ATTENDU :
 {
   "patient_nom": "Nom du patient ou 'Patient'",
   "patient_age": "Âge si mentionné sur le document, sinon null",
@@ -237,6 +258,7 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
       "forme": "Comprimé, gélule, sirop, pommade, etc.",
       "posologie_recopiee": "Posologie exacte recopiée fidèlement (avec abréviations éventuelles)",
       "posologie_orale_simple": "Explication orale soignante fluide sans aucune abréviation pour patient non-lecteur",
+      "posologie_ivoirienne": "Explication en français ivoirien chaleureux d'Abidjan pour patient non-lecteur",
       "score_confiance": 95,
       "statut_confiance": "CONFIRME",
       "motif_incertitude": null,
@@ -381,6 +403,13 @@ async def analyser_ordonnance_reelle(
         else:
             posologie_orale = traduire_abreviations_medicales(posologie_orale)
 
+        # Posologie en français populaire ivoirien
+        posologie_ci = l.get("posologie_ivoirienne", "").strip()
+        if not posologie_ci or len(posologie_ci) < 5:
+            posologie_ci = adapter_vers_ivoirien(posologie_orale)
+        else:
+            posologie_ci = adapter_vers_ivoirien(posologie_ci)
+
         lignes_enrichies.append(LignePrescription(
             id=lid,
             raw_text=raw_text,
@@ -389,6 +418,7 @@ async def analyser_ordonnance_reelle(
             forme=forme,
             posologie_recopiee=posologie,
             posologie_orale_simple=posologie_orale,
+            posologie_ivoirienne=posologie_ci,
             score_confiance=score,
             statut_confiance=statut_confiance,
             motif_incertitude=motif,
