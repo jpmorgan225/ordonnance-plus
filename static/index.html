@@ -384,10 +384,12 @@
           <button id="tab-service-garde" onclick="changerFiltreService('garde')" class="px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
             <span class="material-symbols-outlined text-sm text-emerald-600">nightlight</span>
             <span>🌙 De garde (Nuit, WE & Fériés 24h)</span>
+            <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full text-[10px] font-bold" id="count-tab-garde">—</span>
           </button>
           <button id="tab-service-jour" onclick="changerFiltreService('jour_ouvrable')" class="px-3.5 py-1.5 rounded-full font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
             <span class="material-symbols-outlined text-sm text-blue-600">wb_sunny</span>
             <span>☀️ Jour ouvrable (08h00 - 20h00)</span>
+            <span class="bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded-full text-[10px] font-bold" id="count-tab-jour">—</span>
           </button>
         </div>
 
@@ -548,15 +550,18 @@
 
           // Mettre à jour l'en-tête de commune
           const badgeText = document.getElementById('badge-commune-text');
+          const stats = data.stats_commune || {};
           if (badgeText) {
-            badgeText.textContent = `Commune : ${selectedCommune} (${data.count} pharmacies)`;
+            badgeText.textContent = `Commune : ${selectedCommune} (${stats.total || data.count} pharmacies)`;
           }
 
-          // Compteur total de l'onglet tous
+          // Compteurs dynamiques des 3 onglets
           const countTous = document.getElementById('count-tab-tous');
-          if (countTous && currentServiceFilter === 'tous') {
-            countTous.textContent = data.count;
-          }
+          const countGarde = document.getElementById('count-tab-garde');
+          const countJour = document.getElementById('count-tab-jour');
+          if (countTous) countTous.textContent = stats.total ?? data.count;
+          if (countGarde) countGarde.textContent = stats.garde ?? '—';
+          if (countJour) countJour.textContent = stats.jour_ouvrable ?? '—';
 
           // Indicateur de tri
           const orderText = document.getElementById('order-indicator-text');
