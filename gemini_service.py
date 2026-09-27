@@ -26,6 +26,7 @@ class LignePrescription(BaseModel):
     dosage: str
     forme: str
     posologie_recopiee: str
+    posologie_orale_simple: Optional[str] = Field(default=None, description="Explication orale bienveillante et limpide de la posologie sans abréviations, en français soignant parlé accessible à un patient analphabète")
     score_confiance: int = Field(default=95, description="Score de certitude visuelle de 0 à 100")
     statut_confiance: str = Field(default="CONFIRME", description="'CONFIRME' (>=80%), 'INCERTAIN' (50-79%), ou 'NON_IDENTIFIE' (<50%)")
     motif_incertitude: Optional[str] = None
@@ -135,12 +136,70 @@ def chercher_medicament_catalogue(nom_cherche: str, dosage_cherche: str = "") ->
 
     return meilleur_match if meilleur_score >= 3 else None
 
+def traduire_abreviations_medicales(texte: str) -> str:
+    """Traduit les abréviations médicales courantes (ml, cp, x2/j, càs, etc.) en français soignant parlé naturel et bienveillant."""
+    if not texte:
+        return ""
+    t = f" {texte} "
+
+    # 1-0-1 notation médicale
+    t = re.sub(r'\b1-0-1\b', 'un comprimé le matin et un comprimé le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b1-1-1\b', 'un comprimé le matin, un comprimé le midi et un comprimé le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b2-0-2\b', 'deux comprimés le matin et deux comprimés le soir', t, flags=re.IGNORECASE)
+
+    # Fractions
+    t = re.sub(r'\b1/2\s*c(?:p|ps|omp)\b', 'un demi-comprimé', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b1/2\b', 'un demi', t)
+
+    # Fréquences journalières & moments de la journée
+    t = re.sub(r'\bx\s*2\s*/\s*j(?:our)?\b|\b2\s*x\s*/\s*j(?:our)?\b|\bx\s*2\s*j\b|\b2\s*fois\s*/\s*j(?:our)?\b|\b2\s*prises?\s*/\s*j(?:our)?\b', 'deux fois par jour, le matin et le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bx\s*3\s*/\s*j(?:our)?\b|\b3\s*x\s*/\s*j(?:our)?\b|\bx\s*3\s*j\b|\b3\s*fois\s*/\s*j(?:our)?\b|\b3\s*prises?\s*/\s*j(?:our)?\b', 'trois fois par jour, le matin, le midi et le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bx\s*4\s*/\s*j(?:our)?\b|\b4\s*x\s*/\s*j(?:our)?\b|\b4\s*fois\s*/\s*j(?:our)?\b', 'quatre fois par jour, bien espacées dans la journée', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bx\s*1\s*/\s*j(?:our)?\b|\b1\s*x\s*/\s*j(?:our)?\b|\b1\s*fois\s*/\s*j(?:our)?\b', 'une fois par jour', t, flags=re.IGNORECASE)
+
+    # Durée
+    t = re.sub(r'\bpdt\s*(\d+)\s*j(?:ours?)?\b', r'pendant \1 jours', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bpendant\s*(\d+)\s*j\b', r'pendant \1 jours', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*sem(?:aines?)?\b', r'pendant \1 semaines', t, flags=re.IGNORECASE)
+
+    # Précision moments
+    t = re.sub(r'\bmat[\s/]+soir\b|\bmatin[\s/]+soir\b', 'le matin et le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bmat[\s/]+midi[\s/]+soir\b', 'le matin, le midi et le soir', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bav(?:ant)?[\s\.]+rep(?:as)?\b', 'avant le repas', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bap(?:r[èe]s)?[\s\.]+rep(?:as)?\b', 'après le repas', t, flags=re.IGNORECASE)
+    t = re.sub(r'\bau\s+couch(?:er)?\b', 'au moment du coucher le soir', t, flags=re.IGNORECASE)
+
+    # Cuillères, pipettes, poids pédiatrique
+    t = re.sub(r'(\d+)\s*c[àa]\.?s\b|\b(\d+)\s*cas\b', r'\1 cuillères à soupe', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*c[àa]\.?c\b|\b(\d+)\s*cac\b', r'\1 cuillères à café', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b(?:1\s+)?(?:pipette|dose[- ]poids|dose[- ]kilo)\b', 'une dose selon le poids de l\'enfant avec la pipette graduée', t, flags=re.IGNORECASE)
+
+    # Formes pharmaceutiques & unités
+    t = re.sub(r'\b1\s*c(?:p|ps|omp)\b', 'un comprimé', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*c(?:p|ps|omp)\b', r'\1 comprimés', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b1\s*g[ée]l\b', 'une gélule', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*g[ée]l(?:ules?)?\b', r'\1 gélules', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b1\s*sach(?:ets?)?\b', 'un sachet à dissoudre dans un verre d\'eau', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*sach(?:ets?)?\b', r'\1 sachets à dissoudre dans un verre d\'eau', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*g(?:tte|ttes)\b', r'\1 gouttes', t, flags=re.IGNORECASE)
+    t = re.sub(r'\b1\s*supp?o(?:sitoires?)?\b', 'un suppositoire', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*supp?o(?:sitoires?)?\b', r'\1 suppositoires', t, flags=re.IGNORECASE)
+
+    # Volumes & Dosages
+    t = re.sub(r'(\d+)\s*ml\b', r'\1 millilitres', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*mg\b', r'\1 milligrammes', t, flags=re.IGNORECASE)
+    t = re.sub(r'(\d+)\s*g\b', r'\1 grammes', t, flags=re.IGNORECASE)
+
+    # Nettoyage
+    t = re.sub(r'\s+', ' ', t).strip()
+    return t
+
 SYSTEM_PROMPT_GOOGLE_HEALTH = """Tu es "Ordonnance+", un moteur de vision clinique expert chargé d'extraire fidèlement des ordonnances médicales manuscrites réelles.
 Tu produis STRICTEMENT un objet JSON valide, sans texte additionnel ni markdown en dehors du JSON.
 
 PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
 1. "NE RIEN INVENTER NI DÉDUIRE" :
-   - Recopie fidèlement le texte manuscrit tel quel.
+   - Recopie fidèlement le texte manuscrit tel quel dans "posologie_recopiee".
    - Si un dosage est ambigu ou raturé, signale-le immédiatement : n'extrapole JAMAIS.
    - Si la posologie est illisible ou absente, écris exactement "À confirmer auprès du pharmacien".
 
@@ -150,7 +209,17 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
      * Dès que le score est supérieur ou égal à 40 (>= 40%) : la mention est identifiable et exploitable -> statut_confiance = "CONFIRME", needs_confirmation = false
      * Inférieur à 40 (< 40%) : mention totalement illisible ou raturée méconnaissable -> statut_confiance = "INCERTAIN", needs_confirmation = true, avec motif_incertitude détaillé.
 
-3. STRUCTURE DU JSON ATTENDU :
+3. "EXPLICATION ORALE NATURELLE POUR PATIENT NON-LECTEUR (posologie_orale_simple)" :
+   Pour chaque ligne, traduis les abréviations médicales en une phrase parlée limpide et soignante :
+   - Développe toutes les abréviations :
+     * "12ml x2j pdt 5j" -> "Prenez 12 millilitres deux fois par jour, le matin et le soir pendant 5 jours"
+     * "1 cp x 3/j" -> "Prenez un comprimé trois fois par jour, le matin, le midi et le soir"
+     * "1/2 cp mat/soir" -> "Prenez un demi-comprimé le matin et le soir"
+     * "1 sach au couch" -> "Prenez un sachet à dissoudre dans un verre d'eau au coucher le soir"
+     * "1 dose-poids x3/j" -> "Donnez une dose selon le poids de l'enfant avec la pipette graduée, trois fois par jour"
+   - Précise toujours les moments de la journée pour que ce soit limpide à l'écoute.
+
+4. STRUCTURE DU JSON ATTENDU :
 {
   "patient_nom": "Nom du patient ou 'Patient'",
   "patient_age": "Âge si mentionné sur le document, sinon null",
@@ -164,7 +233,8 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
       "nom_medicament": "Nom usuel du médicament",
       "dosage": "Dosage explicite ou 'Non précisé / Illisible'",
       "forme": "Comprimé, gélule, sirop, pommade, etc.",
-      "posologie_recopiee": "Posologie exacte recopiée",
+      "posologie_recopiee": "Posologie exacte recopiée fidèlement (avec abréviations éventuelles)",
+      "posologie_orale_simple": "Explication orale soignante fluide sans aucune abréviation pour patient non-lecteur",
       "score_confiance": 95,
       "statut_confiance": "CONFIRME",
       "motif_incertitude": null,
@@ -301,6 +371,13 @@ async def analyser_ordonnance_reelle(
             prix = None
             motif_prix = "Score inférieur à 40% : à chiffrer en pharmacie"
 
+        # Posologie orale bienveillante et limpide (sécurité anti-abréviations pour patient non-lecteur)
+        posologie_orale = l.get("posologie_orale_simple", "").strip()
+        if not posologie_orale or len(posologie_orale) < 5:
+            posologie_orale = traduire_abreviations_medicales(posologie)
+        else:
+            posologie_orale = traduire_abreviations_medicales(posologie_orale)
+
         lignes_enrichies.append(LignePrescription(
             id=lid,
             raw_text=raw_text,
@@ -308,6 +385,7 @@ async def analyser_ordonnance_reelle(
             dosage=dosage,
             forme=forme,
             posologie_recopiee=posologie,
+            posologie_orale_simple=posologie_orale,
             score_confiance=score,
             statut_confiance=statut_confiance,
             motif_incertitude=motif,

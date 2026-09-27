@@ -20,6 +20,7 @@ load_dotenv()
 from gemini_service import (
     analyser_ordonnance_reelle,
     chercher_medicament_catalogue,
+    traduire_abreviations_medicales,
     AnalyseOrdonnance,
     LignePrescription,
     DB_PATH
@@ -1253,8 +1254,12 @@ os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
 @app.post("/api/tts")
 async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualNeural", rate: str = "-4%"):
     """Génère un flux audio MP3 naturel et humain via synthèse vocale neuronale HD."""
-    if not text.strip():
+    raw_text = text.strip()
+    if not raw_text:
         raise HTTPException(status_code=400, detail="Texte manquant")
+    
+    # Traduction automatique des abréviations médicales en langage soignant oral
+    texte_oral = traduire_abreviations_medicales(raw_text)
     
     VOIX_VALIDES = {
         "vivienne": "fr-FR-VivienneMultilingualNeural",
@@ -1266,7 +1271,7 @@ async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualN
     voice_key = voice.lower().strip()
     selected_voice = VOIX_VALIDES.get(voice_key, voice)
     
-    cache_key = hashlib.md5(f"{selected_voice}_{rate}_{text.strip()}".encode("utf-8")).hexdigest()
+    cache_key = hashlib.md5(f"{selected_voice}_{rate}_{texte_oral}".encode("utf-8")).hexdigest()
     cache_file = os.path.join(AUDIO_CACHE_DIR, f"{cache_key}.mp3")
     
     if os.path.exists(cache_file):
@@ -1274,7 +1279,7 @@ async def generate_tts(text: str = "", voice: str = "fr-FR-VivienneMultilingualN
             return Response(content=f.read(), media_type="audio/mpeg")
             
     try:
-        communicate = edge_tts.Communicate(text.strip(), voice=selected_voice, rate=rate)
+        communicate = edge_tts.Communicate(texte_oral, voice=selected_voice, rate=rate)
         chunks = []
         async for chunk in communicate.stream():
             if chunk["type"] == "audio":

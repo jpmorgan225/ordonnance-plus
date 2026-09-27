@@ -77,10 +77,32 @@ class TestOrdonnancePlus(unittest.TestCase):
         from fastapi.testclient import TestClient
 
         client = TestClient(app)
-        res = client.get("/api/tts?text=Bonjour&voice=vivienne")
+        res = client.get("/api/tts?text=12ml%20x2j&voice=vivienne")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.headers.get("content-type"), "audio/mpeg")
         self.assertGreater(len(res.content), 1000)
+
+    def test_traduction_abreviations_medicales(self):
+        from gemini_service import traduire_abreviations_medicales
+
+        # Test cas d'abréviations médicales réelles
+        t1 = traduire_abreviations_medicales("12ml x2j pdt 5j")
+        self.assertIn("12 millilitres", t1)
+        self.assertIn("deux fois par jour", t1)
+        self.assertIn("matin et le soir", t1)
+        self.assertIn("pendant 5 jours", t1)
+
+        t2 = traduire_abreviations_medicales("1 cp x 3/j av rep")
+        self.assertIn("comprimé", t2)
+        self.assertIn("trois fois par jour", t2)
+        self.assertIn("avant le repas", t2)
+
+        t3 = traduire_abreviations_medicales("1/2 cp mat/soir")
+        self.assertIn("un demi-comprimé", t3)
+        self.assertIn("le matin et le soir", t3)
+
+        t4 = traduire_abreviations_medicales("1 dose-poids x3/j")
+        self.assertIn("pipette graduée", t4)
 
 if __name__ == "__main__":
     unittest.main()

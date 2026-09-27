@@ -1169,6 +1169,44 @@
     let isAudioPlaying = false;
     let activeLineAudioIndex = null;
 
+    function normaliserTexteOral(texte) {
+      if (!texte) return "";
+      let t = " " + texte + " ";
+      t = t.replace(/\b1-0-1\b/gi, "un comprimé le matin et un comprimé le soir");
+      t = t.replace(/\b1-1-1\b/gi, "un comprimé le matin, un comprimé le midi et un comprimé le soir");
+      t = t.replace(/\b2-0-2\b/gi, "deux comprimés le matin et deux comprimés le soir");
+      t = t.replace(/\b1\/2\s*c(p|ps|omp)\b/gi, "un demi-comprimé");
+      t = t.replace(/\b1\/2\b/g, "un demi");
+      t = t.replace(/\bx\s*2\s*\/\s*j(our)?\b|\b2\s*x\s*\/\s*j(our)?\b|\bx\s*2\s*j\b|\b2\s*fois\s*\/\s*j(our)?\b|\b2\s*prises?\s*\/\s*j(our)?\b/gi, "deux fois par jour, le matin et le soir");
+      t = t.replace(/\bx\s*3\s*\/\s*j(our)?\b|\b3\s*x\s*\/\s*j(our)?\b|\bx\s*3\s*j\b|\b3\s*fois\s*\/\s*j(our)?\b|\b3\s*prises?\s*\/\s*j(our)?\b/gi, "trois fois par jour, le matin, le midi et le soir");
+      t = t.replace(/\bx\s*4\s*\/\s*j(our)?\b|\b4\s*x\s*\/\s*j(our)?\b|\b4\s*fois\s*\/\s*j(our)?\b/gi, "quatre fois par jour, bien espacées dans la journée");
+      t = t.replace(/\bx\s*1\s*\/\s*j(our)?\b|\b1\s*x\s*\/\s*j(our)?\b|\b1\s*fois\s*\/\s*j(our)?\b/gi, "une fois par jour");
+      t = t.replace(/\bpdt\s*(\d+)\s*j(ours?)?\b/gi, "pendant $1 jours");
+      t = t.replace(/\bpendant\s*(\d+)\s*j\b/gi, "pendant $1 jours");
+      t = t.replace(/(\d+)\s*sem(aines?)?\b/gi, "pendant $1 semaines");
+      t = t.replace(/\bmat[\s/]+soir\b|\bmatin[\s/]+soir\b/gi, "le matin et le soir");
+      t = t.replace(/\bmat[\s/]+midi[\s/]+soir\b/gi, "le matin, le midi et le soir");
+      t = t.replace(/\bav(ant)?[\s\.]+rep(as)?\b/gi, "avant le repas");
+      t = t.replace(/\bap(r[èe]s)?[\s\.]+rep(as)?\b/gi, "après le repas");
+      t = t.replace(/\bau\s+couch(er)?\b/gi, "au moment du coucher le soir");
+      t = t.replace(/(\d+)\s*c[àa]\.?s\b|\b(\d+)\s*cas\b/gi, "$1 cuillères à soupe");
+      t = t.replace(/(\d+)\s*c[àa]\.?c\b|\b(\d+)\s*cac\b/gi, "$1 cuillères à café");
+      t = t.replace(/\b(?:1\s+)?(?:pipette|dose[- ]poids|dose[- ]kilo)\b/gi, "une dose selon le poids de l'enfant avec la pipette graduée");
+      t = t.replace(/\b1\s*c(p|ps|omp)\b/gi, "un comprimé");
+      t = t.replace(/(\d+)\s*c(p|ps|omp)\b/gi, "$1 comprimés");
+      t = t.replace(/\b1\s*g[ée]l\b/gi, "une gélule");
+      t = t.replace(/(\d+)\s*g[ée]l(ules?)?\b/gi, "$1 gélules");
+      t = t.replace(/\b1\s*sach(ets?)?\b/gi, "un sachet à dissoudre dans un verre d'eau");
+      t = t.replace(/(\d+)\s*sach(ets?)?\b/gi, "$1 sachets à dissoudre dans un verre d'eau");
+      t = t.replace(/(\d+)\s*g(tte|ttes)\b/gi, "$1 gouttes");
+      t = t.replace(/\b1\s*supp?o(sitoires?)?\b/gi, "un suppositoire");
+      t = t.replace(/(\d+)\s*supp?o(sitoires?)?\b/gi, "$1 suppositoires");
+      t = t.replace(/(\d+)\s*ml\b/gi, "$1 millilitres");
+      t = t.replace(/(\d+)\s*mg\b/gi, "$1 milligrammes");
+      t = t.replace(/(\d+)\s*g\b/gi, "$1 grammes");
+      return t.replace(/\s+/g, " ").trim();
+    }
+
     function genererTexteAudioGlobal() {
       if (!currentPrescription || !currentPrescription.lignes || currentPrescription.lignes.length === 0) {
         return "Bonjour, aucune ordonnance n'est encore chargée.";
@@ -1200,8 +1238,9 @@
         if (l.dosage) {
           texte += `C'est dosé à ${l.dosage}. `;
         }
-        if (l.posologie_recopiee) {
-          texte += `Vous devez le prendre ainsi : ${l.posologie_recopiee}. `;
+        const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
+        if (posologieAConter) {
+          texte += `Conseil de prise : ${posologieAConter}. `;
         }
         if (l.motif_incertitude) {
           texte += `Attention, l'écriture du docteur n'était pas très facile à lire sur cette ligne. Montrez-la bien au pharmacien pour confirmation. `;
@@ -1218,7 +1257,8 @@
     function genererTexteLigne(l, idx) {
       let texte = `Pour le ${l.nom_medicament} : `;
       if (l.dosage) texte += `Dosage ${l.dosage}. `;
-      if (l.posologie_recopiee) texte += `Vous devez prendre : ${l.posologie_recopiee}. `;
+      const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
+      if (posologieAConter) texte += `Conseil de prise : ${posologieAConter}. `;
       if (l.motif_incertitude) {
         texte += `Attention, l'écriture du médecin est peu lisible sur ce médicament, demandez confirmation à votre pharmacien. `;
       }
