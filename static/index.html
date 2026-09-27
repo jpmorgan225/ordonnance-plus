@@ -1,45 +1,48 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full bg-slate-50 text-slate-800">
+<html lang="fr" class="h-full bg-[#f8f9ff]">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordonnance+ — Déchiffrez votre ordonnance & estimez le prix en pharmacie</title>
-  
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>Ordonnance+ — Assistant Médical Patient & Prix Officiels Côte d'Ivoire</title>
+
+  <!-- Google Material Symbols & Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto+Flex:wght@400;500;600&display=swap" rel="stylesheet"/>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts: Google Sans & Roboto Flex -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto+Flex:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Google Material Symbols Outlined -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-  <script>
+  <script id="tailwind-config">
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Roboto Flex"', '"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"Roboto Mono"', 'monospace'],
-          },
           colors: {
-            google: {
-              blue: '#1a73e8',
-              teal: '#00677e',
-              tealDark: '#004e60',
-              tealContainer: '#cce8e8',
-              surface: '#f8fafd',
-              surfaceContainer: '#eff2f7',
-              border: '#e1e3e1',
-              text: '#1f1f1f',
-              textSec: '#444746',
-            }
+            'primary': '#006a39',
+            'primary-container': '#008649',
+            'primary-fixed': '#82faab',
+            'on-primary': '#ffffff',
+            'on-primary-fixed': '#00210e',
+            'pharmacy-green': '#438037',
+            'emergency-red': '#E21C17',
+            'surface': '#f8f9ff',
+            'surface-card': '#ffffff',
+            'surface-container-low': '#eff4ff',
+            'surface-container': '#e6eeff',
+            'surface-container-high': '#dee9fc',
+            'on-surface': '#121c2a',
+            'on-surface-variant': '#3e4a3f',
+            'outline': '#6d7a6f',
+            'outline-variant': '#bdcabc'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            body: ['"Roboto Flex"', 'sans-serif']
           }
         }
       }
-    }
+    };
   </script>
 
   <style>
@@ -58,230 +61,254 @@
       #printable-fiche { position: absolute; left: 0; top: 0; width: 100%; color: black !important; }
       .no-print { display: none !important; }
     }
-    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #bdcabc; border-radius: 4px; }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans bg-google-surface text-google-text selection:bg-teal-100 selection:text-teal-900">
 
-  <!-- GOOGLE TOP APP BAR -->
-  <header class="bg-white border-b border-google-border sticky top-0 z-30 px-4 lg:px-8 py-3.5 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center text-google-teal">
-        <span class="material-symbols-outlined text-2xl material-symbols-fill text-google-teal">prescriptions</span>
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="text-xl font-bold tracking-tight text-slate-900">
-            Ordonnance<span class="text-google-teal font-extrabold">+</span>
-          </span>
-          <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-            Espace Patient • Côte d'Ivoire
-          </span>
+<body class="bg-surface font-sans text-on-surface flex flex-col min-h-screen antialiased selection:bg-primary/20">
+
+  <!-- TOP APP BAR (Stitch Design) -->
+  <header class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-16 px-4 lg:px-8 max-w-6xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-white shadow-sm">
+          <span class="material-symbols-outlined text-2xl material-symbols-fill">prescriptions</span>
         </div>
-        <p class="text-xs text-google-textSec">Comprenez votre ordonnance & estimez votre budget avant la pharmacie</p>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg font-bold text-slate-900 tracking-tight">Ordonnance<span class="text-primary font-black">+</span></span>
+            <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-primary-fixed text-on-primary-fixed">CI</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-on-surface-variant">
+            <span class="w-1.5 h-1.5 rounded-full bg-pharmacy-green animate-pulse"></span>
+            <span>3 852 médicaments officiels CI</span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- BADGES -->
-    <div class="flex items-center gap-3 text-xs">
-      <div class="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-full text-slate-700">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Catalogue CI : <strong>3 852</strong> médicaments</span>
+      <!-- Quick Actions -->
+      <div class="flex items-center gap-2">
+        <a href="#urgences-section" class="h-9 px-3 rounded-full bg-emergency-red/10 text-emergency-red font-semibold text-xs flex items-center gap-1.5 hover:bg-emergency-red/20 transition">
+          <span class="material-symbols-outlined text-base">emergency</span>
+          <span class="hidden sm:inline">Gardes ce soir</span>
+        </a>
+        <div class="h-9 px-3 rounded-full bg-slate-100 text-slate-700 font-semibold text-xs flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm text-primary">security</span>
+          <span class="hidden md:inline">ARTCI 2013-450</span>
+        </div>
       </div>
-      <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full text-slate-700">
-        <span class="material-symbols-outlined text-sm text-google-teal">security</span>
-        <span>Loi ARTCI 2013-450</span>
-      </div>
+
     </div>
   </header>
 
-  <!-- PATIENT HERO & UPLOAD SECTION -->
-  <section class="bg-white border-b border-google-border px-4 lg:px-8 py-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-        
-        <!-- Left: Upload Action Zone -->
-        <div class="md:col-span-7">
-          <h2 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
-            <span class="material-symbols-outlined text-google-teal">add_a_photo</span>
-            Photographiez ou téléversez votre ordonnance
-          </h2>
-          <p class="text-xs text-slate-500 mb-4">
-            L'IA déchiffre l'écriture du médecin en quelques secondes et calcule le prix officiel de référence en FCFA.
-          </p>
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 pt-20 pb-28 px-4 lg:px-8 max-w-6xl mx-auto w-full flex flex-col gap-6">
 
-          <!-- Upload Dropzone / Buttons -->
-          <div class="flex flex-wrap items-center gap-3">
-            <!-- Camera button for mobile / tablet -->
-            <label class="cursor-pointer px-5 py-3 rounded-full bg-google-teal hover:bg-google-tealDark text-white text-xs font-bold transition shadow-sm flex items-center gap-2">
-              <span class="material-symbols-outlined text-base">photo_camera</span>
-              <span>Prendre en photo</span>
-              <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="uploadPhoto(event)">
-            </label>
-
-            <!-- File browser button -->
-            <label class="cursor-pointer px-5 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-300 transition shadow-sm flex items-center gap-2">
-              <span class="material-symbols-outlined text-base text-google-teal">upload_file</span>
-              <span>Choisir un fichier (photo ou PDF)</span>
-              <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden" onchange="uploadPhoto(event)">
-            </label>
-          </div>
-        </div>
-
-        <!-- Right: Sample Prescriptions shortcuts -->
-        <div class="md:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-4">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
-            Ou tester avec un exemple réel :
-          </span>
-          <div class="flex flex-col gap-1.5">
-            <button onclick="chargerSampleReel('reelle_1')" class="sample-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-teal-50 border border-slate-200 transition flex items-center justify-between" data-id="reelle_1">
-              <span class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-google-teal">smartphone</span>
-                <span>Ordonnance manuscrite (photo réelle)</span>
-              </span>
-              <span class="text-[10px] text-slate-400">Kisangani / 2019</span>
-            </button>
-            <button onclick="chargerSampleReel('reelle_2')" class="sample-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-teal-50 border border-slate-200 transition flex items-center justify-between" data-id="reelle_2">
-              <span class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-google-teal">description</span>
-                <span>Prescription clinique scannée</span>
-              </span>
-              <span class="text-[10px] text-slate-400">Dr John Smith</span>
-            </button>
-            <button onclick="chargerSampleReel('reelle_3')" class="sample-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-teal-50 border border-slate-200 transition flex items-center justify-between" data-id="reelle_3">
-              <span class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-google-teal">local_hospital</span>
-                <span>Prescription hospitalière scannée</span>
-              </span>
-              <span class="text-[10px] text-slate-400">Hôpital</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- MAIN RESULTS WORKSPACE -->
-  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
-    
-    <!-- LEFT PANE: DOCUMENT VIEWER (5 cols) -->
-    <div class="lg:col-span-5 border-r border-google-border bg-slate-100/70 flex flex-col h-full overflow-hidden">
-      <div class="px-4 py-2.5 bg-white border-b border-google-border flex items-center justify-between text-xs text-slate-600">
-        <span class="font-semibold flex items-center gap-1.5 text-slate-800">
-          <span class="material-symbols-outlined text-sm text-google-teal">image</span> Votre document original
-        </span>
-        <div class="flex items-center gap-1">
-          <button onclick="zoomImage(1.2)" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Zoomer">
-            <span class="material-symbols-outlined text-base">zoom_in</span>
-          </button>
-          <button onclick="zoomImage(0.8)" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Dézoomer">
-            <span class="material-symbols-outlined text-base">zoom_out</span>
-          </button>
-          <button onclick="resetZoom()" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Réinitialiser">
-            <span class="material-symbols-outlined text-base">restart_alt</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Image Canvas Container -->
-      <div class="flex-1 overflow-auto p-4 flex items-center justify-center relative custom-scroll" id="image-scroll-box" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px;">
-        <div id="image-wrapper" class="transition-transform duration-150 origin-center max-w-full">
-          <img id="prescription-img" src="/static/samples/ordonnance_reelle_1.jpg" alt="Ordonnance originale" class="rounded-xl shadow-lg border border-slate-200 max-h-[70vh] object-contain bg-white">
-        </div>
-        
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-20">
-          <div class="w-10 h-10 border-3 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-sm font-bold text-slate-800">Déchiffrage par l'IA en cours...</p>
-          <span class="text-xs text-slate-500">Lecture attentive sans rien inventer</span>
-        </div>
-      </div>
-
-      <div class="px-4 py-2 bg-white border-t border-google-border text-[11px] text-slate-500 flex items-center justify-between">
-        <span id="label-image-source">Document analysé</span>
-        <span class="text-google-teal font-medium flex items-center gap-1">
-          <span class="material-symbols-outlined text-xs">verified_user</span> Données de santé protégées
-        </span>
-      </div>
-    </div>
-
-    <!-- RIGHT PANE: PATIENT READING & PHARMACY PRICING (7 cols) -->
-    <div class="lg:col-span-7 flex flex-col h-full bg-white overflow-y-auto custom-scroll">
-      
-      <!-- PRESCRIPTION SUMMARY CARD -->
-      <div class="p-6 border-b border-google-border bg-white">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs font-semibold uppercase text-google-teal tracking-wider">Patient</span>
-              <h2 class="text-xl font-bold text-slate-900" id="patient-name">—</h2>
-              <span id="patient-age-badge" class="text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200">Âge non précisé</span>
-            </div>
-            <p class="text-xs text-slate-500 flex items-center gap-3 mt-1">
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">stethoscope</span> Médecin : <strong class="text-slate-800 font-medium" id="doctor-name">—</strong></span>
-              <span>•</span>
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">calendar_month</span> Date : <span id="prescription-date">—</span></span>
-            </p>
-          </div>
-
-          <!-- Total price estimate box -->
-          <div class="text-right bg-teal-50/70 border border-teal-200 rounded-2xl px-5 py-3">
-            <span class="text-[11px] font-bold text-google-teal uppercase tracking-wider block">Estimation Pharmacie</span>
-            <span class="text-2xl font-black text-slate-900 font-mono" id="total-price-fcfa">0 FCFA</span>
-            <span class="text-[10px] text-slate-500 block">Prix réglementé Côte d'Ivoire</span>
-          </div>
-        </div>
-
-        <!-- DYNAMIC SAFETY NOTICE FOR PATIENT -->
-        <div id="safety-banner" class="mt-4 p-4 rounded-2xl border flex items-start gap-3 transition-all duration-200">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- PRESCRIPTION ITEMS LIST -->
-      <div class="p-6 flex-1 flex flex-col gap-4">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-base text-google-teal">pill</span> Médicaments Détectés (<span id="items-count">0</span>)
-          </h3>
-          <span class="text-xs text-slate-400">Source : Référentiel officiel CI</span>
-        </div>
-
-        <!-- Dynamic Lines Container -->
-        <div id="lines-container" class="space-y-3">
-          <!-- Rendered by JS -->
-        </div>
-
-        <!-- DUTY PHARMACIES NEARBY FOR PATIENT -->
-        <div class="mt-4 p-5 rounded-2xl border border-slate-200 bg-slate-50">
-          <div class="flex items-center justify-between mb-3">
-            <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
-              <span class="material-symbols-outlined text-sm text-google-teal">local_pharmacy</span> Pharmacies de garde recommandées (Abidjan)
-            </h4>
-            <span class="text-[11px] text-slate-500">Ouvertes 24h/24</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="pharmacies-garde-list">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- BOTTOM ACTION BAR -->
-      <div class="p-5 border-t border-google-border bg-white sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-4 shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
+    <!-- GREETING HERO BANNER -->
+    <section class="bg-surface-container-low rounded-2xl p-5 shadow-sm relative overflow-hidden">
+      <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-primary-fixed/40 pointer-events-none blur-2xl"></div>
+      <div class="flex items-start justify-between relative z-10 gap-4">
         <div>
-          <span class="text-xs font-semibold text-slate-800 block">Présentez toujours votre ordonnance originale</span>
-          <span class="text-[11px] text-slate-400">Le pharmacien vérifie l'authenticité et délivre vos médicaments</span>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-on-surface-variant text-[11px] font-semibold mb-1 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-pharmacy-green animate-pulse"></span>
+            <span>Abidjan, Côte d'Ivoire • En direct</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Bonjour, prenez soin de votre santé</h1>
+          <p class="text-xs sm:text-sm text-on-surface-variant font-body mt-0.5">
+            Déchiffrez votre ordonnance manuscrite et estimez le coût officiel de vos médicaments avant la pharmacie.
+          </p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+          <span class="material-symbols-outlined text-2xl material-symbols-fill">health_and_safety</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCANNER & UPLOAD HERO CARD (Stitch Multimodal Viewfinder) -->
+    <section class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col gap-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-xl">document_scanner</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Déchiffrer une ordonnance</h2>
+            <p class="text-xs text-on-surface-variant font-body">Manuscrite ou imprimée • Analyse par vision IA</p>
+          </div>
+        </div>
+        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-primary font-bold text-xs flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+          <span>&lt; 3 sec</span>
+        </span>
+      </div>
+
+      <!-- Smart Viewfinder Window -->
+      <div class="relative w-full h-56 rounded-2xl bg-slate-900 overflow-hidden flex flex-col items-center justify-center text-center p-4 shadow-inner group">
+        <!-- Background preview or uploaded image -->
+        <img id="prescription-img" src="/static/samples/ordonnance_reelle_1.jpg" alt="Ordonnance aperçu" class="absolute inset-0 w-full h-full object-contain opacity-60 transition duration-300">
+        
+        <!-- Framing Corner Overlays -->
+        <div class="absolute inset-4 pointer-events-none flex flex-col justify-between z-10">
+          <div class="flex justify-between w-full">
+            <div class="w-6 h-6 border-t-2 border-l-2 border-emerald-400 rounded-tl"></div>
+            <div class="w-6 h-6 border-t-2 border-r-2 border-emerald-400 rounded-tr"></div>
+          </div>
+          <!-- Animated Scanline -->
+          <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#34d399] animate-pulse"></div>
+          <div class="flex justify-between w-full">
+            <div class="w-6 h-6 border-b-2 border-l-2 border-emerald-400 rounded-bl"></div>
+            <div class="w-6 h-6 border-b-2 border-r-2 border-emerald-400 rounded-br"></div>
+          </div>
         </div>
 
-        <button onclick="genererFichePatient()" class="px-6 py-3 rounded-full font-bold text-sm bg-google-teal hover:bg-google-tealDark text-white shadow-md transition flex items-center gap-2">
+        <div class="relative z-20 flex flex-col items-center gap-2">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-emerald-300 text-xs font-semibold shadow-sm">
+            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+            <span>Google Gemini Multimodal Prêt</span>
+          </div>
+          <p class="text-xs text-slate-200 font-body max-w-xs" id="label-image-source">
+            Alignez votre ordonnance ou prenez-la en photo pour une lecture immédiate
+          </p>
+        </div>
+
+        <!-- Loading spinner -->
+        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-30">
+          <div class="w-10 h-10 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-bold text-white">Déchiffrage par l'IA en cours...</p>
+          <span class="text-xs text-slate-300">Lecture attentive sans extrapolation</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons : Camera & File Upload -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Take photo from camera -->
+        <label class="w-full h-12 rounded-full bg-primary hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99] cursor-pointer">
+          <span class="material-symbols-outlined text-xl">photo_camera</span>
+          <span>Prendre une photo instantanée</span>
+          <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="uploadPhoto(event)">
+        </label>
+
+        <!-- Upload from gallery / file -->
+        <label class="w-full h-12 rounded-full bg-surface-container hover:bg-slate-200 text-primary font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.99] cursor-pointer">
+          <span class="material-symbols-outlined text-xl">upload_file</span>
+          <span>Téléverser une image ou scan</span>
+          <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden" onchange="uploadPhoto(event)">
+        </label>
+      </div>
+
+      <!-- Sample Test Shortcuts for Demonstration -->
+      <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span class="text-slate-500 font-semibold flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm text-primary">science</span> Exemples réels :
+        </span>
+        <div class="flex flex-wrap items-center gap-1.5" id="sample-buttons">
+          <button onclick="chargerSampleReel('reelle_1')" class="sample-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-primary border border-emerald-200 transition" data-id="reelle_1">
+            1. Cursive Smartphone
+          </button>
+          <button onclick="chargerSampleReel('reelle_2')" class="sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition" data-id="reelle_2">
+            2. Clinique Scannée
+          </button>
+          <button onclick="chargerSampleReel('reelle_3')" class="sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition" data-id="reelle_3">
+            3. Hospitalier Scanné
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ETHICAL GUARDRAIL ALERT (Stitch Style: Ne Rien Déduire) -->
+    <section class="bg-surface-container-low rounded-2xl p-4 shadow-sm flex items-start gap-3 border border-slate-200/60">
+      <div class="w-9 h-9 rounded-xl bg-white text-primary flex items-center justify-center shrink-0 shadow-sm">
+        <span class="material-symbols-outlined text-xl">policy</span>
+      </div>
+      <div class="flex-1 text-xs">
+        <div class="flex items-center gap-2 mb-0.5">
+          <strong class="font-bold text-slate-900">Règle de sécurité éthique</strong>
+          <span class="text-[10px] px-2 py-0.2 rounded-full bg-white text-slate-600 font-semibold">Gemini Vision CI</span>
+        </div>
+        <p class="text-on-surface-variant font-body leading-relaxed">
+          Recopie textuelle stricte par l'IA. Aucune posologie non écrite n'est extrapolée ou complétée. En cas de doute, la confirmation finale revient à votre pharmacien d'officine lors de la délivrance.
+        </p>
+      </div>
+    </section>
+
+    <!-- LIVE RESULTS & PRESCRIPTION BREAKDOWN -->
+    <section class="flex flex-col gap-4">
+      
+      <!-- Metadata & Estimated Total Bar -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold uppercase text-primary tracking-wider">Patient</span>
+            <h3 class="text-lg font-bold text-slate-900" id="patient-name">—</h3>
+            <span id="patient-age-badge" class="text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200">Âge non précisé</span>
+          </div>
+          <p class="text-xs text-slate-500 flex items-center gap-3">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">stethoscope</span> <span id="doctor-name">—</span></span>
+            <span>•</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-slate-400">calendar_month</span> <span id="prescription-date">—</span></span>
+          </p>
+        </div>
+
+        <div class="text-right bg-emerald-50/70 border border-emerald-200 rounded-2xl px-5 py-2.5">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider block">Estimation Pharmacie</span>
+          <span class="text-2xl font-black text-slate-900 font-mono" id="total-price-fcfa">0 FCFA</span>
+          <span class="text-[10px] text-slate-500 block">Tarif réglementé officiel CI</span>
+        </div>
+      </div>
+
+      <!-- Prescribed items header -->
+      <div class="flex items-center justify-between px-1">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Médicaments Détectés</h3>
+          <span class="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-bold" id="items-count">0</span>
+        </div>
+        <span class="text-xs text-slate-400 font-body">Tarif officiel pharmacies-de-garde.ci</span>
+      </div>
+
+      <!-- Dynamic Items Container -->
+      <div id="lines-container" class="space-y-3">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Print / Export Bar -->
+      <div class="mt-2 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-slate-900 block">Prêt à vous rendre en officine ?</span>
+          <span class="text-[11px] text-slate-500">Présentez toujours votre ordonnance médicale papier originale au pharmacien.</span>
+        </div>
+        <button onclick="genererFichePatient()" class="px-6 py-2.5 rounded-full font-bold text-xs bg-primary hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2">
           <span class="material-symbols-outlined text-base">print</span>
-          <span>Imprimer / Télécharger ma fiche</span>
+          <span>Imprimer / Télécharger ma fiche patient</span>
         </button>
       </div>
 
-    </div>
+    </section>
+
+    <!-- DUTY PHARMACIES NEARBY (Abidjan) -->
+    <section id="urgences-section" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emergency-red text-white flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-xl">local_pharmacy</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Pharmacies de garde à proximité (Abidjan)</h3>
+            <p class="text-xs text-on-surface-variant font-body">Ouvertes 24h/24 cette semaine • Contact direct</p>
+          </div>
+        </div>
+        <span class="text-[11px] font-bold text-emergency-red px-2.5 py-1 rounded-full bg-emergency-red/10">
+          Urgences nuit & WE
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="pharmacies-garde-list">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
   </main>
 
   <!-- MODAL FICHE PATIENT (READY TO PRINT) -->
@@ -294,11 +321,11 @@
       </button>
 
       <!-- Fiche Header -->
-      <div class="border-b-2 border-teal-700 pb-4 mb-6 flex justify-between items-start">
+      <div class="border-b-2 border-primary pb-4 mb-6 flex justify-between items-start">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-2xl font-black text-slate-900 tracking-tight">ORDONNANCE<span class="text-google-teal">+</span></span>
-            <span class="text-[10px] font-bold bg-teal-50 text-teal-800 px-2.5 py-0.5 rounded-full border border-teal-200">FICHE RÉCAPITULATIVE PATIENT</span>
+            <span class="text-2xl font-black text-slate-900 tracking-tight">ORDONNANCE<span class="text-primary font-black">+</span></span>
+            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">FICHE PATIENT RÉCAPITULATIVE</span>
           </div>
           <p class="text-xs text-slate-600 mt-1">Déchiffrage assisté par IA • Estimation officielle des prix en Côte d'Ivoire</p>
         </div>
@@ -342,21 +369,13 @@
       </div>
 
       <!-- Total & Source -->
-      <div class="flex justify-between items-center bg-teal-50/70 border border-teal-200 p-4 rounded-2xl mb-6">
+      <div class="flex justify-between items-center bg-emerald-50/70 border border-emerald-200 p-4 rounded-2xl mb-6">
         <div>
-          <span class="text-xs font-bold text-teal-900 block">Total Indicatif Estimé (Pharmacies CI)</span>
-          <span class="text-[11px] text-teal-700">Source officielle : pharmacies-de-garde.ci (Tarification encadrée)</span>
+          <span class="text-xs font-bold text-emerald-900 block">Total Indicatif Estimé (Pharmacies CI)</span>
+          <span class="text-[11px] text-emerald-700">Source officielle : pharmacies-de-garde.ci (Tarification encadrée)</span>
         </div>
         <div class="text-right">
-          <span class="text-xl font-black text-teal-900 font-mono" id="fiche-total-prix">0 FCFA</span>
-        </div>
-      </div>
-
-      <!-- Duty Pharmacies info -->
-      <div class="p-4 bg-slate-100 rounded-2xl text-[11px] text-slate-600 mb-6">
-        <span class="font-bold text-slate-800 block mb-1">Pharmacies de garde à contacter pour délivrance :</span>
-        <div class="grid grid-cols-2 gap-2" id="fiche-pharmacies-garde">
-          <!-- Rendered by JS -->
+          <span class="text-xl font-black text-emerald-900 font-mono" id="fiche-total-prix">0 FCFA</span>
         </div>
       </div>
 
@@ -366,9 +385,9 @@
           <p>Document d'information pour le patient. Présentez toujours l'ordonnance médicale originale au pharmacien.</p>
           <p class="text-[10px] text-slate-400">Conformité ARTCI / Loi ivoirienne n° 2013-450 sur la protection des données de santé.</p>
         </div>
-        <div class="border-2 border-teal-700 rounded-xl p-2 text-center text-teal-900 font-bold text-[10px] w-40">
+        <div class="border-2 border-primary rounded-xl p-2 text-center text-primary font-bold text-[10px] w-40">
           ORDONNANCE+
-          <span class="block text-[8px] font-normal text-teal-700">ASSISTANT PATIENT CI</span>
+          <span class="block text-[8px] font-normal text-emerald-700">ASSISTANT PATIENT CI</span>
         </div>
       </div>
 
@@ -377,7 +396,7 @@
         <button onclick="fermerModal()" class="px-4 py-2 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
           Fermer
         </button>
-        <button onclick="window.print()" class="px-5 py-2 rounded-full text-xs font-bold bg-google-teal hover:bg-google-tealDark text-white shadow transition flex items-center gap-1.5">
+        <button onclick="window.print()" class="px-5 py-2 rounded-full text-xs font-bold bg-primary hover:bg-emerald-800 text-white shadow transition flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm">print</span> Imprimer / Enregistrer en PDF
         </button>
       </div>
@@ -385,14 +404,13 @@
     </div>
   </div>
 
-  <!-- APPLICATION LOGIC -->
+  <!-- APPLICATION LOGIC SCRIPT -->
   <script>
     let currentPrescription = null;
-    let currentZoom = 1.0;
 
     const PHARMACIES_ABIDJAN = [
-      { commune: "Cocody", nom: "Pharmacie des Deux-Plateaux", tel: "+225 27 22 41 20 20", adresse: "Boulevard des Martyrs, près de la station Shell" },
-      { commune: "Cocody", nom: "Pharmacie Saint-Jean", tel: "+225 27 22 44 11 00", adresse: "Rue des Jardins, II Plateaux Vallon" },
+      { commune: "Cocody", nom: "Pharmacie des Deux-Plateaux", tel: "+225 27 22 41 20 20", adresse: "Bd des Martyrs, station Shell" },
+      { commune: "Cocody", nom: "Pharmacie Saint-Jean", tel: "+225 27 22 44 11 00", adresse: "Rue des Jardins, II Plateaux" },
       { commune: "Plateau", nom: "Pharmacie du Commerce", tel: "+225 27 20 21 02 12", adresse: "Avenue Général de Gaulle" },
       { commune: "Yopougon", nom: "Pharmacie Bel-Air", tel: "+225 27 23 45 67 89", adresse: "Yopougon Selmer, Carrefour Zone" },
     ];
@@ -407,11 +425,13 @@
       container.innerHTML = '';
       PHARMACIES_ABIDJAN.forEach(p => {
         const d = document.createElement('div');
-        d.className = "p-3 bg-white rounded-xl border border-slate-200 text-xs";
+        d.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex flex-col justify-between";
         d.innerHTML = `
-          <strong class="text-slate-900 block">${escapeHtml(p.nom)} (${escapeHtml(p.commune)})</strong>
-          <span class="text-slate-500 text-[11px] block mt-0.5">${escapeHtml(p.adresse)}</span>
-          <a href="tel:${p.tel.replace(/\\s/g, '')}" class="text-google-teal font-mono font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline">
+          <div>
+            <strong class="text-slate-900 block font-semibold">${escapeHtml(p.nom)}</strong>
+            <span class="text-slate-500 text-[11px] block mt-0.5">${escapeHtml(p.commune)} • ${escapeHtml(p.adresse)}</span>
+          </div>
+          <a href="tel:${p.tel.replace(/\\s/g, '')}" class="text-primary font-mono font-bold text-xs inline-flex items-center gap-1 mt-2 hover:underline">
             <span class="material-symbols-outlined text-xs">call</span> ${escapeHtml(p.tel)}
           </a>
         `;
@@ -419,36 +439,25 @@
       });
     }
 
-    // Zoom controls
-    function zoomImage(factor) {
-      currentZoom = Math.min(Math.max(currentZoom * factor, 0.5), 3.0);
-      document.getElementById('image-wrapper').style.transform = `scale(${currentZoom})`;
-    }
-    function resetZoom() {
-      currentZoom = 1.0;
-      document.getElementById('image-wrapper').style.transform = `scale(1.0)`;
-    }
-
-    // Load a sample prescription
+    // Load sample
     async function chargerSampleReel(sampleId) {
       document.querySelectorAll('.sample-btn').forEach(b => {
         if (b.dataset.id === sampleId) {
-          b.className = "sample-btn text-left px-3 py-1.5 rounded-xl text-xs font-semibold bg-teal-50 border border-teal-300 text-google-teal transition flex items-center justify-between shadow-sm";
+          b.className = "sample-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-primary border border-emerald-300 shadow-sm transition";
         } else {
-          b.className = "sample-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition flex items-center justify-between";
+          b.className = "sample-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition";
         }
       });
 
       const mapImg = {
         'reelle_1': { url: '/static/samples/ordonnance_reelle_1.jpg', label: 'Ordonnance manuscrite smartphone (Wikimedia/Kisangani)' },
-        'reelle_2': { url: '/static/samples/ordonnance_reelle_2.png', label: 'Prescription clinique scannée' },
-        'reelle_3': { url: '/static/samples/ordonnance_reelle_3.png', label: 'Prescription hospitalière scannée' }
+        'reelle_2': { url: '/static/samples/ordonnance_reelle_2.png', label: 'Prescription clinique scannée réelle' },
+        'reelle_3': { url: '/static/samples/ordonnance_reelle_3.png', label: 'Prescription hospitalière scannée réelle' }
       };
 
       const info = mapImg[sampleId] || mapImg['reelle_1'];
       document.getElementById('prescription-img').src = info.url;
       document.getElementById('label-image-source').textContent = info.label;
-      resetZoom();
 
       showLoading(true);
       try {
@@ -474,7 +483,7 @@
       }
     }
 
-    // Upload custom photo from device (camera or gallery)
+    // Upload custom photo from device
     async function uploadPhoto(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -483,7 +492,6 @@
       reader.onload = e => {
         document.getElementById('prescription-img').src = e.target.result;
         document.getElementById('label-image-source').textContent = "Votre photo : " + file.name;
-        resetZoom();
       };
       reader.readAsDataURL(file);
 
@@ -515,7 +523,7 @@
       document.getElementById('loading-overlay').classList.toggle('hidden', !show);
     }
 
-    // Render Prescription into Right Pane
+    // Render Prescription into Page
     function renderPrescription() {
       if (!currentPrescription) return;
 
@@ -524,35 +532,8 @@
       document.getElementById('doctor-name').textContent = currentPrescription.medecin_nom || 'Médecin Praticien';
       document.getElementById('prescription-date').textContent = currentPrescription.date_prescription || 'Date non précisée';
 
-      renderSafetyBanner();
       renderLines();
       updateTotalPrice();
-    }
-
-    function renderSafetyBanner() {
-      const banner = document.getElementById('safety-banner');
-      const hasDoutes = currentPrescription.lignes.some(l => l.confiance === 'douteux');
-
-      if (hasDoutes) {
-        banner.className = "mt-4 p-4 rounded-2xl border border-amber-300 bg-amber-50 text-slate-800 flex items-start gap-3 shadow-sm";
-        banner.innerHTML = `
-          <span class="material-symbols-outlined text-amber-600 text-2xl shrink-0 mt-0.5">help</span>
-          <div class="text-xs">
-            <strong class="font-bold text-slate-900 block text-sm">Écriture Manuscrite Délicate Détectée</strong>
-            <span class="text-slate-600">L'IA a relevé des zones de doute ou des dosages manuscrits difficiles à lire sur le document. 
-            <strong>Règle de sécurité :</strong> ne prenez aucun médicament sans faire confirmer cette ligne par votre pharmacien lors de la délivrance.</span>
-          </div>
-        `;
-      } else {
-        banner.className = "mt-4 p-4 rounded-2xl border border-teal-200 bg-teal-50/70 text-slate-800 flex items-start gap-3 shadow-sm";
-        banner.innerHTML = `
-          <span class="material-symbols-outlined text-google-teal text-2xl shrink-0 mt-0.5 material-symbols-fill">check_circle</span>
-          <div class="text-xs">
-            <strong class="font-bold text-slate-900 block text-sm">Lecture Claire & Conforme</strong>
-            <span class="text-slate-600">Les médicaments et posologies ont été déchiffrés mot à mot sans extrapolation. Vous pouvez vous rendre en pharmacie pour la délivrance.</span>
-          </div>
-        `;
-      }
     }
 
     function renderLines() {
@@ -564,48 +545,50 @@
         const isDouteux = (ligne.confiance === 'douteux');
 
         const card = document.createElement('div');
-        card.className = `p-4 rounded-2xl border transition-all ${
+        card.className = `p-4 sm:p-5 rounded-2xl border transition-all ${
           isDouteux 
-            ? 'bg-amber-50/40 border-amber-300 shadow-sm' 
-            : 'bg-white border-google-border hover:border-slate-300 shadow-[0_1px_3px_rgba(0,0,0,0.02)]'
+            ? 'bg-amber-50/50 border-amber-300 shadow-sm' 
+            : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-sm'
         }`;
 
         card.innerHTML = `
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap mb-1">
                 <span class="text-xs font-mono font-bold text-slate-400">#${idx + 1}</span>
-                <span class="font-bold text-slate-900 text-sm">${escapeHtml(ligne.nom_medicament)}</span>
-                ${ligne.dosage ? `<span class="text-xs font-semibold text-google-teal bg-teal-50 border border-teal-200 rounded-full px-2.5 py-0.5">${escapeHtml(ligne.dosage)}</span>` : ''}
+                <h4 class="font-bold text-slate-900 text-sm sm:text-base">${escapeHtml(ligne.nom_medicament)}</h4>
+                ${ligne.dosage ? `<span class="text-xs font-bold text-primary bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">${escapeHtml(ligne.dosage)}</span>` : ''}
                 
                 ${isDouteux 
                   ? `<span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                       <span class="material-symbols-outlined text-xs text-amber-700">info</span> À confirmer en officine
+                       <span class="material-symbols-outlined text-xs text-amber-700">help</span> À confirmer en officine
                      </span>`
-                  : `<span class="text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                       <span class="material-symbols-outlined text-xs text-teal-700">check</span> Lecture nette
+                  : `<span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                       <span class="material-symbols-outlined text-xs text-emerald-700">check</span> Lecture nette
                      </span>`
                 }
               </div>
 
               <!-- Posologie recopiée -->
-              <div class="mt-2 pl-3 border-l-2 ${isDouteux ? 'border-amber-400' : 'border-slate-300'}">
-                <label class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block mb-0.5">Posologie prescrite (recopiée mot à mot)</label>
-                <p class="text-xs text-slate-800 font-medium">${escapeHtml(ligne.posologie_recopiee)}</p>
+              <div class="mt-2.5 bg-slate-50 rounded-xl p-2.5 sm:p-3 flex items-start gap-2 border border-slate-100">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">format_quote</span>
+                <p class="text-xs sm:text-sm text-slate-800 font-body">
+                  Recopie : <span class="font-semibold text-slate-900 italic">« ${escapeHtml(ligne.posologie_recopiee)} »</span>
+                </p>
               </div>
 
               <!-- Note de sécurité si doute -->
               ${ligne.note_securite ? `
                 <div class="mt-2 text-xs flex items-center gap-1.5 ${isDouteux ? 'text-amber-800 font-medium' : 'text-slate-500'}">
-                  <span class="material-symbols-outlined text-sm ${isDouteux ? 'text-amber-600' : 'text-slate-400'}">report</span>
+                  <span class="material-symbols-outlined text-sm ${isDouteux ? 'text-amber-600' : 'text-slate-400'}">info</span>
                   <span>${escapeHtml(ligne.note_securite)}</span>
                 </div>
               ` : ''}
 
               <!-- Prix officiel CI -->
-              <div class="mt-3 flex items-center gap-3 text-xs">
-                <span class="text-slate-600 font-mono text-[11px] flex items-center gap-1">
-                  <span class="material-symbols-outlined text-xs text-google-teal">sell</span> Prix indicatif officiel CI : 
+              <div class="mt-3 flex items-center justify-between flex-wrap gap-2 text-xs pt-2 border-t border-slate-100">
+                <span class="text-slate-500 font-mono text-[11px] flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs text-primary">sell</span> Tarif officiel CI : 
                   <strong class="text-slate-900 font-bold">${ligne.prix_reference_fcfa ? ligne.prix_reference_fcfa.toLocaleString() + ' FCFA' : 'Tarif non répertorié'}</strong>
                 </span>
                 ${ligne.nom_catalogue ? `<span class="text-[10px] text-slate-400 truncate max-w-xs">(${escapeHtml(ligne.nom_catalogue)})</span>` : ''}
@@ -638,24 +621,11 @@
       currentPrescription.lignes.forEach(m => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="p-3 font-bold text-slate-900">${escapeHtml(m.nom_medicament)} <span class="text-teal-800 font-semibold">${escapeHtml(m.dosage)}</span></td>
+          <td class="p-3 font-bold text-slate-900">${escapeHtml(m.nom_medicament)} <span class="text-primary font-semibold">${escapeHtml(m.dosage)}</span></td>
           <td class="p-3 text-slate-700 font-medium">${escapeHtml(m.posologie_recopiee)}</td>
           <td class="p-3 text-right font-mono font-bold text-slate-900">${m.prix_reference_fcfa ? m.prix_reference_fcfa.toLocaleString() + ' FCFA' : '-'}</td>
         `;
         tbody.appendChild(tr);
-      });
-
-      const pharmaciesDiv = document.getElementById('fiche-pharmacies-garde');
-      pharmaciesDiv.innerHTML = '';
-      PHARMACIES_ABIDJAN.slice(0, 2).forEach(p => {
-        const item = document.createElement('div');
-        item.className = "p-2.5 bg-white rounded-xl border border-slate-200";
-        item.innerHTML = `
-          <strong class="text-slate-900 block">${escapeHtml(p.nom)} (${escapeHtml(p.commune)})</strong>
-          <span class="text-slate-500">${escapeHtml(p.adresse)}</span><br>
-          <span class="text-teal-700 font-mono font-bold">${escapeHtml(p.tel)}</span>
-        `;
-        pharmaciesDiv.appendChild(item);
       });
 
       document.getElementById('modal-fiche').classList.remove('hidden');

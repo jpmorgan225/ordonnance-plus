@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Roboto+Flex:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'secondary': '#0058bb', 'surface-container-high': '#dee9fc', 'on-surface': '#121c2a', 'tertiary': '#8d4b00', 'surface-container-highest': '#d9e3f6', 'on-primary-fixed': '#00210e', 'on-secondary-fixed': '#001a41', 'on-secondary': '#ffffff', 'on-tertiary-fixed': '#2f1500', 'on-error': '#ffffff', 'surface-variant': '#d9e3f6', 'secondary-fixed-dim': '#adc7ff', 'surface-dim': '#d0dbed', 'error': '#ba1a1a', 'border-subtle': '#E5E7EB', 'on-primary-fixed-variant': '#00522b', 'pharmacy-green': '#438037', 'tertiary-container': '#ad6214', 'inverse-surface': '#27313f', 'surface-card': '#FFFFFF', 'warning-gold': '#F1BE25', 'outline-variant': '#bdcabc', 'surface-bright': '#f8f9ff', 'on-primary': '#ffffff', 'primary': '#006a39', 'tertiary-fixed': '#ffdcc3', 'inverse-primary': '#64dd91', 'emergency-red': '#E21C17', 'on-secondary-fixed-variant': '#004493', 'surface-container-low': '#eff4ff', 'on-secondary-container': '#fefcff', 'on-tertiary': '#ffffff', 'outline': '#6d7a6f', 'primary-fixed': '#82faab', 'on-tertiary-fixed-variant': '#6e3900', 'surface-container': '#e6eeff', 'primary-fixed-dim': '#64dd91', 'on-background': '#121c2a', 'surface': '#f8f9ff', 'on-tertiary-container': '#fffbff', 'surface-container-lowest': '#ffffff', 'surface-light': '#F8F9FA', 'secondary-fixed': '#d8e2ff', 'on-primary-container': '#f6fff4', 'primary-container': '#008649', 'error-container': '#ffdad6', 'on-error-container': '#93000a', 'tertiary-fixed-dim': '#ffb77d', 'on-surface-variant': '#3e4a3f', 'background': '#f8f9ff', 'inverse-on-surface': '#eaf1ff', 'secondary-container': '#1471e6', 'surface-tint': '#006d3a' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-xl': '2.25rem', 'gutter': '1rem', 'space-xs': '0.25rem', 'gutter-tablet': '1.5rem', 'margin': '1rem', 'space-sm': '0.5rem', 'space-lg': '1.5rem', 'margin-tablet': '2rem', 'space-md': '1rem', 'margin-desktop': '3rem' }, fontFamily: { 'headline-md': ['Plus Jakarta Sans'], 'body-sm': ['Roboto Flex'], 'price-display': ['Plus Jakarta Sans'], 'label-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'body-md': ['Roboto Flex'], 'headline-lg-mobile': ['Plus Jakarta Sans'], 'body-lg': ['Roboto Flex'], 'headline-lg': ['Plus Jakarta Sans'], 'label-lg': ['Plus Jakarta Sans'] }, fontSize: { 'headline-md': ['22px', { lineHeight: '28px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'price-display': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.5px', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '24px', fontWeight: '600' }], 'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.5px', fontWeight: '600' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'headline-lg-mobile': ['26px', { lineHeight: '34px', fontWeight: '700' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'headline-lg': ['32px', { lineHeight: '40px', fontWeight: '700' }], 'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior-y: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen antialiased selection:bg-primary/20"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><img alt="Logo Ordonnance+ CÃ´te d'Ivoire" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1VKFJvch026vK59GCymCGyY1IH5gUUYLx4uJQTdlQIVCAa2b7xx0gRQaxfMEAHidFyMp-zMOTWU4CdUsHGJmLGo4TVc_lfPE17hUNzlhYFM73w0N87awqYhKBGIV44NVQ92U84Ga2IBYMjhwtmTHLeaZHvJtSb37afapn3m61LIaJ1ecWiHi3m0v7dVZbdO_GVbCQR5zf6Ov9o5HXStlHoBCE_IWSl9kMsRAlqtHixHpFoNJ3kA5ezWYvE"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight truncate">Ordonnance+</span><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-semibold">CI</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-pharmacy-green animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">3 852 mÃ©dicaments officiels CI</span></div></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Urgences et gardes CI" class="w-11 h-11 min-h-[44px] min-w-[44px] rounded-full bg-emergency-red/10 text-emergency-red flex items-center justify-center transition-colors hover:bg-emergency-red/20 active:scale-95" type="button"><span class="material-symbols-outlined text-[22px]">emergency</span></button><button aria-label="Profil patient" class="w-11 h-11 min-h-[44px] min-w-[44px] rounded-full p-0.5 flex items-center justify-center focus:outline-none" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiCCdRFJG1Y0vp1OLvt8rsOYGCIlLe1BtimTXTxYlBwxuEcEOXh8_UKHYlFQxCUtGydV6PsuKRJpmqevNbL9cs_URubIMPYMEpmYvsS5VwI5GL_VPSGrd7oetAVXyphRLd-t1ovYo76ac__93ukoRY8Ypet65V2wGq2ndwjj7O4fYERoz0gCaU9pAkITWv5kLlb-3OuJzVjuQ1Hn6TJz0nOILZ14ztrmhM1AGQbwXNvcnZa0YvoYd-"/></button></div></div></header><main class="flex flex-col relative w-full pt-20 pb-28 bg-surface min-h-screen"><div class="flex flex-col w-full px-gutter space-y-space-md">
+<!-- En-tÃªte de vue avec statut de conformitÃ© -->
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Dossier CertifiÃ© &amp; ChiffrÃ©</span>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Ma Fiche de Traitement &amp; DÃ©marche Ãthique</h1>
+</div>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-high text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+</div>
+</div>
+<!-- Carte d'identitÃ© du traitement & QR Code SÃ©curisÃ© -->
+<div class="bg-surface-card rounded-xl shadow-sm p-space-md flex flex-col space-y-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container flex items-center justify-center flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait chaleureux et souriant d'une jeune femme ivoirienne nommÃ©e Awa portant un foulard colorÃ© moderne, lumiÃ¨re douce d'Abidjan, esthÃ©tique mÃ©dicale rassurante avec tonalitÃ©s vertes Ã©meraude et ivoire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4WE0mSiMmURSXOHqmm3kcsL3Sas7zxlj4FwjJ7w_ruF-Vrs0JUCreCiCcaIcThpE4clm3cM55YYU0eN_0EdJRq4ypK2XalrI_SE68IMZv1R8B1oBeGW_lDR13M28ViP32A0dMl4A1poZBn6oy-fzCJFBCd7u2Gws5xM7PKBS9KVDQsDVNjLn78IOJiPcCMzaFzly08LN_X05H-0zRPgkwtcm9OW2DoLVEzp3ccKnizrr6mThui6LS"/>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Awa TourÃ©</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">CMU Active</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">NÂ° National : CI-ABJ-8942-X01</p>
+</div>
+</div>
+<span class="px-2 py-1 rounded-full bg-surface-container-low text-primary font-label-sm text-label-sm flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-pharmacy-green animate-pulse"></span>
+        En cours
+      </span>
+</div>
+<!-- DÃ©tails du Prescripteur et date -->
+<div class="grid grid-cols-2 gap-space-xs p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Prescripteur</span>
+<span class="font-label-md text-label-md text-on-surface truncate">Dr. KouamÃ© Patrice</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Polyclinique Sainte-Anne (Cocody)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">DÃ©livrance &amp; ValiditÃ©</span>
+<span class="font-label-md text-label-md text-on-surface">18 Mai - 18 Juin 2024</span>
+<span class="font-body-sm text-body-sm text-primary text-[10px]">Ordonnance renouvelable (1/3)</span>
+</div>
+</div>
+<!-- QR Code de traÃ§abilitÃ© anonymisÃ© -->
+<div class="flex items-center gap-space-md p-space-sm bg-surface-bright rounded-lg">
+<div class="p-2 bg-surface-card rounded-lg shadow-sm flex-shrink-0 flex items-center justify-center">
+<!-- SVG QR Code StylisÃ© SÃ©curisÃ© avec badge central -->
+<svg class="w-20 h-20 text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- Corners markers -->
+<rect fill="currentColor" height="28" rx="4" width="28" x="0" y="0"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="4" y="4"></rect>
+<rect fill="currentColor" height="12" width="12" x="8" y="8"></rect>
+<rect fill="currentColor" height="28" rx="4" width="28" x="72" y="0"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="76" y="4"></rect>
+<rect fill="currentColor" height="12" width="12" x="80" y="8"></rect>
+<rect fill="currentColor" height="28" rx="4" width="28" x="0" y="72"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="4" y="76"></rect>
+<rect fill="currentColor" height="12" width="12" x="8" y="80"></rect>
+<!-- Pseudo-random QR data bits -->
+<rect fill="currentColor" height="8" width="8" x="36" y="4"></rect>
+<rect fill="currentColor" height="8" width="8" x="52" y="12"></rect>
+<rect fill="currentColor" height="8" width="8" x="36" y="24"></rect>
+<rect fill="currentColor" height="8" width="8" x="48" y="28"></rect>
+<rect fill="currentColor" height="8" width="8" x="12" y="36"></rect>
+<rect fill="currentColor" height="8" width="8" x="24" y="44"></rect>
+<rect fill="currentColor" height="8" width="8" x="4" y="52"></rect>
+<rect fill="currentColor" height="8" width="8" x="72" y="36"></rect>
+<rect fill="currentColor" height="8" width="8" x="84" y="44"></rect>
+<rect fill="currentColor" height="8" width="8" x="76" y="56"></rect>
+<rect fill="currentColor" height="8" width="8" x="36" y="72"></rect>
+<rect fill="currentColor" height="8" width="8" x="48" y="80"></rect>
+<rect fill="currentColor" height="8" width="8" x="64" y="76"></rect>
+<rect fill="currentColor" height="8" width="8" x="84" y="84"></rect>
+<rect fill="currentColor" height="8" width="8" x="72" y="92"></rect>
+<!-- CaducÃ©e centrÃ© en vert -->
+<circle cx="50" cy="50" fill="#FFFFFF" r="14"></circle>
+<circle cx="50" cy="50" fill="#006a39" r="11"></circle>
+<path d="M47 50h6M50 47v6" stroke="#FFFFFF" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+<span class="font-label-sm text-label-sm font-semibold">Pass Comptoir Express</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-mono tracking-tight text-xs mt-0.5">ORD-CI-2024-981F</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+          PrÃ©sentez ce code sÃ©curisÃ© au pharmacien. DÃ©chiffrement direct sans exposer vos donnÃ©es nominatives en clair.
+        </p>
+</div>
+</div>
+</div>
+<!-- Les 3 Piliers Ãthiques d'Ordonnance+ -->
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]">verified_user</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Les 3 Piliers Ãthiques</h2>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-bold">Standard ARTCI</span>
+</div>
+<!-- Pilier 1 : ZÃ©ro hallucination -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm flex flex-col space-y-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">psychology_alt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide">PILIER 01</span>
+<h3 class="font-label-lg text-label-lg text-on-surface">RÃ¨gle d'or : ZÃ©ro hallucination</h3>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant pt-1 leading-relaxed">
+        L'intelligence artificielle <strong class="text-on-surface">Gemini Multimodal</strong> ne devine aucune posologie absente ou tronquÃ©e. Chaque comprimÃ©, dosage et frÃ©quence est extrait par recopie textuelle certifiÃ©e, sans extrapolation probabiliste.
+      </p>
+<div class="flex items-center gap-1.5 pt-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+<span class="font-label-sm text-label-sm">Recopie textuelle fidÃ¨le garantie Ã  100%</span>
+</div>
+</div>
+<!-- Pilier 2 : Indication d'incertitude honnÃªte -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm flex flex-col space-y-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">draw_abstract</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary font-bold tracking-wide">PILIER 02</span>
+<h3 class="font-label-lg text-label-lg text-on-surface">Indication d'incertitude honnÃªte</h3>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant pt-1 leading-relaxed">
+        DÃ¨s qu'une Ã©criture cursive mÃ©dicale prÃ©sente un doute supÃ©rieur Ã  3%, l'algorithme refuse de trancher. Une alerte ambrÃ©e s'affiche pour solliciter obligatoirement le regard critique du pharmacien d'officine diplÃ´mÃ©.
+      </p>
+<div class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-warning-gold text-[18px]">handshake</span>
+<span class="font-label-sm text-label-sm">Alliance IA &amp; Jugement clinique humain</span>
+</div>
+</div>
+<!-- Pilier 3 : SouverainetÃ© des donnÃ©es mÃ©dicales -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm flex flex-col space-y-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">policy</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-tertiary font-bold tracking-wide">PILIER 03</span>
+<h3 class="font-label-lg text-label-lg text-on-surface">SouverainetÃ© des donnÃ©es mÃ©dicales</h3>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant pt-1 leading-relaxed">
+        Strictement conforme Ã  la <strong class="text-on-surface">Loi ivoirienne nÂ° 2013-450</strong> sur la protection des donnÃ©es personnelles et aux directives officielles de l'<strong class="text-on-surface">ARTCI</strong>. Vos donnÃ©es restent chiffrÃ©es de bout en bout : zÃ©ro monÃ©tisation, zÃ©ro cession commerciale tiers.
+      </p>
+<div class="flex items-center gap-2 pt-1 text-tertiary">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span class="font-label-sm text-label-sm">Stockage souverain &amp; Chiffrement AES-256</span>
+</div>
+</div>
+</div>
+<!-- Section Partenaires & Officines (B2B & CMU) -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">apartment</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">InteropÃ©rabilitÃ© Officines</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Gain au comptoir &amp; Tiers-payant ivoirien</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">CI-LGO</span>
+</div>
+<!-- Grille mÃ©triques B2B & CMU -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="p-space-sm bg-surface-card rounded-lg flex flex-col">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+<span class="font-label-md text-label-md font-bold">Gain : 3 min</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+          IntÃ©gration directe aux logiciels officinaux (LG-Pharm, SmartRx CI). ZÃ©ro re-saisie manuelle au comptoir.
+        </p>
+</div>
+<div class="p-space-sm bg-surface-card rounded-lg flex flex-col">
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+<span class="font-label-md text-label-md font-bold">CNAM / CMU</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+          Ventilation automatique 70% CMU et 30% ticket modÃ©rateur en FCFA selon la liste officielle CNAM.
+        </p>
+</div>
+</div>
+<!-- RÃ©capitulatif Panier MÃ©dicaments -->
+<div class="p-space-sm bg-surface-card rounded-lg flex flex-col space-y-1.5">
+<div class="flex justify-between items-center text-on-surface">
+<span class="font-label-md text-label-md">Total panier (3 molÃ©cules)</span>
+<span class="font-label-md text-label-md">14 200 FCFA</span>
+</div>
+<div class="flex justify-between items-center text-pharmacy-green font-body-sm text-body-sm">
+<span>Prise en charge CMU (70%)</span>
+<span>- 9 940 FCFA</span>
+</div>
+<div class="h-px bg-surface-container my-0.5"></div>
+<div class="flex justify-between items-center text-primary">
+<span class="font-label-lg text-label-lg font-bold">Reste Ã  payer patient</span>
+<span class="font-price-display text-price-display">4 260 FCFA</span>
+</div>
+</div>
+</div>
+<!-- Boutons d'export et actions terrain -->
+<div class="flex flex-col space-y-space-sm pt-space-xs pb-space-lg">
+<!-- PrÃ©senter l'Ã©cran au pharmacien (Mode plein Ã©cran / tactile) -->
+<button class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-all active:bg-primary-container active:scale-[0.99]" id="btn-presenter" type="button">
+<span class="material-symbols-outlined text-[20px]">screen_share</span>
+<span>PrÃ©senter l'Ã©cran au pharmacien</span>
+</button>
+<!-- Exporter en PDF haute fidÃ©litÃ© -->
+<button class="w-full h-12 rounded-full bg-surface-card text-secondary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-all active:bg-surface-container-high" id="btn-export-pdf" type="button">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+<span>Exporter en PDF haute fidÃ©litÃ©</span>
+</button>
+<!-- Effacer l'historique local (ConfidentialitÃ© totale) -->
+<button class="w-full h-11 rounded-full bg-surface-container-low text-error font-label-md text-label-md flex items-center justify-center gap-1.5 transition-colors hover:bg-error-container hover:text-on-error-container" id="btn-effacer-local" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+<span>Effacer l'historique local</span>
+</button>
+<!-- Toast feedback interactif -->
+<div class="hidden transition-all duration-300 p-space-sm bg-inverse-surface text-inverse-on-surface rounded-lg flex items-center justify-between shadow-md" id="toast-action">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-inverse-primary text-[18px]" id="toast-icon">check_circle</span>
+<span class="font-body-sm text-body-sm" id="toast-text">Action exÃ©cutÃ©e</span>
+</div>
+<button class="text-inverse-on-surface/70 hover:text-inverse-on-surface" onclick="document.getElementById('toast-action').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const toast = document.getElementById('toast-action');
+    const toastText = document.getElementById('toast-text');
+    const toastIcon = document.getElementById('toast-icon');
+
+    function showFeedback(message, icon) {
+      if (!toast) return;
+      toastText.textContent = message;
+      toastIcon.textContent = icon || 'check_circle';
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    const btnPresenter = document.getElementById('btn-presenter');
+    if (btnPresenter) {
+      btnPresenter.addEventListener('click', () => {
+        showFeedback('Mode comptoir activÃ© : luminositÃ© maximale & QR Code prÃªt Ã  scanner.', 'qr_code_scanner');
+      });
+    }
+
+    const btnPdf = document.getElementById('btn-export-pdf');
+    if (btnPdf) {
+      btnPdf.addEventListener('click', () => {
+        showFeedback('Fiche gÃ©nÃ©rÃ©e en PDF haute fidÃ©litÃ© (Filigrane ARTCI & signature certifiÃ©e).', 'download_done');
+      });
+    }
+
+    const btnEffacer = document.getElementById('btn-effacer-local');
+    if (btnEffacer) {
+      btnEffacer.addEventListener('click', () => {
+        const confirmPurge = confirm('Supprimer le cache local de cette ordonnance sur cet appareil conformÃ©ment Ã  la loi ARTCI ?');
+        if (confirmPurge) {
+          showFeedback('Historique local purgÃ© avec succÃ¨s. DonnÃ©es patient rÃ©initialisÃ©es.', 'lock_reset');
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-card/95 backdrop-blur-xl shadow-[0_-4px_16px_rgba(18,28,42,0.06)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-20 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-20 py-1 gap-1 text-on-surface-variant hover:text-primary transition-colors" data-path="accueil-scan" href="#"><span class="material-symbols-outlined text-[24px]">document_scanner</span><span class="font-label-sm text-label-sm text-center leading-tight">Accueil &amp; Scan</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-20 py-1 gap-1 text-on-surface-variant hover:text-primary transition-colors" data-path="ordonnances-panier" href="#"><span class="material-symbols-outlined text-[24px]">prescriptions</span><span class="font-label-sm text-label-sm text-center leading-tight">Ordonnances</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-20 py-1 gap-1 text-on-surface-variant hover:text-primary transition-colors" data-path="pharmacies-de-garde" href="#"><span class="material-symbols-outlined text-[24px]">local_pharmacy</span><span class="font-label-sm text-label-sm text-center leading-tight">Gardes 24h</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-20 py-1 gap-1 text-on-surface-variant hover:text-primary transition-colors" data-path="securite-fiche-patient" href="#"><span class="material-symbols-outlined text-[24px]">verified_user</span><span class="font-label-sm text-label-sm text-center leading-tight">SÃ©curitÃ© ARTCI</span></a></div></nav></body></html>
