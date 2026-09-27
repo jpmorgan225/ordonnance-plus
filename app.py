@@ -1249,7 +1249,7 @@ import hashlib
 import edge_tts
 from fastapi import Response
 
-AUDIO_CACHE_DIR = os.path.join(BASE_DIR, "audio_cache")
+AUDIO_CACHE_DIR = os.path.join("/tmp", "ordonnance-plus-audio")
 os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
 
 @app.get("/api/tts")
