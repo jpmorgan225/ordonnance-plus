@@ -44,10 +44,10 @@ class LignePrescription(BaseModel):
     groupe_therapeutique: Optional[str] = None
 
 class AnalyseOrdonnance(BaseModel):
-    patient_nom: str
+    patient_nom: Optional[str] = "Patient"
     patient_age: Optional[str] = None
-    medecin_nom: str
-    date_prescription: str
+    medecin_nom: Optional[str] = "Médecin Prescripteur"
+    date_prescription: Optional[str] = "Date non spécifiée"
     etablissement: Optional[str] = None
     lignes: List[LignePrescription]
     total_lignes: int = 0
@@ -158,13 +158,10 @@ async def analyser_ordonnance_reelle(
 
     # Modèles Gemini multimodaux par ordre de disponibilité et performance
     models = [
-        "gemini-flash-latest",
-        "gemini-3.7-flash",
         "gemini-3.1-flash-lite",
-        "gemini-2.5-flash-lite",
+        "gemini-3.7-flash",
         "gemini-flash-lite-latest",
-        "gemini-3.8-flash",
-        "gemini-3.5-flash"
+        "gemini-3-flash-preview"
     ]
     image_b64 = base64.b64encode(image_bytes).decode("utf-8")
 
@@ -212,6 +209,8 @@ async def analyser_ordonnance_reelle(
                 print(f"[!] Erreur appel Gemini {model}: {e}")
 
     if not raw_data:
+        if "nodename nor servname" in dernier_erreur or "ConnectError" in dernier_erreur or "gaierror" in dernier_erreur:
+            raise RuntimeError("Connexion impossible aux serveurs Google Gemini. Veuillez vérifier votre connexion internet.")
         raise RuntimeError(f"Échec de l'appel Google Gemini : {dernier_erreur}")
 
     # Rapprochement avec le référentiel de prix de Côte d'Ivoire
@@ -302,11 +301,11 @@ async def analyser_ordonnance_reelle(
     incertaines = total_lignes - confirmees
 
     return AnalyseOrdonnance(
-        patient_nom=raw_data.get("patient_nom", "Patient"),
+        patient_nom=raw_data.get("patient_nom") or "Patient",
         patient_age=raw_data.get("patient_age"),
-        medecin_nom=raw_data.get("medecin_nom", "Médecin Prescripteur"),
-        date_prescription=raw_data.get("date_prescription", "Date non spécifiée"),
-        etablissement=raw_data.get("etablissement", "Cabinet Médical / Centre Hospitalier"),
+        medecin_nom=raw_data.get("medecin_nom") or "Médecin Prescripteur",
+        date_prescription=raw_data.get("date_prescription") or "Date non spécifiée",
+        etablissement=raw_data.get("etablissement") or "Cabinet Médical / Centre Hospitalier",
         lignes=lignes_enrichies,
         total_lignes=total_lignes,
         lignes_confirmees=confirmees,
