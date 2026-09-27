@@ -286,6 +286,37 @@
         </div>
       </div>
 
+      <!-- ASSISTANCE VOCALE / LECTEUR AUDIO POUR PATIENT (Accessibilité & Inclusion) -->
+      <div id="audio-player-banner" class="hidden bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-emerald-500/40 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 transition-all">
+        <div class="flex items-start gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
+            <span class="material-symbols-outlined text-2xl" id="audio-icon-main">volume_up</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Assistance Vocale Patient</span>
+              <span class="text-[11px] text-slate-400">Pour les patients qui ne savent pas lire</span>
+            </div>
+            <h4 class="font-bold text-white text-sm sm:text-base mt-0.5" id="audio-title-text">
+              Écouter l'ordonnance et les posologies expliquées à voix haute
+            </h4>
+            <p class="text-xs text-slate-300 font-body mt-0.5" id="audio-status-text">
+              Explication vocale claire en français simple : posologies, prises par jour et budget total.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 shrink-0">
+          <button id="btn-audio-play" onclick="toggleAudioLectureGlobale()" class="h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer">
+            <span class="material-symbols-outlined text-xl" id="btn-audio-play-icon">play_arrow</span>
+            <span id="btn-audio-play-label">Écouter mon ordonnance</span>
+          </button>
+          <button id="btn-audio-stop" onclick="arreterAudioLecture()" class="h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white transition flex items-center justify-center hidden cursor-pointer" title="Arrêter la lecture">
+            <span class="material-symbols-outlined text-lg">stop</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Prescribed items header -->
       <div class="flex items-center justify-between px-1">
         <div class="flex items-center gap-2">
@@ -772,6 +803,10 @@
     }
 
     function renderInitialEmptyState() {
+      arreterAudioLecture();
+      const audioBanner = document.getElementById('audio-player-banner');
+      if (audioBanner) audioBanner.classList.add('hidden');
+
       const container = document.getElementById('lines-container');
       container.innerHTML = `
         <div class="p-8 text-center bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400 shadow-sm flex flex-col items-center justify-center">
@@ -921,6 +956,10 @@
     function renderPrescription() {
       if (!currentPrescription) return;
 
+      arreterAudioLecture();
+      const audioBanner = document.getElementById('audio-player-banner');
+      if (audioBanner) audioBanner.classList.remove('hidden');
+
       document.getElementById('patient-name').textContent = currentPrescription.patient_nom || 'Patient';
       document.getElementById('patient-age-badge').textContent = currentPrescription.patient_age || 'Âge non précisé';
       document.getElementById('doctor-name').textContent = currentPrescription.medecin_nom || 'Médecin Praticien';
@@ -956,6 +995,7 @@
         const isIncertain = !isConfirme;
 
         const card = document.createElement('div');
+        card.id = `med-card-${idx}`;
         card.className = `p-4 sm:p-5 rounded-2xl border transition-all ${
           isConfirme 
             ? 'bg-white border-slate-200/90 hover:border-emerald-300 shadow-sm'
@@ -1007,12 +1047,18 @@
                 <span>Texte brut relevé : <strong class="text-slate-800">« ${escapeHtml(ligne.raw_text || (ligne.nom_medicament + ' ' + (ligne.dosage || '')))} »</strong></span>
               </div>
 
-              <!-- Posologie recopiée -->
-              <div class="mt-2 bg-white rounded-xl p-2.5 sm:p-3 flex items-start gap-2 border border-slate-200/70 shadow-2xs">
-                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">format_quote</span>
-                <p class="text-xs sm:text-sm text-slate-800 font-body">
-                  Recopie fidèle : <span class="font-semibold text-slate-900 italic">« ${escapeHtml(ligne.posologie_recopiee)} »</span>
-                </p>
+              <!-- Posologie recopiée + Bouton Écouter individuel -->
+              <div class="mt-2 bg-white rounded-xl p-2.5 sm:p-3 flex items-start justify-between gap-3 border border-slate-200/70 shadow-2xs">
+                <div class="flex items-start gap-2 flex-1">
+                  <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">format_quote</span>
+                  <p class="text-xs sm:text-sm text-slate-800 font-body">
+                    Recopie fidèle : <span class="font-semibold text-slate-900 italic">« ${escapeHtml(ligne.posologie_recopiee)} »</span>
+                  </p>
+                </div>
+                <button onclick="lirePosologieLigne(${idx})" id="btn-audio-line-${idx}" class="shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs" title="Écouter la posologie de ce médicament">
+                  <span class="material-symbols-outlined text-sm" id="icon-audio-line-${idx}">volume_up</span>
+                  <span>Écouter</span>
+                </button>
               </div>
 
               <!-- Motif de l'incertitude si applicable -->
@@ -1100,6 +1146,210 @@
     function escapeHtml(text) {
       if (!text) return '';
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    /* ==========================================================================
+       ASSISTANCE VOCALE POUR PATIENTS (Text-to-Speech / Accessibilité & Inclusion)
+       Permet d'écouter l'ordonnance complète ou médicament par médicament
+       ========================================================================== */
+    let isAudioPlaying = false;
+    let activeLineAudioIndex = null;
+
+    function getFrenchVoice() {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      const frVoice = voices.find(v => v.lang && (v.lang === 'fr-FR' || v.lang.startsWith('fr')));
+      return frVoice || null;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        getFrenchVoice();
+      };
+    }
+
+    function genererTexteAudioGlobal() {
+      if (!currentPrescription || !currentPrescription.lignes || currentPrescription.lignes.length === 0) {
+        return "Aucune ordonnance n'est chargée actuellement.";
+      }
+
+      const pNom = currentPrescription.patient_nom && currentPrescription.patient_nom !== 'Patient' 
+        ? currentPrescription.patient_nom 
+        : 'vous';
+      const nb = currentPrescription.lignes.length;
+      const totalPrix = currentPrescription.total_estime_fcfa || 0;
+
+      let texte = `Bonjour. Voici la lecture complète de votre ordonnance. `;
+      texte += `Elle comporte ${nb} médicament${nb > 1 ? 's' : ''}. `;
+      if (totalPrix > 0) {
+        texte += `Le montant total estimé en pharmacie est d'environ ${totalPrix.toLocaleString()} francs CFA. `;
+      }
+      texte += `Voici le détail de chaque médicament et la façon de le prendre : `;
+
+      currentPrescription.lignes.forEach((l, i) => {
+        texte += `Médicament numéro ${i + 1} : ${l.nom_medicament}. `;
+        if (l.dosage) {
+          texte += `Dosage : ${l.dosage}. `;
+        }
+        if (l.posologie_recopiee) {
+          texte += `Conseil de prise : ${l.posologie_recopiee}. `;
+        }
+        if (l.motif_incertitude) {
+          texte += `Attention, l'écriture sur cette ligne est difficile à lire. Demandez confirmation à votre pharmacien. `;
+        }
+        if (l.prix_reference_fcfa) {
+          texte += `Prix indicatif officiel : ${l.prix_reference_fcfa.toLocaleString()} francs CFA. `;
+        }
+      });
+
+      texte += `Rappel très important : présentez toujours votre ordonnance médicale papier originale au pharmacien lors de votre achat. Bon rétablissement !`;
+      return texte;
+    }
+
+    function toggleAudioLectureGlobale() {
+      if (!('speechSynthesis' in window)) {
+        alert("La synthèse vocale n'est pas supportée par votre navigateur.");
+        return;
+      }
+
+      if (isAudioPlaying) {
+        arreterAudioLecture();
+        return;
+      }
+
+      const texte = genererTexteAudioGlobal();
+      lancerLectureAudio(texte, null);
+    }
+
+    function lirePosologieLigne(idx) {
+      if (!('speechSynthesis' in window)) {
+        alert("La synthèse vocale n'est pas supportée par votre navigateur.");
+        return;
+      }
+
+      if (!currentPrescription || !currentPrescription.lignes || !currentPrescription.lignes[idx]) return;
+
+      if (isAudioPlaying && activeLineAudioIndex === idx) {
+        arreterAudioLecture();
+        return;
+      }
+
+      arreterAudioLecture();
+
+      const l = currentPrescription.lignes[idx];
+      let texte = `Médicament ${idx + 1} : ${l.nom_medicament}. `;
+      if (l.dosage) texte += `Dosage : ${l.dosage}. `;
+      if (l.posologie_recopiee) texte += `Comment le prendre : ${l.posologie_recopiee}. `;
+      if (l.motif_incertitude) texte += `Attention : ${l.motif_incertitude}. Demandez confirmation au pharmacien. `;
+      if (l.prix_reference_fcfa) texte += `Prix indicatif : ${l.prix_reference_fcfa.toLocaleString()} francs CFA.`;
+
+      lancerLectureAudio(texte, idx);
+    }
+
+    function lancerLectureAudio(texte, lineIdx = null) {
+      window.speechSynthesis.cancel();
+
+      const utter = new SpeechSynthesisUtterance(texte);
+      utter.lang = 'fr-FR';
+      utter.rate = 0.93;
+      utter.pitch = 1.0;
+
+      const frVoice = getFrenchVoice();
+      if (frVoice) utter.voice = frVoice;
+
+      isAudioPlaying = true;
+      activeLineAudioIndex = lineIdx;
+      mettreAJourUIAudio(true, lineIdx);
+
+      utter.onend = () => {
+        arreterAudioLecture();
+      };
+
+      utter.onerror = (e) => {
+        console.error("Erreur de synthèse vocale :", e);
+        arreterAudioLecture();
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function arreterAudioLecture() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isAudioPlaying = false;
+      const prevLine = activeLineAudioIndex;
+      activeLineAudioIndex = null;
+      mettreAJourUIAudio(false, prevLine);
+    }
+
+    function mettreAJourUIAudio(enLecture, lineIdx = null) {
+      const btnPlay = document.getElementById('btn-audio-play');
+      const btnPlayIcon = document.getElementById('btn-audio-play-icon');
+      const btnPlayLabel = document.getElementById('btn-audio-play-label');
+      const btnStop = document.getElementById('btn-audio-stop');
+      const audioIcon = document.getElementById('audio-icon-main');
+      const statusText = document.getElementById('audio-status-text');
+
+      if (enLecture) {
+        if (btnPlay) btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        if (btnPlayIcon) btnPlayIcon.textContent = "pause";
+        if (btnPlayLabel) btnPlayLabel.textContent = "Mettre en pause";
+        if (btnStop) btnStop.classList.remove('hidden');
+        if (audioIcon) {
+          audioIcon.classList.add('animate-pulse', 'text-emerald-300');
+        }
+        if (statusText) {
+          statusText.textContent = lineIdx !== null 
+            ? `Lecture en cours du médicament #${lineIdx + 1}...` 
+            : "Lecture vocale de l'ordonnance en cours...";
+        }
+
+        if (lineIdx !== null) {
+          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
+          const lineIcon = document.getElementById(`icon-audio-line-${lineIdx}`);
+          const card = document.getElementById(`med-card-${lineIdx}`);
+          if (lineBtn) {
+            lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 border border-emerald-400 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-md";
+          }
+          if (lineIcon) {
+            lineIcon.textContent = "graphic_eq";
+            lineIcon.classList.add('animate-pulse');
+          }
+          if (card) {
+            card.classList.add('ring-2', 'ring-emerald-500');
+          }
+        }
+      } else {
+        if (btnPlay) btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+        if (btnPlayIcon) btnPlayIcon.textContent = "play_arrow";
+        if (btnPlayLabel) btnPlayLabel.textContent = "Écouter mon ordonnance";
+        if (btnStop) btnStop.classList.add('hidden');
+        if (audioIcon) {
+          audioIcon.classList.remove('animate-pulse', 'text-emerald-300');
+        }
+        if (statusText) {
+          statusText.textContent = "Explication vocale claire en français simple : posologies, prises par jour et budget total.";
+        }
+
+        if (currentPrescription && currentPrescription.lignes) {
+          currentPrescription.lignes.forEach((_, idx) => {
+            const lineBtn = document.getElementById(`btn-audio-line-${idx}`);
+            const lineIcon = document.getElementById(`icon-audio-line-${idx}`);
+            const card = document.getElementById(`med-card-${idx}`);
+            if (lineBtn) {
+              lineBtn.className = "shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs";
+            }
+            if (lineIcon) {
+              lineIcon.textContent = "volume_up";
+              lineIcon.classList.remove('animate-pulse');
+            }
+            if (card) {
+              card.classList.remove('ring-2', 'ring-emerald-500');
+            }
+          });
+        }
+      }
     }
   </script>
 </body>

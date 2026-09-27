@@ -152,7 +152,7 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
 
 3. STRUCTURE DU JSON ATTENDU :
 {
-  "patient_nom": "Nom du patient ou 'Patient Anonymisé'",
+  "patient_nom": "Nom du patient ou 'Patient'",
   "patient_age": "Âge si mentionné sur le document, sinon null",
   "medecin_nom": "Nom du médecin praticien",
   "date_prescription": "Date au format JJ/MM/AAAA si lisible",
