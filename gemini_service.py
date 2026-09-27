@@ -144,8 +144,16 @@ async def analyser_ordonnance_reelle(
     if not api_key:
         raise ValueError("Clé API Google AI Studio manquante. Veuillez saisir votre clé API pour lancer l'analyse en direct.")
 
-    # Modèles Gemini multimodaux par ordre de précision
-    models = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+    # Modèles Gemini multimodaux par ordre de disponibilité et performance
+    models = [
+        "gemini-flash-latest",
+        "gemini-3.7-flash",
+        "gemini-3.1-flash-lite",
+        "gemini-2.5-flash-lite",
+        "gemini-flash-lite-latest",
+        "gemini-3.8-flash",
+        "gemini-3.5-flash"
+    ]
     image_b64 = base64.b64encode(image_bytes).decode("utf-8")
 
     payload = {
