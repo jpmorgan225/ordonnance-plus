@@ -329,23 +329,17 @@
           <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700 rounded-xl px-2.5 py-1.5 shadow-inner">
             <span class="material-symbols-outlined text-xs text-slate-400">record_voice_over</span>
             <select id="select-audio-voice" onchange="arreterAudioLecture()" class="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer">
-              <option value="vivienne" selected>Voix Vivienne (Humaine & chaleureuse)</option>
-              <option value="kore">Voix Kore (Google Gemini 3.8 Flash TTS)</option>
+              <option value="kore" selected>Voix Kore (Google Gemini 3.8 Flash TTS)</option>
+              <option value="vivienne">Voix Vivienne (Humaine & chaleureuse)</option>
               <option value="aoede">Voix Aoede (Google Gemini 3.8 Flash Expressive)</option>
               <option value="denise">Voix Denise (Douce & posée)</option>
               <option value="remy">Voix Rémy (Masculine & claire)</option>
             </select>
           </div>
 
-          <button id="btn-audio-play" onclick="toggleAudioLectureGlobale()" class="h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer">
+          <button id="btn-audio-play" onclick="toggleAudioLectureGlobale()" class="h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer">
             <span class="material-symbols-outlined text-xl" id="btn-audio-play-icon">play_arrow</span>
-            <span id="btn-audio-play-label">Écouter (Standard)</span>
-          </button>
-
-          <!-- BOUTON DÉDIÉ FRANÇAIS POPULAIRE IVOIRIEN / NOUCHI -->
-          <button id="btn-audio-ci" onclick="toggleAudioLectureIvoirienne()" class="h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 hover:brightness-110 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer border border-orange-300/40">
-            <span class="text-base">🇨🇮</span>
-            <span id="btn-audio-ci-label">Écouter en français ivoirien</span>
+            <span id="btn-audio-play-label">Écouter mon ordonnance</span>
           </button>
 
           <button id="btn-audio-stop" onclick="arreterAudioLecture()" class="h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white transition flex items-center justify-center hidden cursor-pointer" title="Arrêter la lecture">
@@ -1090,11 +1084,9 @@
       setTimeout(() => {
         try {
           const tGlobal = genererTexteAudioGlobal();
-          const tCI = genererTexteAudioIvoirien();
           const voiceSelect = document.getElementById('select-audio-voice');
-          const v = voiceSelect ? voiceSelect.value : 'vivienne';
+          const v = voiceSelect ? voiceSelect.value : 'kore';
           fetch(`/api/tts?voice=${encodeURIComponent(v)}&text=${encodeURIComponent(tGlobal)}`).catch(() => {});
-          fetch(`/api/tts?voice=${encodeURIComponent(v)}&text=${encodeURIComponent(tCI)}`).catch(() => {});
         } catch (_) {}
       }, 400);
     }
@@ -1171,16 +1163,10 @@
                     Recopie fidèle : <span class="font-semibold text-slate-900 italic">« ${escapeHtml(ligne.posologie_recopiee)} »</span>
                   </p>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
-                  <button onclick="lirePosologieLigne(${idx})" id="btn-audio-line-${idx}" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs" title="Écouter la posologie (français standard)">
-                    <span class="material-symbols-outlined text-sm" id="icon-audio-line-${idx}">volume_up</span>
-                    <span>Écouter</span>
-                  </button>
-                  <button onclick="lirePosologieLigneIvoirienne(${idx})" id="btn-audio-ci-line-${idx}" class="px-2 py-1.5 rounded-xl text-xs font-bold bg-orange-50 hover:bg-orange-100 text-orange-950 border border-orange-200 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs" title="Écouter en français populaire ivoirien">
-                    <span>🇨🇮</span>
-                    <span>Ivoirien</span>
-                  </button>
-                </div>
+                <button onclick="lirePosologieLigne(${idx})" id="btn-audio-line-${idx}" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-2xs" title="Écouter la posologie de ce médicament">
+                  <span class="material-symbols-outlined text-sm" id="icon-audio-line-${idx}">volume_up</span>
+                  <span>Écouter</span>
+                </button>
               </div>
 
               <!-- Motif de l'incertitude si applicable -->
@@ -1335,7 +1321,7 @@
       return `C'est dosé à ${normaliserTexteOral(dosage)}.`;
     }
 
-    function formaterDosageVocalIvoirien(dosage) {
+    function formaterDosageVocal(dosage) {
       if (!dosage) return "Le docteur n'a pas précisé le dosage sur le papier.";
       const d = dosage.trim().toLowerCase();
       if (d.includes('non précisé') || d.includes('non precise') || d.includes('illisible') || d.includes('inconnu') || d === 'null' || d === '-' || d === 'aucun') {
@@ -1345,52 +1331,6 @@
     }
 
     function genererTexteAudioGlobal() {
-      if (!currentPrescription || !currentPrescription.lignes || currentPrescription.lignes.length === 0) {
-        return "Bonjour, aucune ordonnance n'est encore chargée.";
-      }
-
-      const pNom = currentPrescription.patient_nom && currentPrescription.patient_nom !== 'Patient' 
-        ? currentPrescription.patient_nom 
-        : '';
-      const nb = currentPrescription.lignes.length;
-      const totalPrix = currentPrescription.total_estime_fcfa || 0;
-
-      let texte = pNom ? `Bonjour ${pNom} ! ` : "Bonjour ! ";
-      texte += `Voici les explications bienveillantes de votre ordonnance. `;
-      texte += `Le docteur vous a prescrit ${nb} médicament${nb > 1 ? 's' : ''}. `;
-      if (totalPrix > 0) {
-        texte += `À la pharmacie, le prix moyen total est estimé à environ ${totalPrix.toLocaleString()} francs CFA. `;
-      }
-      texte += `Écoutez attentivement les conseils pour chaque médicament : `;
-
-      const ordinaux = [
-        "Premier médicament", "Deuxième médicament", "Troisième médicament", 
-        "Quatrième médicament", "Cinquième médicament", "Sixième médicament", 
-        "Septième médicament", "Huitième médicament"
-      ];
-
-      currentPrescription.lignes.forEach((l, i) => {
-        const prefixe = ordinaux[i] || `Médicament numéro ${i + 1}`;
-        texte += `${prefixe} : ${l.nom_medicament}. `;
-        texte += `${formaterDosageVocal(l.dosage)} `;
-
-        const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
-        if (posologieAConter) {
-          texte += `Conseil de prise : ${posologieAConter}. `;
-        }
-        if (l.motif_incertitude) {
-          texte += `Attention, l'écriture du docteur n'était pas très facile à lire sur cette ligne. Montrez-la bien au pharmacien pour confirmation. `;
-        }
-        if (l.prix_reference_fcfa) {
-          texte += `Prix moyen : ${l.prix_reference_fcfa.toLocaleString()} francs CFA. `;
-        }
-      });
-
-      texte += `Un dernier conseil essentiel : pensez à bien emporter votre ordonnance papier originale avec vous quand vous irez à la pharmacie. Prenez bien soin de vous et très prompt rétablissement !`;
-      return texte;
-    }
-
-    function genererTexteAudioIvoirien() {
       if (!currentPrescription || !currentPrescription.lignes || currentPrescription.lignes.length === 0) {
         return "Bonjour mon cher, y'a pas encore d'ordonnance chargée.";
       }
@@ -1418,11 +1358,11 @@
       currentPrescription.lignes.forEach((l, i) => {
         const prefixe = ordinaux[i] || `Médicament numéro ${i + 1}`;
         texte += `${prefixe} : ${l.nom_medicament}. `;
-        texte += `${formaterDosageVocalIvoirien(l.dosage)} `;
+        texte += `${formaterDosageVocal(l.dosage)} `;
 
-        const posologieCI = l.posologie_ivoirienne || adapterVersIvoirien(l.posologie_orale_simple || l.posologie_recopiee);
-        if (posologieCI) {
-          texte += `Comment prendre : ${posologieCI}. `;
+        const posologieAConter = l.posologie_orale_simple || l.posologie_ivoirienne || adapterVersIvoirien(l.posologie_recopiee);
+        if (posologieAConter) {
+          texte += `Comment prendre : ${posologieAConter}. `;
         }
         if (l.motif_incertitude) {
           texte += `Attention, l'écriture du docteur n'est pas bien sortie ici, faut bien montrer le papier au pharmacien pour qu'il vérifie pour toi. `;
@@ -1437,24 +1377,12 @@
     }
 
     function genererTexteLigne(l, idx) {
-      let texte = `Pour le ${l.nom_medicament} : `;
-      texte += `${formaterDosageVocal(l.dosage)} `;
-      const posologieAConter = l.posologie_orale_simple || normaliserTexteOral(l.posologie_recopiee);
-      if (posologieAConter) texte += `Conseil de prise : ${posologieAConter}. `;
-      if (l.motif_incertitude) {
-        texte += `Attention, l'écriture du médecin est peu lisible sur ce médicament, demandez confirmation à votre pharmacien. `;
-      }
-      if (l.prix_reference_fcfa) {
-        texte += `Prix moyen : ${l.prix_reference_fcfa.toLocaleString()} francs CFA.`;
-      }
-      return texte;
-    }
-
-    function genererTexteLigneIvoirienne(l, idx) {
       let texte = `Pour le médicament ${l.nom_medicament} : `;
-      texte += `${formaterDosageVocalIvoirien(l.dosage)} `;
-      const posologieCI = l.posologie_ivoirienne || adapterVersIvoirien(l.posologie_orale_simple || l.posologie_recopiee);
-      if (posologieCI) texte += `Comment tu dois prendre : ${posologieCI}. `;
+      texte += `${formaterDosageVocal(l.dosage)} `;
+      const posologieAConter = l.posologie_orale_simple || l.posologie_ivoirienne || adapterVersIvoirien(l.posologie_recopiee);
+      if (posologieAConter) {
+        texte += `Comment tu dois prendre : ${posologieAConter}. `;
+      }
       if (l.motif_incertitude) {
         texte += `Attention, l'écriture du docteur n'est pas bien sortie sur cette ligne, montre bien ton papier au pharmacien. `;
       }
@@ -1467,7 +1395,6 @@
     let currentAudioPlayer = null;
     let isAudioPlaying = false;
     let isAudioLoading = false;
-    let currentAudioMode = 'standard'; // 'standard' ou 'ivoirien'
     let activeLineAudioIndex = null;
 
     function toggleAudioLectureGlobale() {
@@ -1475,47 +1402,26 @@
         arreterAudioLecture();
         return;
       }
-      if (isAudioPlaying && currentAudioPlayer && currentAudioMode === 'standard' && activeLineAudioIndex === null) {
+      if (isAudioPlaying && currentAudioPlayer && activeLineAudioIndex === null) {
         if (!currentAudioPlayer.paused) {
           currentAudioPlayer.pause();
-          mettreAJourUIAudio('pause', null, 'standard');
+          mettreAJourUIAudio('pause', null);
           return;
         } else {
           currentAudioPlayer.play();
-          mettreAJourUIAudio('lecture', null, 'standard');
+          mettreAJourUIAudio('lecture', null);
           return;
         }
       }
 
       const texte = genererTexteAudioGlobal();
-      lancerLectureAudio(texte, null, 'standard');
-    }
-
-    function toggleAudioLectureIvoirienne() {
-      if (isAudioLoading) {
-        arreterAudioLecture();
-        return;
-      }
-      if (isAudioPlaying && currentAudioPlayer && currentAudioMode === 'ivoirien' && activeLineAudioIndex === null) {
-        if (!currentAudioPlayer.paused) {
-          currentAudioPlayer.pause();
-          mettreAJourUIAudio('pause', null, 'ivoirien');
-          return;
-        } else {
-          currentAudioPlayer.play();
-          mettreAJourUIAudio('lecture', null, 'ivoirien');
-          return;
-        }
-      }
-
-      const texte = genererTexteAudioIvoirien();
-      lancerLectureAudio(texte, null, 'ivoirien');
+      lancerLectureAudio(texte, null);
     }
 
     function lirePosologieLigne(idx) {
       if (!currentPrescription || !currentPrescription.lignes || !currentPrescription.lignes[idx]) return;
 
-      if ((isAudioPlaying || isAudioLoading) && activeLineAudioIndex === idx && currentAudioMode === 'standard') {
+      if ((isAudioPlaying || isAudioLoading) && activeLineAudioIndex === idx) {
         arreterAudioLecture();
         return;
       }
@@ -1524,34 +1430,18 @@
 
       const l = currentPrescription.lignes[idx];
       const texte = genererTexteLigne(l, idx);
-      lancerLectureAudio(texte, idx, 'standard');
+      lancerLectureAudio(texte, idx);
     }
 
-    function lirePosologieLigneIvoirienne(idx) {
-      if (!currentPrescription || !currentPrescription.lignes || !currentPrescription.lignes[idx]) return;
-
-      if ((isAudioPlaying || isAudioLoading) && activeLineAudioIndex === idx && currentAudioMode === 'ivoirien') {
-        arreterAudioLecture();
-        return;
-      }
-
-      arreterAudioLecture();
-
-      const l = currentPrescription.lignes[idx];
-      const texte = genererTexteLigneIvoirienne(l, idx);
-      lancerLectureAudio(texte, idx, 'ivoirien');
-    }
-
-    function lancerLectureAudio(texte, lineIdx = null, mode = 'standard') {
+    function lancerLectureAudio(texte, lineIdx = null) {
       arreterAudioLecture();
 
       const voiceSelect = document.getElementById('select-audio-voice');
-      const voice = voiceSelect ? voiceSelect.value : 'vivienne';
+      const voice = voiceSelect ? voiceSelect.value : 'kore';
 
-      currentAudioMode = mode;
       isAudioLoading = true;
       activeLineAudioIndex = lineIdx;
-      mettreAJourUIAudio('chargement', lineIdx, mode);
+      mettreAJourUIAudio('chargement', lineIdx);
 
       const audioUrl = `/api/tts?voice=${encodeURIComponent(voice)}&text=${encodeURIComponent(texte)}`;
       const audio = new Audio(audioUrl);
@@ -1560,12 +1450,12 @@
       audio.onplaying = () => {
         isAudioLoading = false;
         isAudioPlaying = true;
-        mettreAJourUIAudio('lecture', lineIdx, mode);
+        mettreAJourUIAudio('lecture', lineIdx);
       };
 
       audio.onpause = () => {
         if (isAudioPlaying && !audio.ended) {
-          mettreAJourUIAudio('pause', lineIdx, mode);
+          mettreAJourUIAudio('pause', lineIdx);
         }
       };
 
@@ -1575,16 +1465,16 @@
 
       audio.onerror = (err) => {
         console.warn("Échec streaming TTS serveur, secours vers synthèse locale du navigateur:", err);
-        fallbackWebSpeech(texte, lineIdx, mode);
+        fallbackWebSpeech(texte, lineIdx);
       };
 
       audio.play().catch(e => {
         console.warn("Erreur démarrage audio HD:", e);
-        fallbackWebSpeech(texte, lineIdx, mode);
+        fallbackWebSpeech(texte, lineIdx);
       });
     }
 
-    function fallbackWebSpeech(texte, lineIdx, mode = 'standard') {
+    function fallbackWebSpeech(texte, lineIdx) {
       if (!('speechSynthesis' in window)) {
         arreterAudioLecture();
         alert("La lecture audio n'a pas pu démarrer.");
@@ -1601,7 +1491,7 @@
       utter.onstart = () => {
         isAudioLoading = false;
         isAudioPlaying = true;
-        mettreAJourUIAudio('lecture', lineIdx, mode);
+        mettreAJourUIAudio('lecture', lineIdx);
       };
       utter.onend = () => arreterAudioLecture();
       utter.onerror = () => arreterAudioLecture();
@@ -1621,18 +1511,14 @@
       isAudioLoading = false;
       isAudioPlaying = false;
       const prevLine = activeLineAudioIndex;
-      const prevMode = currentAudioMode;
       activeLineAudioIndex = null;
-      currentAudioMode = 'standard';
-      mettreAJourUIAudio('repos', prevLine, prevMode);
+      mettreAJourUIAudio('repos', prevLine);
     }
 
-    function mettreAJourUIAudio(etat, lineIdx = null, mode = 'standard') {
+    function mettreAJourUIAudio(etat, lineIdx = null) {
       const btnPlay = document.getElementById('btn-audio-play');
       const btnPlayIcon = document.getElementById('btn-audio-play-icon');
       const btnPlayLabel = document.getElementById('btn-audio-play-label');
-      const btnCI = document.getElementById('btn-audio-ci');
-      const btnCILabel = document.getElementById('btn-audio-ci-label');
       const btnStop = document.getElementById('btn-audio-stop');
       const audioIcon = document.getElementById('audio-icon-main');
       const statusText = document.getElementById('audio-status-text');
@@ -1641,20 +1527,15 @@
       if (currentPrescription && currentPrescription.lignes) {
         currentPrescription.lignes.forEach((_, idx) => {
           const lineBtn = document.getElementById(`btn-audio-line-${idx}`);
-          const lineCIBtn = document.getElementById(`btn-audio-ci-line-${idx}`);
           const card = document.getElementById(`med-card-${idx}`);
 
           if (idx !== lineIdx || etat === 'repos') {
             if (lineBtn) {
-              lineBtn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs";
+              lineBtn.className = "shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 transition flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-2xs";
               lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm" id="icon-audio-line-${idx}">volume_up</span> <span>Écouter</span>`;
             }
-            if (lineCIBtn) {
-              lineCIBtn.className = "px-2 py-1.5 rounded-xl text-xs font-bold bg-orange-50 hover:bg-orange-100 text-orange-950 border border-orange-200 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs";
-              lineCIBtn.innerHTML = `<span>🇨🇮</span> <span>Ivoirien</span>`;
-            }
             if (card) {
-              card.classList.remove('ring-2', 'ring-emerald-500', 'ring-orange-500');
+              card.classList.remove('ring-2', 'ring-emerald-500');
             }
           }
         });
@@ -1668,89 +1549,51 @@
         }
 
         if (lineIdx === null) {
-          if (mode === 'ivoirien') {
-            if (btnCI) {
-              btnCI.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-amber-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-              btnCI.innerHTML = `<span class="material-symbols-outlined text-xl animate-spin">progress_activity</span> <span id="btn-audio-ci-label">Préparation...</span>`;
-            }
-            if (statusText) statusText.textContent = "⏳ Préparation vocale en français ivoirien d'Abidjan... Veuillez patienter un instant.";
-          } else {
-            if (btnPlay) {
-              btnPlay.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-amber-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-            }
-            if (btnPlayIcon) {
-              btnPlayIcon.textContent = "progress_activity";
-              btnPlayIcon.className = "material-symbols-outlined text-xl animate-spin";
-            }
-            if (btnPlayLabel) btnPlayLabel.textContent = "Génération de la voix...";
-            if (statusText) statusText.textContent = "⏳ Génération de la voix haute définition en cours... Veuillez patienter un instant.";
+          if (btnPlay) {
+            btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
           }
+          if (btnPlayIcon) {
+            btnPlayIcon.textContent = "progress_activity";
+            btnPlayIcon.className = "material-symbols-outlined text-xl animate-spin";
+          }
+          if (btnPlayLabel) btnPlayLabel.textContent = "Préparation de la voix...";
+          if (statusText) statusText.textContent = "⏳ Préparation vocale en cours... Veuillez patienter un instant.";
         } else {
-          // Ligne spécifique
+          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
           const card = document.getElementById(`med-card-${lineIdx}`);
-          if (mode === 'ivoirien') {
-            const lineCIBtn = document.getElementById(`btn-audio-ci-line-${lineIdx}`);
-            if (lineCIBtn) {
-              lineCIBtn.className = "px-2 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-slate-950 border border-amber-400 transition flex items-center gap-1 shadow-sm";
-              lineCIBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> <span>Chargement...</span>`;
-            }
-            if (card) card.classList.add('ring-2', 'ring-orange-500');
-            if (statusText) statusText.textContent = `Préparation vocale ivoirienne du médicament #${lineIdx + 1}... Veuillez patienter.`;
-          } else {
-            const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
-            if (lineBtn) {
-              lineBtn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-slate-950 border border-amber-400 transition flex items-center gap-1 shadow-sm";
-              lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> <span>Chargement...</span>`;
-            }
-            if (card) card.classList.add('ring-2', 'ring-emerald-500');
-            if (statusText) statusText.textContent = `Préparation vocale du médicament #${lineIdx + 1}... Veuillez patienter.`;
+          if (lineBtn) {
+            lineBtn.className = "shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-slate-950 border border-amber-400 transition flex items-center gap-1.5 shadow-sm";
+            lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> <span>Chargement...</span>`;
           }
+          if (card) card.classList.add('ring-2', 'ring-emerald-500');
+          if (statusText) statusText.textContent = `Préparation vocale du médicament #${lineIdx + 1}... Veuillez patienter.`;
         }
       } else if (etat === 'lecture') {
         if (btnStop) btnStop.classList.remove('hidden');
         if (audioIcon) {
-          audioIcon.className = `material-symbols-outlined text-2xl animate-pulse ${mode === 'ivoirien' ? 'text-amber-400' : 'text-emerald-300'}`;
+          audioIcon.className = "material-symbols-outlined text-2xl animate-pulse text-emerald-300";
           audioIcon.textContent = "volume_up";
         }
 
         if (lineIdx === null) {
-          if (mode === 'ivoirien') {
-            if (btnCI) {
-              btnCI.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer ring-2 ring-orange-300";
-              btnCI.innerHTML = `<span class="material-symbols-outlined text-xl">pause</span> <span id="btn-audio-ci-label">Mettre en pause (Ivoirien)</span>`;
-            }
-            if (statusText) statusText.textContent = "🇨🇮 Lecture en français ivoirien d'Abidjan en cours (Voix HD)...";
-          } else {
-            if (btnPlay) {
-              btnPlay.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-            }
-            if (btnPlayIcon) {
-              btnPlayIcon.textContent = "pause";
-              btnPlayIcon.className = "material-symbols-outlined text-xl";
-            }
-            if (btnPlayLabel) btnPlayLabel.textContent = "Mettre en pause";
-            if (statusText) statusText.textContent = "Lecture vocale de l'ordonnance en cours (Voix HD naturelle)...";
+          if (btnPlay) {
+            btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
           }
+          if (btnPlayIcon) {
+            btnPlayIcon.textContent = "pause";
+            btnPlayIcon.className = "material-symbols-outlined text-xl";
+          }
+          if (btnPlayLabel) btnPlayLabel.textContent = "Mettre en pause";
+          if (statusText) statusText.textContent = "Lecture vocale de l'ordonnance en cours...";
         } else {
-          // Ligne spécifique
+          const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
           const card = document.getElementById(`med-card-${lineIdx}`);
-          if (mode === 'ivoirien') {
-            const lineCIBtn = document.getElementById(`btn-audio-ci-line-${lineIdx}`);
-            if (lineCIBtn) {
-              lineCIBtn.className = "px-2 py-1.5 rounded-xl text-xs font-bold bg-orange-500 text-slate-950 border border-orange-400 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-md";
-              lineCIBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-pulse">graphic_eq</span> <span>En lecture</span>`;
-            }
-            if (card) card.classList.add('ring-2', 'ring-orange-500');
-            if (statusText) statusText.textContent = `🇨🇮 Lecture ivoirienne du médicament #${lineIdx + 1} en cours...`;
-          } else {
-            const lineBtn = document.getElementById(`btn-audio-line-${lineIdx}`);
-            if (lineBtn) {
-              lineBtn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 border border-emerald-400 transition flex items-center gap-1 active:scale-95 cursor-pointer shadow-md";
-              lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-pulse">graphic_eq</span> <span>En lecture</span>`;
-            }
-            if (card) card.classList.add('ring-2', 'ring-emerald-500');
-            if (statusText) statusText.textContent = `Lecture du médicament #${lineIdx + 1} en cours (Voix HD)...`;
+          if (lineBtn) {
+            lineBtn.className = "shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 border border-emerald-400 transition flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-md";
+            lineBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-pulse">graphic_eq</span> <span>En lecture</span>`;
           }
+          if (card) card.classList.add('ring-2', 'ring-emerald-500');
+          if (statusText) statusText.textContent = `Lecture du médicament #${lineIdx + 1} en cours...`;
         }
       } else if (etat === 'pause') {
         if (btnStop) btnStop.classList.remove('hidden');
@@ -1761,37 +1604,25 @@
         if (statusText) statusText.textContent = "Lecture en pause. Cliquez pour reprendre.";
 
         if (lineIdx === null) {
-          if (mode === 'ivoirien') {
-            if (btnCI) {
-              btnCI.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 hover:brightness-110 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer border border-orange-300/40";
-              btnCI.innerHTML = `<span class="text-base">🇨🇮</span> <span id="btn-audio-ci-label">Reprendre (Ivoirien)</span>`;
-            }
-          } else {
-            if (btnPlay) {
-              btnPlay.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
-            }
-            if (btnPlayIcon) {
-              btnPlayIcon.textContent = "play_arrow";
-              btnPlayIcon.className = "material-symbols-outlined text-xl";
-            }
-            if (btnPlayLabel) btnPlayLabel.textContent = "Reprendre la lecture";
+          if (btnPlay) {
+            btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
           }
+          if (btnPlayIcon) {
+            btnPlayIcon.textContent = "play_arrow";
+            btnPlayIcon.className = "material-symbols-outlined text-xl";
+          }
+          if (btnPlayLabel) btnPlayLabel.textContent = "Reprendre la lecture";
         }
       } else {
         // repos
         if (btnPlay) {
-          btnPlay.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
+          btnPlay.className = "h-11 px-5 rounded-full font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer";
         }
         if (btnPlayIcon) {
           btnPlayIcon.textContent = "play_arrow";
           btnPlayIcon.className = "material-symbols-outlined text-xl";
         }
-        if (btnPlayLabel) btnPlayLabel.textContent = "Écouter (Standard)";
-
-        if (btnCI) {
-          btnCI.className = "h-11 px-4 sm:px-5 rounded-full font-bold text-xs bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 hover:brightness-110 text-slate-950 shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer border border-orange-300/40";
-          btnCI.innerHTML = `<span class="text-base">🇨🇮</span> <span id="btn-audio-ci-label">Écouter en français ivoirien</span>`;
-        }
+        if (btnPlayLabel) btnPlayLabel.textContent = "Écouter mon ordonnance";
 
         if (btnStop) btnStop.classList.add('hidden');
         if (audioIcon) {

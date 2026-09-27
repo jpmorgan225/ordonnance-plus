@@ -225,24 +225,19 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
      * Dès que le score est supérieur ou égal à 40 (>= 40%) : la mention est identifiable et exploitable -> statut_confiance = "CONFIRME", needs_confirmation = false
      * Inférieur à 40 (< 40%) : mention totalement illisible ou raturée méconnaissable -> statut_confiance = "INCERTAIN", needs_confirmation = true, avec motif_incertitude détaillé.
 
-3. "EXPLICATION ORALE NATURELLE POUR PATIENT NON-LECTEUR (posologie_orale_simple)" :
-   Pour chaque ligne, traduis les abréviations médicales en une phrase parlée limpide et soignante :
-   - Développe toutes les abréviations :
-     * "12ml x2j pdt 5j" -> "Prenez 12 millilitres deux fois par jour, le matin et le soir pendant 5 jours"
-     * "1 cp x 3/j" -> "Prenez un comprimé trois fois par jour, le matin, le midi et le soir"
-     * "1/2 cp mat/soir" -> "Prenez un demi-comprimé le matin et le soir"
-     * "1 sach au couch" -> "Prenez un sachet à dissoudre dans un verre d'eau au coucher le soir"
-     * "1 dose-poids x3/j" -> "Donnez une dose selon le poids de l'enfant avec la pipette graduée, trois fois par jour"
+3. "EXPLICATION ORALE NATURELLE EN FRANÇAIS IVOIRIEN D'ABIDJAN (posologie_orale_simple)" :
+   Pour chaque ligne, formule l'explication orale dans un français ivoirien d'Abidjan chaleureux, limpide et bienveillant pour un patient non-lecteur :
+   - Développe toutes les abréviations médicales avec les tournures naturelles et rassurantes d'Abidjan ("faut prendre", "dans la journée", etc.) :
+     * "12ml x2j pdt 5j" -> "Faut prendre 12 millilitres deux fois dans la journée, un le matin et un le soir avant de manger pendant 5 jours sans sauter de jour"
+     * "1 cp x 3/j" -> "Faut prendre un comprimé trois fois dans la journée, un le matin, un à midi et un le soir avant de manger"
+     * "1/2 cp mat/soir" -> "Faut prendre un demi-comprimé le matin et un demi-comprimé le soir"
+     * "1 sach au couch" -> "Faut prendre un sachet à bien mélanger dans un verre d'eau la nuit avant d'aller dormir"
+     * "1 dose-poids x3/j" -> "Faut donner une dose selon le poids de l'enfant avec la pipette graduée, trois fois dans la journée"
    - Précise toujours les moments de la journée pour que ce soit limpide à l'écoute.
    - Si le dosage n'est pas précisé, dis exactement "Le dosage n'est pas précisé" (ne dis JAMAIS "c'est dosé à non précisé").
    - Pour les prix, utilise l'expression "Prix moyen" (ne dis JAMAIS "prix indicatif officiel").
 
-4. "EXPLICATION EN FRANÇAIS IVOIRIEN D'ABIDJAN (posologie_ivoirienne)" :
-   Pour chaque ligne, formule aussi la posologie en français populaire ivoirien d'Abidjan, chaleureux et bienveillant :
-   - Ex: "Faut prendre un comprimé deux fois dans la journée, un le matin et un le soir avant de manger pendant 5 jours sans sauter de jour."
-   - Ex: "Faut donner une dose selon le poids de l'enfant avec la pipette graduée, trois fois dans la journée."
-
-5. STRUCTURE DU JSON ATTENDU :
+4. STRUCTURE DU JSON ATTENDU :
 {
   "patient_nom": "Nom du patient ou 'Patient'",
   "patient_age": "Âge si mentionné sur le document, sinon null",
@@ -257,7 +252,7 @@ PROTOCOLE DE SÉCURITÉ CLINIQUE ET CONFIDENTIALITÉ :
       "dosage": "Dosage explicite ou 'Non précisé / Illisible'",
       "forme": "Comprimé, gélule, sirop, pommade, etc.",
       "posologie_recopiee": "Posologie exacte recopiée fidèlement (avec abréviations éventuelles)",
-      "posologie_orale_simple": "Explication orale soignante fluide sans aucune abréviation pour patient non-lecteur",
+      "posologie_orale_simple": "Explication en français ivoirien chaleureux d'Abidjan sans abréviation pour patient non-lecteur",
       "posologie_ivoirienne": "Explication en français ivoirien chaleureux d'Abidjan pour patient non-lecteur",
       "score_confiance": 95,
       "statut_confiance": "CONFIRME",
@@ -397,16 +392,17 @@ async def analyser_ordonnance_reelle(
             motif_prix = "Score inférieur à 40% : à chiffrer en pharmacie"
 
         # Posologie orale bienveillante et limpide (sécurité anti-abréviations pour patient non-lecteur)
+        # Posologie orale bienveillante et limpide en français ivoirien d'Abidjan
         posologie_orale = l.get("posologie_orale_simple", "").strip()
         if not posologie_orale or len(posologie_orale) < 5:
-            posologie_orale = traduire_abreviations_medicales(posologie)
+            posologie_orale = adapter_vers_ivoirien(posologie)
         else:
-            posologie_orale = traduire_abreviations_medicales(posologie_orale)
+            posologie_orale = adapter_vers_ivoirien(posologie_orale)
 
-        # Posologie en français populaire ivoirien
+        # Posologie en français populaire ivoirien (synchrone)
         posologie_ci = l.get("posologie_ivoirienne", "").strip()
         if not posologie_ci or len(posologie_ci) < 5:
-            posologie_ci = adapter_vers_ivoirien(posologie_orale)
+            posologie_ci = posologie_orale
         else:
             posologie_ci = adapter_vers_ivoirien(posologie_ci)
 
